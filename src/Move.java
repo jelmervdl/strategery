@@ -1,12 +1,12 @@
 class Move
 {
-	public Country attacker;
+	public Country attackingCountry;
 
-	public Country defender;
+	public Country defendingCountry;
 
 	public Move(Country attacker, Country defender)
 	{
-		this.attacker = attacker;
-		this.defender = defender;
+		this.attackingCountry = attacker;
+		this.defendingCountry = defender;
 	}
 }

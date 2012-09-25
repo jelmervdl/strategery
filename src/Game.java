@@ -20,7 +20,7 @@ class Game
 			Move move;
 
 			do {
-				Vector<Move> moves = generatePossibleMoves(player);
+				Vector<Move> moves = state.generatePossibleMoves(player);
 
 				move = player.decide(moves, state);
 				
@@ -30,30 +30,6 @@ class Game
 
 			distributeNewDice(player);
 		}
-	}
-
-	private Vector<Move> generatePossibleMoves(Player player)
-	{
-		Vector<Move> moves = new Vector<Move>();
-
-		for (Country country : state.countries)
-		{
-			if (country.player != player)
-				continue;
-
-			if (country.dice <= 1)
-				continue;
-
-			Vector<Country> enemyNeighbours = country.enemyNeighbours();
-
-			if (enemyNeighbours.size() == 0)
-				continue;
-
-			for (Country enemyCountry : enemyNeighbours)
-				moves.add(new Move(country, enemyCountry));
-		}
-
-		return moves; 
 	}
 
 	private void distributeNewDice(Player player)

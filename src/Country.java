@@ -18,4 +18,14 @@ class Country
 
 		return enemies;
 	}
+
+	public Country clone()
+	{
+		Country country = new Country();
+		country.player = player;
+		country.neighbours = neighbours;
+		country.dice = dice;
+
+		return country;
+	}
 }
