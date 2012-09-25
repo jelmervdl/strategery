@@ -36,6 +36,10 @@ class TestGame
 		players.add(b);
 
 		Vector<Country> countries = new Vector<Country>();
+		countries.add(c1);
+		countries.add(c2);
+		countries.add(c3);
+		countries.add(c4);
 
 		GameState state = new GameState(countries);
 

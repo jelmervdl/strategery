@@ -79,15 +79,24 @@ class GameState
 		for (Country country : countries)
 		{
 			if (country.player != player)
+			{
+				System.out.println("Not same player");
 				continue;
+			}
 
 			if (country.dice <= 1)
+			{
+				System.out.println("Not enough dice");
 				continue;
+			}
 
 			Vector<Country> enemyNeighbours = country.enemyNeighbours();
 
 			if (enemyNeighbours.size() == 0)
+			{
+				System.out.println("Not enough enemy neighbours");
 				continue;
+			}
 
 			for (Country enemyCountry : enemyNeighbours)
 				moves.add(new Move(country, enemyCountry));
@@ -99,6 +108,17 @@ class GameState
 	public Country getCountry(Country country)
 	{
 		return countries.get(countries.indexOf(country));
+	}
+
+	public Vector<Country> getCountries(Player player)
+	{
+		Vector<Country> playerCountries = new Vector<Country>();
+
+		for (Country country : countries)
+			if (country.player == player)
+				playerCountries.add(country);
+
+		return playerCountries;
 	}
 
 	private int rollDice(int dice)

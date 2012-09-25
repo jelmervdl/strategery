@@ -34,6 +34,11 @@ class Game
 				
 				if (move != null)
 					state = state.apply(move);
+
+				for (Player player2 : players)
+					if (state.getCountries(player2).size() == 0)
+						System.out.println("Player " + player2 + " has been defeated!");
+
 			} while(move != null);
 
 			distributeNewDice(player);
