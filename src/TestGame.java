@@ -7,7 +7,7 @@ class TestGame
 		Player a = new RandomPlayer("a");
 		Player b = new RandomPlayer("b");
 		Player c = new RandomPlayer("c");
-		Player d = new BoringPlayer("d");
+		Player d = new TerminalPlayer("d");
 
 		/*
 		  c1
@@ -67,8 +67,9 @@ class TestGame
 	{
 		try {
 			java.io.BufferedReader stdin = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
+			System.out.println("Press enter to continue...");
 			String line = stdin.readLine();
-			return line.equals("y");
+			return true;
 		}
 		catch (java.io.IOException e)
 		{
