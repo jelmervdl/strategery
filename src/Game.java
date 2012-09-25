@@ -1,3 +1,5 @@
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 
 class Game
@@ -49,6 +51,35 @@ class Game
 	{
 		int dice = Util.countLargestCluster(state.countries, player);
 
-		// to do something
+		Vector<Country> countries = state.getCountries(player);
+
+		Collections.sort(countries, new Comparator<Country>(){
+			public int compare(Country a, Country b)
+			{
+				return a.enemyNeighbours().size() - b.enemyNeighbours().size();
+			}
+		});
+
+		while (dice > 0)
+		{
+			int diceAdded = 0;
+
+			for (Country country : countries)
+			{
+				if (country.dice < country.maximumDice())
+				{
+					country.dice++;
+					dice--;
+					diceAdded++;
+				}
+
+				if (dice == 0)
+					break;
+			}
+
+			// Stop if all countries are filled
+			if (diceAdded == 0)
+				break;
+		}
 	}
 }

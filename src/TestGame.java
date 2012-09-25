@@ -45,6 +45,24 @@ class TestGame
 
 		Game game = new Game(players, state);
 
-		game.step();
+		do {
+			game.step();
+
+			System.out.print(game.state);
+		}
+		while (confirmContinue());
+	}
+
+	static private boolean confirmContinue()
+	{
+		try {
+			java.io.BufferedReader stdin = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
+			String line = stdin.readLine();
+			return line.equals("y");
+		}
+		catch (java.io.IOException e)
+		{
+			return false;
+		}
 	}
 }

@@ -32,6 +32,11 @@ class Country
 		dice = other.dice;
 	}
 
+	public int maximumDice()
+	{
+		return 6;
+	}
+
 	public Vector<Country> enemyNeighbours()
 	{
 		Vector<Country> enemies = new Vector<Country>();
@@ -56,6 +61,6 @@ class Country
 
 	public String toString()
 	{
-		return "[Country " + id + "]";
+		return "[Country " + id + " player:" + player + " dice:" + dice + "]";
 	}
 }

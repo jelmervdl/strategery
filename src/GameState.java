@@ -80,13 +80,13 @@ class GameState
 		{
 			if (country.player != player)
 			{
-				System.out.println("Not same player");
+				// System.out.println("Not same player");
 				continue;
 			}
 
 			if (country.dice <= 1)
 			{
-				System.out.println("Not enough dice");
+				// System.out.println("Not enough dice");
 				continue;
 			}
 
@@ -94,7 +94,7 @@ class GameState
 
 			if (enemyNeighbours.size() == 0)
 			{
-				System.out.println("Not enough enemy neighbours");
+				// System.out.println("Not enough enemy neighbours");
 				continue;
 			}
 
@@ -119,6 +119,18 @@ class GameState
 				playerCountries.add(country);
 
 		return playerCountries;
+	}
+
+	public String toString()
+	{
+		String out = "[GameState countries:\n";
+
+		for (Country country : countries)
+			out += "\t" + country + "\n";
+
+		out += "]";
+
+		return out;
 	}
 
 	private int rollDice(int dice)
