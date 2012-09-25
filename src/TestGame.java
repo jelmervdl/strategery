@@ -7,7 +7,7 @@ class TestGame
 		Player a = new RandomPlayer("a");
 		Player b = new RandomPlayer("b");
 		Player c = new RandomPlayer("c");
-		Player d = new RandomPlayer("d");
+		Player d = new BoringPlayer("d");
 
 		/*
 		  c1
