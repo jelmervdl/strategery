@@ -1,4 +1,5 @@
 <canvas width="400" height="400" id="map"></canvas>
+<p id="info"></p>
 <script>
 function Map()
 {
@@ -14,6 +15,15 @@ Map.prototype.get = function(x, y)
 	return null;
 }
 
+Map.prototype.hasUnclaimedHexagons = function()
+{
+	for (var i = 0; i < this.hexagons.length; ++i)
+		if (!this.hexagons[i].country)
+			return true;
+
+	return false;
+}
+
 Map.prototype.render = function(ctx)
 {
 	for (var i = 0; i < this.hexagons.length; ++i)
@@ -24,7 +34,7 @@ function Hexagon(x, y)
 {
 	this.x = x;
 	this.y = y;
-	this.color = 'red';
+	this.country = null;
 }
 
 Hexagon.prototype.getNeighbours = function(map)
@@ -73,7 +83,7 @@ Hexagon.prototype.render = function(ctx)
 	    x = this.x * 20 + (this.y % 2) * 10,
 	    y = this.y * 20;
 
-	ctx.fillStyle = this.color;
+	ctx.fillStyle = this.country ? this.country.color : 'white';
 	ctx.strokeStyle = 'black';
 	ctx.beginPath();
 	ctx.moveTo(x + 0, y + a + c);
@@ -99,6 +109,22 @@ Hexagon.prototype.hitTest = function(cx, cy)
 		&& cy >= y && cy <= y + 4*a;
 }
 
+function Country(name, hexagons)
+{
+	this.name = name;
+	this.hexagons = hexagons;
+	this.color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+
+	for (var i = 0; i < this.hexagons.length; ++i)
+		this.hexagons[i].country = this;
+}
+
+Country.prototype.addHexagon = function(hexagon)
+{
+	this.hexagons.push(hexagon);
+	hexagon.country = this;
+}
+
 function main()
 {
 	var map = new Map();
@@ -109,22 +135,44 @@ function main()
 
 	var canvas = document.getElementById('map').getContext('2d');
 
+	
 	document.getElementById('map').onclick = function(e)
 	{
 		for (var i = 0; i < map.hexagons.length; ++i)
 			if (map.hexagons[i].hitTest(e.offsetX, e.offsetY))
 			{
-				map.hexagons[i].getNeighbours(map).forEach(function(neighbour) {
-					neighbour.color = 'yellow';
-				});
-
+				info.innerText = 'Country ' + map.hexagons[i].country.name;
 				break;
 			}
-
-		map.render(canvas);
 	}
+	
+
+	var countries = [],
+		hexagons = map.hexagons.slice();
+
+	for (var i = 1; i <= 10; ++i)
+		countries.push(new Country(i, hexagons.splice(Math.floor(Math.random() * hexagons.length), 1)));
+
+	while (map.hasUnclaimedHexagons())
+		for (var i = 0; i < 6; ++i)
+			smear(map, countries[i]);
 
 	map.render(canvas);
+}
+
+function smear(map, country)
+{
+	var hexagons = country.hexagons.slice();
+
+	for (var i = 0; i < hexagons.length; ++i)
+	{
+		var hexagon = country.hexagons[i],
+			neighbours = hexagon.getNeighbours(map);
+
+		for (var j = 0; j < neighbours.length; ++j)
+			if (!neighbours[j].country && Math.random() < .5)
+				country.addHexagon(neighbours[j]);
+	}
 }
 
 main();
