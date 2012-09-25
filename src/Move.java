@@ -9,4 +9,9 @@ class Move
 		this.attackingCountry = attacker;
 		this.defendingCountry = defender;
 	}
+
+	public String toString()
+	{
+		return "[Move " + attackingCountry + " attacks " + defendingCountry + "]";
+	}
 }

@@ -6,11 +6,11 @@ class Game
 
 	Vector<Player> players;
 
-	public Game(Vector<Player> players)
+	public Game(Vector<Player> players, GameState state)
 	{
 		this.players = players;
 
-		this.state = generateNewGame();
+		this.state = state;
 	}
 
 	public void step()
@@ -22,10 +22,18 @@ class Game
 			do {
 				Vector<Move> moves = state.generatePossibleMoves(player);
 
+				System.out.println("Player " + player + " has possible moves:");
+				for (Move aMove : moves)
+					System.out.println("\t" + aMove);
+
 				move = player.decide(moves, state);
+
+				// move == null -> player finishes his turn.
+
+				System.out.println("Player " + player + " will play move " + move);
 				
 				if (move != null)
-					state.apply(move);
+					state = state.apply(move);
 			} while(move != null);
 
 			distributeNewDice(player);
@@ -37,14 +45,5 @@ class Game
 		int dice = Util.countLargestCluster(state.countries, player);
 
 		// to do something
-	}
-
-	private GameState generateNewGame()
-	{
-		// generate random countries, assign players to countries.
-
-		// assign dice to coutries
-
-		return new GameState();
 	}
 }

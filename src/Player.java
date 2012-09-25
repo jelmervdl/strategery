@@ -14,6 +14,7 @@ class Player
 	{
 		Random random = new Random();
 
+		// All possible moves plus the [end this turn]-move (the +1 which returns NULL)
 		int move = random.nextInt(possibleMoves.size() + 1);
 
 		return move == possibleMoves.size()
@@ -23,6 +24,6 @@ class Player
 
 	public String toString()
 	{
-		return "Player " + name;
+		return "[Player " + name + "]";
 	}
 }

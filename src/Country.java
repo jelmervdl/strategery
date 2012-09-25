@@ -1,16 +1,21 @@
 import java.util.Vector;
+import java.util.UUID;
 
 class Country
 {
+	private UUID id;
+
 	public Player player;
 
 	public Vector<Country> neighbours;
 
 	public int dice;
 
+	// generate empty country		
 	public Country(Player player, int dice)
 	{
-		// generate empty country
+		this.id = UUID.randomUUID();
+
 		this.player = player;
 
 		this.neighbours = new Vector<Country>();
@@ -21,9 +26,10 @@ class Country
 	public Country(Country other)
 	{
 		// Copy constructor!
-		this.player = player;
-		this.neighbours = new Vector<Country>(neighbours);
-		this.dice = dice;
+		id = other.id;
+		player = other.player;
+		neighbours = new Vector<Country>(other.neighbours);
+		dice = other.dice;
 	}
 
 	public Vector<Country> enemyNeighbours()
@@ -35,5 +41,21 @@ class Country
 				enemies.add(neighbour);
 
 		return enemies;
+	}
+
+	public boolean equals(Object other)
+	{
+		if (this == other)
+			return true;
+
+		if (!(other instanceof Country))
+			return false;
+
+		return id == ((Country) other).id;
+	}
+
+	public String toString()
+	{
+		return "[Country " + id + "]";
 	}
 }

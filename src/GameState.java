@@ -29,7 +29,7 @@ class GameState
 				country.neighbours.set(i, getCountry(country.neighbours.get(i)));
 	}
 
-	public void apply(Move move)
+	public GameState apply(Move move)
 	{
 		GameState state = new GameState(this);
 
@@ -45,6 +45,8 @@ class GameState
 
 			// Assign remaining dice to country
 			state.getCountry(move.defendingCountry).dice = remainingDice(attackingEyes - defendingEyes);
+
+			System.out.println("Attacker wins!");
 		}
 
 		// It's a draw
@@ -53,6 +55,8 @@ class GameState
 			state.getCountry(move.attackingCountry).dice = 1;
 
 			state.getCountry(move.defendingCountry).dice = 1;
+
+			System.out.println("Draw!");
 		}
 
 		// Attacker loses
@@ -61,7 +65,11 @@ class GameState
 			state.getCountry(move.attackingCountry).dice = 1;
 
 			state.getCountry(move.defendingCountry).dice = remainingDice(attackingEyes - defendingEyes);
+
+			System.out.println("Defender wins!");
 		}
+
+		return state;
 	}
 
 	public Vector<Move> generatePossibleMoves(Player player)
