@@ -34,7 +34,7 @@ class Country
 
 	public int maximumDice()
 	{
-		return 6;
+		return 7;
 	}
 
 	public Vector<Country> enemyNeighbours()
