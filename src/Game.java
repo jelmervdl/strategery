@@ -1,16 +1,15 @@
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.List;
 
 class Game
 {
 	GameState state;
 
-	Set<Player> players;
+	List<Player> players;
 
-	public Game(Set<Player> players, GameState state)
+	public Game(List<Player> players, GameState state)
 	{
 		this.players = players;
 
@@ -47,9 +46,9 @@ class Game
 		}
 	}
 
-	public Set<Player> livingPlayers()
+	public List<Player> livingPlayers()
 	{
-		Set<Player> alive = new HashSet<Player>();
+		List<Player> alive = new Vector<Player>();
 
 		for (Player player : players)
 			if (state.getCountries(player).size() > 0)

@@ -33,7 +33,7 @@ class TestGame
 		c4.neighbours.add(c3);
 
 
-		Set<Player> players = new HashSet<Player>();
+		List<Player> players = new Vector<Player>();
 		players.add(a);
 		players.add(b);
 		players.add(c);
