@@ -1,14 +1,16 @@
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
+import java.util.Set;
+import java.util.HashSet;
 
 class Game
 {
 	GameState state;
 
-	Vector<Player> players;
+	Set<Player> players;
 
-	public Game(Vector<Player> players, GameState state)
+	public Game(Set<Player> players, GameState state)
 	{
 		this.players = players;
 
@@ -19,6 +21,9 @@ class Game
 	{
 		for (Player player : players)
 		{
+			if (!livingPlayers().contains(player))
+				continue;
+
 			Move move;
 
 			do {
@@ -36,15 +41,21 @@ class Game
 				
 				if (move != null)
 					state = state.apply(move);
-
-				for (Player player2 : players)
-					if (state.getCountries(player2).size() == 0)
-						System.out.println("Player " + player2 + " has been defeated!");
-
 			} while(move != null);
 
 			distributeNewDice(player);
 		}
+	}
+
+	public Set<Player> livingPlayers()
+	{
+		Set<Player> alive = new HashSet<Player>();
+
+		for (Player player : players)
+			if (state.getCountries(player).size() > 0)
+				alive.add(player);
+
+		return alive;
 	}
 
 	private void distributeNewDice(Player player)

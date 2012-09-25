@@ -1,4 +1,4 @@
-import java.util.Vector;
+import java.util.*;
 
 class TestGame
 {
@@ -31,7 +31,7 @@ class TestGame
 		c4.neighbours.add(c3);
 
 
-		Vector<Player> players = new Vector<Player>();
+		Set<Player> players = new HashSet<Player>();
 		players.add(a);
 		players.add(b);
 
@@ -49,6 +49,12 @@ class TestGame
 			game.step();
 
 			System.out.print(game.state);
+
+			if (game.livingPlayers().size() == 1)
+			{
+				System.out.println("We have a winner!");
+				break;
+			}
 		}
 		while (confirmContinue());
 	}
