@@ -1,0 +1,131 @@
+<canvas width="400" height="400" id="map"></canvas>
+<script>
+function Map()
+{
+	this.hexagons = [];
+}
+
+Map.prototype.get = function(x, y)
+{
+	for (var i = 0; i < this.hexagons.length; ++i)
+		if (this.hexagons[i].x == x && this.hexagons[i].y == y)
+			return this.hexagons[i];
+
+	return null;
+}
+
+Map.prototype.render = function(ctx)
+{
+	for (var i = 0; i < this.hexagons.length; ++i)
+		this.hexagons[i].render(ctx);
+}
+
+function Hexagon(x, y)
+{
+	this.x = x;
+	this.y = y;
+	this.color = 'red';
+}
+
+Hexagon.prototype.getNeighbours = function(map)
+{
+	/*
+		a b c d e
+		 f g h i j
+		k l m n o
+		 p q r s t
+
+		h = [c, d, g, i, m, n]
+		m = [g, h, l, n, q, r]
+	*/
+
+	var neighbours;
+
+	if (this.y % 2 == 0)
+		neighbours = [
+			map.get(this.x - 1, this.y - 1),
+			map.get(this.x    , this.y - 1),
+			map.get(this.x - 1, this.y),
+			map.get(this.x + 1, this.y),
+			map.get(this.x - 1, this.y + 1),
+			map.get(this.x    , this.y + 1)
+		];
+	else
+		neighbours = [
+			map.get(this.x    , this.y - 1),
+			map.get(this.x + 1, this.y - 1),
+			map.get(this.x - 1, this.y),
+			map.get(this.x + 1, this.y),
+			map.get(this.x	  , this.y + 1),
+			map.get(this.x + 1, this.y + 1)
+		];
+
+	return neighbours.filter(function(neighbour) {
+		return neighbour != null;
+	});
+}
+
+Hexagon.prototype.render = function(ctx)
+{
+	var c = 10,
+	    a = .5 * c,
+	    b = Math.sin(45) * c,
+	    x = this.x * 20 + (this.y % 2) * 10,
+	    y = this.y * 20;
+
+	ctx.fillStyle = this.color;
+	ctx.strokeStyle = 'black';
+	ctx.beginPath();
+	ctx.moveTo(x + 0, y + a + c);
+	ctx.lineTo(x + 0, y + a);
+	ctx.lineTo(x + b, y + 0);
+	ctx.lineTo(x + 2*b, y + a);
+	ctx.lineTo(x + 2*b, y + a + c);
+	ctx.lineTo(x + b, y + 2*c);
+	ctx.lineTo(x + 0, y + a + c);
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
+}
+
+Hexagon.prototype.hitTest = function(cx, cy)
+{
+	var c = 10,
+		a = .5 * c,
+		x = this.x * 20 + (this.y % 2) * 10,
+	    y = this.y * 20;
+
+	return cx >= x && cx <= x + 4*a
+		&& cy >= y && cy <= y + 4*a;
+}
+
+function main()
+{
+	var map = new Map();
+
+	for (var x = 0; x < 10; ++x)
+		for (var y = 0; y < 10; ++y)
+			map.hexagons.push(new Hexagon(x, y));
+
+	var canvas = document.getElementById('map').getContext('2d');
+
+	document.getElementById('map').onclick = function(e)
+	{
+		for (var i = 0; i < map.hexagons.length; ++i)
+			if (map.hexagons[i].hitTest(e.offsetX, e.offsetY))
+			{
+				map.hexagons[i].getNeighbours(map).forEach(function(neighbour) {
+					neighbour.color = 'yellow';
+				});
+
+				break;
+			}
+
+		map.render(canvas);
+	}
+
+	map.render(canvas);
+}
+
+main();
+</script>
