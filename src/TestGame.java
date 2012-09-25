@@ -6,6 +6,8 @@ class TestGame
 	{
 		Player a = new Player("a");
 		Player b = new Player("b");
+		Player c = new Player("c");
+		Player d = new Player("d");
 
 		/*
 		  c1
@@ -14,9 +16,9 @@ class TestGame
 		*/
 
 		Country c1 = new Country(a, 2);
-		Country c2 = new Country(a, 2);
-		Country c3 = new Country(b, 2);
-		Country c4 = new Country(b, 2);
+		Country c2 = new Country(b, 2);
+		Country c3 = new Country(c, 2);
+		Country c4 = new Country(d, 2);
 
 		c1.neighbours.add(c2);
 		c1.neighbours.add(c3);
@@ -34,6 +36,8 @@ class TestGame
 		Set<Player> players = new HashSet<Player>();
 		players.add(a);
 		players.add(b);
+		players.add(c);
+		players.add(d);
 
 		Vector<Country> countries = new Vector<Country>();
 		countries.add(c1);

@@ -64,7 +64,7 @@ class GameState
 		{
 			state.getCountry(move.attackingCountry).dice = 1;
 
-			state.getCountry(move.defendingCountry).dice = remainingDice(attackingEyes - defendingEyes);
+			state.getCountry(move.defendingCountry).dice = remainingDice(defendingEyes - attackingEyes);
 
 			System.out.println("Defender wins!");
 		}
