@@ -8,6 +8,24 @@ class Country
 
 	public int dice;
 
+	public Country(Player player, int dice)
+	{
+		// generate empty country
+		this.player = player;
+
+		this.neighbours = new Vector<Country>();
+
+		this.dice = dice;
+	}
+
+	public Country(Country other)
+	{
+		// Copy constructor!
+		this.player = player;
+		this.neighbours = new Vector<Country>(neighbours);
+		this.dice = dice;
+	}
+
 	public Vector<Country> enemyNeighbours()
 	{
 		Vector<Country> enemies = new Vector<Country>();
@@ -17,15 +35,5 @@ class Country
 				enemies.add(neighbour);
 
 		return enemies;
-	}
-
-	public Country clone()
-	{
-		Country country = new Country();
-		country.player = player;
-		country.neighbours = neighbours;
-		country.dice = dice;
-
-		return country;
 	}
 }

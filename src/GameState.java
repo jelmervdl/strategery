@@ -15,9 +15,23 @@ class GameState
 		this.countries = countries;
 	}
 
+	public GameState(GameState other)
+	{
+		countries = new Vector<Country>();
+
+		// Copy all the countries
+		for (Country country : other.countries)
+			countries.add(new Country(country));
+
+		// Update neighbours to direct to the countries in the current state
+		for (Country country : countries)
+			for (int i = 0; i < country.neighbours.size(); ++i)
+				country.neighbours.set(i, getCountry(country.neighbours.get(i)));
+	}
+
 	public void apply(Move move)
 	{
-		GameState state = this.clone();
+		GameState state = new GameState(this);
 
 		// fight battle (if there is one)
 		int attackingEyes = rollDice(move.attackingCountry.dice);
@@ -72,22 +86,6 @@ class GameState
 		}
 
 		return moves; 
-	}
-
-	public GameState clone()
-	{
-		GameState state = new GameState();
-
-		// Copy all the countries
-		for (Country country : countries)
-			state.countries.add(country.clone());
-
-		// Update neighbours to direct to the countries in the current state
-		for (Country country : state.countries)
-			for (int i = 0; i < country.neighbours.size(); ++i)
-				country.neighbours.set(i, state.getCountry(country.neighbours.get(i)));
-
-		return state;
 	}
 
 	public Country getCountry(Country country)
