@@ -4,10 +4,10 @@ class TestGame
 {
 	static public void main(String[] args)
 	{
-		Player a = new Player("a");
-		Player b = new Player("b");
-		Player c = new Player("c");
-		Player d = new Player("d");
+		Player a = new RandomPlayer("a");
+		Player b = new RandomPlayer("b");
+		Player c = new RandomPlayer("c");
+		Player d = new RandomPlayer("d");
 
 		/*
 		  c1

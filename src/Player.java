@@ -1,7 +1,6 @@
-import java.util.Random;
 import java.util.Vector;
 
-class Player
+abstract class Player
 {
 	String name;
 
@@ -9,21 +8,11 @@ class Player
 	{
 		this.name = name;
 	}
-
-	public Move decide(Vector<Move> possibleMoves, GameState state)
-	{
-		Random random = new Random();
-
-		// All possible moves plus the [end this turn]-move (the +1 which returns NULL)
-		int move = random.nextInt(possibleMoves.size() + 1);
-
-		return move == possibleMoves.size()
-			? null
-			: possibleMoves.get(move);
-	}
-
+	
 	public String toString()
 	{
 		return "[Player " + name + "]";
 	}
+
+	abstract public Move decide(Vector<Move> possibleMoves, GameState state);
 }
