@@ -1,6 +1,12 @@
-<canvas width="400" height="400" id="map"></canvas>
-<p id="info"></p>
-<script>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Map generator</title>
+	</head>
+	<body>
+		<canvas id="map" width="800" height="800"></canvas>
+		<p id="info"></p>
+		<script>
 function Map()
 {
 	this.hexagons = [];
@@ -27,7 +33,7 @@ Map.prototype.hasUnclaimedHexagons = function()
 Map.prototype.render = function(ctx)
 {
 	for (var i = 0; i < this.hexagons.length; ++i)
-		this.hexagons[i].render(ctx);
+		this.hexagons[i].render(this, ctx);
 }
 
 function Hexagon(x, y)
@@ -37,7 +43,7 @@ function Hexagon(x, y)
 	this.country = null;
 }
 
-Hexagon.prototype.getNeighbours = function(map)
+Hexagon.prototype.getNeighbours = function(map, sparse)
 {
 	/*
 		a b c d e
@@ -70,21 +76,23 @@ Hexagon.prototype.getNeighbours = function(map)
 			map.get(this.x + 1, this.y + 1)
 		];
 
-	return neighbours.filter(function(neighbour) {
-		return neighbour != null;
-	});
+	return sparse
+		? neighbours
+		: neighbours.filter(function(neighbour) { return neighbour != null; });
 }
 
-Hexagon.prototype.render = function(ctx)
+Hexagon.prototype.render = function(map, ctx)
 {
 	var c = 10,
 	    a = .5 * c,
 	    b = Math.sin(45) * c,
-	    x = this.x * 20 + (this.y % 2) * 10,
-	    y = this.y * 20;
+	    x = this.x * 2*b + (this.y % 2) * b,
+	    y = this.y * 3*a,
+	    country = this.country,
+	    n = this.getNeighbours(map, true).map(function(neighbour) {
+	    	return (country && !neighbour) || (neighbour && neighbour.country != country) ? 'lineTo' : 'moveTo';
+	    });
 
-	ctx.fillStyle = this.country ? this.country.color : 'white';
-	ctx.strokeStyle = 'black';
 	ctx.beginPath();
 	ctx.moveTo(x + 0, y + a + c);
 	ctx.lineTo(x + 0, y + a);
@@ -94,18 +102,36 @@ Hexagon.prototype.render = function(ctx)
 	ctx.lineTo(x + b, y + 2*c);
 	ctx.lineTo(x + 0, y + a + c);
 	ctx.closePath();
+	ctx.fillStyle = this.country ? this.country.color.toString() : 'white';
 	ctx.fill();
+
+	if (this.country)
+	{
+		ctx.fillStyle = 'white';
+		ctx.fillText(this.country.player.name, x + .75*b, y + 2.75*a);
+	}
+
+	ctx.strokeStyle = 'black';
+	ctx.beginPath();
+	ctx.moveTo(x + 0, y + a + c);
+	ctx[n[2]](x + 0, y + a);
+	ctx[n[0]](x + b, y + 0);
+	ctx[n[1]](x + 2*b, y + a);
+	ctx[n[3]](x + 2*b, y + a + c);
+	ctx[n[5]](x + b, y + 2*c);
+	ctx[n[4]](x + 0, y + a + c);
 	ctx.stroke();
 }
 
 Hexagon.prototype.hitTest = function(cx, cy)
 {
 	var c = 10,
-		a = .5 * c,
-		x = this.x * 20 + (this.y % 2) * 10,
-	    y = this.y * 20;
+	    a = .5 * c,
+	    b = Math.sin(45) * c,
+	    x = this.x * 2*b + (this.y % 2) * b,
+	    y = this.y * 3*a;
 
-	return cx >= x && cx <= x + 4*a
+	return cx >= x && cx <= x + 2*b
 		&& cy >= y && cy <= y + 4*a;
 }
 
@@ -121,11 +147,31 @@ Hexagon.prototype.openness = function(map)
 	return enemies / neighbours.length;
 }
 
-function Country(name, hexagons)
+function Color(color)
+{
+	this.color = color % 0xffffff;
+}
+
+Color.random = function()
+{
+	return new Color(Math.floor(Math.random() * 16777215));
+}
+
+Color.prototype.toString = function()
+{
+	return '#' + ("000000" + this.color.toString(16)).substr(-6);
+}
+
+function Player(name, color)
 {
 	this.name = name;
+}
+
+function Country(player, hexagons)
+{
+	this.player = player;
 	this.hexagons = hexagons;
-	this.color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+	this.color = Color.random();
 
 	for (var i = 0; i < this.hexagons.length; ++i)
 		this.hexagons[i].country = this;
@@ -137,6 +183,24 @@ Country.prototype.addHexagon = function(hexagon)
 	hexagon.country = this;
 }
 
+function loop(test, body, next)
+{
+	var interval = 1;
+
+	var runtime = function() {
+		if (test())
+		{
+			body();
+			setTimeout(runtime, interval);
+		}
+		else
+			if (next)
+				next();
+	}
+
+	setTimeout(runtime, interval);
+}
+
 function main()
 {
 	var map = new Map(),
@@ -144,8 +208,8 @@ function main()
 		info = document.getElementById('info'),
 		ctx = canvas.getContext('2d');
 
-	for (var x = 0; x < 10; ++x)
-		for (var y = 0; y < 10; ++y)
+	for (var x = 0; x < 20; ++x)
+		for (var y = 0; y < 20; ++y)
 			map.hexagons.push(new Hexagon(x, y));
 
 	document.getElementById('map').onclick = function(e)
@@ -153,22 +217,72 @@ function main()
 		for (var i = 0; i < map.hexagons.length; ++i)
 			if (map.hexagons[i].hitTest(e.offsetX, e.offsetY))
 			{
-				info.innerText = 'Country ' + map.hexagons[i].country.name;
+				console.log(map.hexagons[i].country.player.name, map.hexagons[i]);
+				map.render(ctx);
 				break;
 			}
 	}
 
-	var countries = [],
+	var players = [],
+		countries = [],
 		hexagons = map.hexagons.slice();
 
-	for (var i = 1; i <= 10; ++i)
-		countries.push(new Country(i, hexagons.splice(Math.floor(Math.random() * hexagons.length), 1)));
+	for (var i = 1; i <= 4; ++i)
+		players.push(new Player(i));
 
-	while (map.hasUnclaimedHexagons())
-		for (var i = 0; i < 6; ++i)
-			smear(map, countries[i]);
+	for (var i = 1; i <= 50; ++i)
+		countries.push(new Country(players.random(), hexagons.spliceRandom(1)));
 
-	map.render(ctx);
+	var limit = 100;
+	// while (map.hasUnclaimedHexagons() && --limit)
+	// 	for (var i = 0; i < 6; ++i)
+	// 		smear(map, countries[i]);
+
+	// map.render(ctx);
+	loop(
+		function() {
+			return map.hasUnclaimedHexagons() && --limit;
+		},
+		function() {
+			for (var i = 0; i < countries.length; ++i)
+				smear(map, countries[i]);
+
+			map.render(ctx);
+		},
+		function() {
+			var desolate = [];
+
+			for (var i = 0; i < countries.length; ++i)
+				if (countries[i].hexagons.length <= 3)
+					desolate.push(countries[i]);
+
+			for (var i = 0; i < desolate.length; ++i)
+			{
+				for (var j = 0; j < desolate[i].hexagons.length; ++j)
+					desolate[i].hexagons[j].country = null;
+
+				countries.remove(desolate[i]);
+			}
+
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			map.render(ctx);
+		});
+}
+
+Array.prototype.random = function()
+{
+	return this[Math.floor(Math.random() * this.length)];
+}
+
+Array.prototype.spliceRandom = function(n)
+{
+	return this.splice(Math.floor(Math.random() * this.length), n);
+}
+
+Array.prototype.remove = function(element)
+{
+	var pos = this.indexOf(element);
+	return this.splice(pos, 1);
 }
 
 Array.prototype.shuffle = function() {
@@ -177,17 +291,23 @@ Array.prototype.shuffle = function() {
 
 	while (i--)
 	{
-	 	var p = Math.floor(Math.random() * len);
+		var p = Math.floor(Math.random() * len);
 		var t = this[i];
-	  	this[i] = this[p];
-	  	this[p] = t;
+		this[i] = this[p];
+		this[p] = t;
  	}
 
  	return this;
 };
 
+function square(x)
+{
+	return x * x;
+}
+
 function smear(map, country)
 {
+	// Copy the hexagons list (since we are going to change country.hexagons inside the loop)
 	var hexagons = country.hexagons.slice();
 
 	for (var i = 0; i < hexagons.length; ++i)
@@ -196,14 +316,21 @@ function smear(map, country)
 			neighbours = hexagon.getNeighbours(map).shuffle();
 
 		for (var j = 0; j < neighbours.length; ++j)
-		{
-			var p = neighbours[j].openness(map);
+		{	
+			// Some sort of chance for adding the hexagon to the country.
+			// One heuristic would be how desolated it is, how many neighbours it has.
+			// (more enemy neighbours -> bad, more friendly neighbours, hexagons of the same country -> good)
+			var p = square(neighbours[j].openness(map));
 
-			if (!neighbours[j].country && Math.random() < p)
+			if (!neighbours[j].country && Math.random() < p) {
 				country.addHexagon(neighbours[j]);
+				return;
+			}
 		}
 	}
 }
 
-main();
-</script>
+window.onload = main();
+		</script>
+	</body>
+</html>
