@@ -1,4 +1,4 @@
-import java.util.Vector;
+import java.util.List;
 
 class BoringPlayer extends Player
 {
@@ -7,7 +7,7 @@ class BoringPlayer extends Player
 		super(name);
 	}
 
-	public Move decide(Vector<Move> possibleMoves, GameState state)
+	public Move decide(List<Move> possibleMoves, GameState state)
 	{
 		return null;
 	}

@@ -1,4 +1,4 @@
-import java.util.Vector;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -14,12 +14,12 @@ class TerminalPlayer extends Player
 		stdin = new BufferedReader(new InputStreamReader(System.in));
 	}
 
-	public Move decide(Vector<Move> possibleMoves, GameState state)
+	public Move decide(List<Move> possibleMoves, GameState state)
 	{
 		System.out.println("Your turn! Which move will you play?");
 
 		for (int i = 0; i < possibleMoves.size(); ++i)
-			System.out.println((i + 1) + ". " + possibleMoves.elementAt(i));
+			System.out.println((i + 1) + ". " + possibleMoves.get(i));
 
 		System.out.println("0. End of turn");
 		int moveIndex;
@@ -39,6 +39,6 @@ class TerminalPlayer extends Player
 
 		return moveIndex == 0
 			? null
-			: possibleMoves.elementAt(moveIndex - 1);
+			: possibleMoves.get(moveIndex - 1);
 	}
 }

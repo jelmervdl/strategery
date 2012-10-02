@@ -105,11 +105,11 @@ Hexagon.prototype.render = function(map, ctx)
 	ctx.fillStyle = this.country ? this.country.player.color.toString() : 'white';
 	ctx.fill();
 
-	if (this.country)
-	{
+	// if (this.country)
+	// {
 		ctx.fillStyle = 'white';
-		ctx.fillText(this.country.player.name, x + .75*b, y + 2.75*a);
-	}
+	// 	ctx.fillText(this.country.player.name, x + .75*b, y + 2.75*a);
+	// }
 
 	ctx.strokeStyle = 'black';
 	ctx.beginPath();
@@ -184,6 +184,33 @@ Country.prototype.addHexagon = function(hexagon)
 	hexagon.country = this;
 }
 
+Country.prototype.getNeighbours = function(map)
+{
+	var neighbours = new Set();
+
+	for (var i = 0; i < this.hexagons.length; ++i)
+		if (this.hexagons[i].country && this.hexagons[i].country != this)
+			neighbours.add(this.hexagons[i].country);
+
+	return neighbours.elements;
+}
+
+function Set()
+{
+	this.elements = [];
+}
+
+Set.prototype.add = function(element)
+{
+	if (!this.contains(element))
+		this.elements.push(element);
+}
+
+Set.prototype.contains = function(element)
+{
+	return this.elements.indexOf(element) !== -1;
+}
+
 function loop(test, body, next)
 {
 	var interval = 1;
@@ -254,8 +281,15 @@ function main()
 			var desolate = [];
 
 			for (var i = 0; i < countries.length; ++i)
+			{
+				// Delete too small countries
 				if (countries[i].hexagons.length <= 3)
 					desolate.push(countries[i]);
+
+				// Delete countries with too many connections
+				else if (countries[i].getNeighbours(map).length > 2)
+					desolate.push(countries[i]);
+			}
 
 			for (var i = 0; i < desolate.length; ++i)
 			{

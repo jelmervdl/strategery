@@ -1,66 +1,46 @@
 import java.util.*;
+import java.io.IOException;
 
 class TestGame
 {
 	static public void main(String[] args)
 	{
-		Player a = new RandomPlayer("a");
-		Player b = new RandomPlayer("b");
-		Player c = new RandomPlayer("c");
-		Player d = new TerminalPlayer("d");
-
-		/*
-		  c1
-		c2  c3
-		  c4
-		*/
-
-		Country c1 = new Country(a, 2);
-		Country c2 = new Country(b, 2);
-		Country c3 = new Country(c, 2);
-		Country c4 = new Country(d, 2);
-
-		c1.neighbours.add(c2);
-		c1.neighbours.add(c3);
-
-		c2.neighbours.add(c1);
-		c2.neighbours.add(c4);
-
-		c3.neighbours.add(c1);
-		c3.neighbours.add(c4);
-
-		c4.neighbours.add(c2);
-		c4.neighbours.add(c3);
-
-
 		List<Player> players = new Vector<Player>();
-		players.add(a);
-		players.add(b);
-		players.add(c);
-		players.add(d);
+		players.add(new RandomPlayer("a"));
+		players.add(new RandomPlayer("b"));
+		players.add(new RandomPlayer("c"));
+		players.add(new RandomPlayer("d"));
+		players.add(new TerminalPlayer("e"));
 
-		Vector<Country> countries = new Vector<Country>();
-		countries.add(c1);
-		countries.add(c2);
-		countries.add(c3);
-		countries.add(c4);
+		MapReader reader = new MapReader(players);
 
-		GameState state = new GameState(countries);
+		try {
+			List<Country> countries = reader.read(args[0]);
+		
+			GameState state = new GameState(countries);
 
-		Game game = new Game(players, state);
+			Game game = new Game(players, state);
 
-		do {
-			game.step();
+			for (Player player : players)
+				game.distributeNewDice(player, 10);
 
-			System.out.print(game.state);
+			do {
+				game.step();
 
-			if (game.livingPlayers().size() == 1)
-			{
-				System.out.println("We have a winner!");
-				break;
+				System.out.print(game.state);
+
+				if (game.livingPlayers().size() == 1)
+				{
+					System.out.println("We have a winner!");
+					break;
+				}
 			}
+			while (confirmContinue());
 		}
-		while (confirmContinue());
+		catch (IOException e) {
+			System.out.println("Could not read map: " + e.getMessage());
+			return;
+		}
 	}
 
 	static private boolean confirmContinue()

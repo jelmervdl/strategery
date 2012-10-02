@@ -1,16 +1,17 @@
 import java.util.Random;
+import java.util.List;
 import java.util.Vector;
 
 class GameState
 {
-	Vector<Country> countries;
+	List<Country> countries;
 
 	public GameState()
 	{
 		this.countries = new Vector<Country>();
 	}
 
-	public GameState(Vector<Country> countries)
+	public GameState(List<Country> countries)
 	{
 		this.countries = countries;
 	}
@@ -72,9 +73,9 @@ class GameState
 		return state;
 	}
 
-	public Vector<Move> generatePossibleMoves(Player player)
+	public List<Move> generatePossibleMoves(Player player)
 	{
-		Vector<Move> moves = new Vector<Move>();
+		List<Move> moves = new Vector<Move>();
 
 		for (Country country : countries)
 		{
@@ -90,7 +91,7 @@ class GameState
 				continue;
 			}
 
-			Vector<Country> enemyNeighbours = country.enemyNeighbours();
+			List<Country> enemyNeighbours = country.enemyNeighbours();
 
 			if (enemyNeighbours.size() == 0)
 			{
@@ -110,9 +111,9 @@ class GameState
 		return countries.get(countries.indexOf(country));
 	}
 
-	public Vector<Country> getCountries(Player player)
+	public List<Country> getCountries(Player player)
 	{
-		Vector<Country> playerCountries = new Vector<Country>();
+		List<Country> playerCountries = new Vector<Country>();
 
 		for (Country country : countries)
 			if (country.player == player)

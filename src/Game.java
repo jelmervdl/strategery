@@ -26,7 +26,7 @@ class Game
 			Move move;
 
 			do {
-				Vector<Move> moves = state.generatePossibleMoves(player);
+				List<Move> moves = state.generatePossibleMoves(player);
 
 				System.out.println("Player " + player + " has possible moves:");
 				for (Move aMove : moves)
@@ -57,11 +57,14 @@ class Game
 		return alive;
 	}
 
-	private void distributeNewDice(Player player)
+	public void distributeNewDice(Player player)
 	{
-		int dice = Util.countLargestCluster(state.countries, player);
+		distributeNewDice(player, Util.countLargestCluster(state.countries, player));
+	}
 
-		Vector<Country> countries = state.getCountries(player);
+	public void distributeNewDice(Player player, int dice)
+	{
+		List<Country> countries = state.getCountries(player);
 
 		Collections.sort(countries, new Comparator<Country>(){
 			public int compare(Country a, Country b)

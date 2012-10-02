@@ -1,5 +1,5 @@
 import java.util.Random;
-import java.util.Vector;
+import java.util.List;
 
 class RandomPlayer extends Player
 {
@@ -8,7 +8,7 @@ class RandomPlayer extends Player
 		super(name);
 	}
 
-	public Move decide(Vector<Move> possibleMoves, GameState state)
+	public Move decide(List<Move> possibleMoves, GameState state)
 	{
 		Random random = new Random();
 

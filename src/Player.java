@@ -1,4 +1,4 @@
-import java.util.Vector;
+import java.util.List;
 
 abstract class Player
 {
@@ -14,5 +14,5 @@ abstract class Player
 		return "[Player " + name + "]";
 	}
 
-	abstract public Move decide(Vector<Move> possibleMoves, GameState state);
+	abstract public Move decide(List<Move> possibleMoves, GameState state);
 }
