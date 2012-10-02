@@ -4,7 +4,7 @@
 		<title>Map generator</title>
 	</head>
 	<body>
-		<canvas id="map" width="800" height="800"></canvas>
+		<canvas id="map" width="1600" height="1600" style="width:800px;height:800px"></canvas>
 		<p id="info"></p>
 		<script>
 function Map()
@@ -83,7 +83,7 @@ Hexagon.prototype.getNeighbours = function(map, sparse)
 
 Hexagon.prototype.render = function(map, ctx)
 {
-	var c = 10,
+	var c = 20,
 	    a = .5 * c,
 	    b = Math.sin(45) * c,
 	    x = this.x * 2*b + (this.y % 2) * b,
@@ -102,7 +102,7 @@ Hexagon.prototype.render = function(map, ctx)
 	ctx.lineTo(x + b, y + 2*c);
 	ctx.lineTo(x + 0, y + a + c);
 	ctx.closePath();
-	ctx.fillStyle = this.country ? this.country.color.toString() : 'white';
+	ctx.fillStyle = this.country ? this.country.player.color.toString() : 'white';
 	ctx.fill();
 
 	if (this.country)
@@ -125,7 +125,7 @@ Hexagon.prototype.render = function(map, ctx)
 
 Hexagon.prototype.hitTest = function(cx, cy)
 {
-	var c = 10,
+	var c = 20,
 	    a = .5 * c,
 	    b = Math.sin(45) * c,
 	    x = this.x * 2*b + (this.y % 2) * b,
@@ -165,6 +165,7 @@ Color.prototype.toString = function()
 function Player(name, color)
 {
 	this.name = name;
+	this.color = color;
 }
 
 function Country(player, hexagons)
@@ -228,9 +229,9 @@ function main()
 		hexagons = map.hexagons.slice();
 
 	for (var i = 1; i <= 4; ++i)
-		players.push(new Player(i));
+		players.push(new Player(i, Color.random()));
 
-	for (var i = 1; i <= 50; ++i)
+	for (var i = 1; i <= 25; ++i)
 		countries.push(new Country(players.random(), hexagons.spliceRandom(1)));
 
 	var limit = 100;
