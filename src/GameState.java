@@ -44,6 +44,9 @@ class GameState
 			// Take the country!
 			state.getCountry(move.defendingCountry).player = move.attackingCountry.player;
 
+			// Reset attacking country dice to 1 (as the army has moved to the defending country)
+			state.getCountry(move.attackingCountry).dice = 1;
+
 			// Assign remaining dice to country
 			state.getCountry(move.defendingCountry).dice = remainingDice(attackingEyes - defendingEyes);
 
