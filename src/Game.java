@@ -9,44 +9,78 @@ class Game
 
 	List<Player> players;
 
+	List<GameEventListener> listeners;
+
 	public Game(List<Player> players, GameState state)
 	{
+		this.state = state;
+
 		this.players = players;
 
-		this.state = state;
+		this.listeners = new Vector<GameEventListener>();
 	}
 
-	public void step()
+	public void addEventListener(GameEventListener listener)
 	{
+		listeners.add(listener);
+	}
+
+	public void removeEventListener(GameEventListener listener)
+	{
+		listeners.remove(listener);
+	}
+
+	public void play()
+	{
+		for (Player player : players)
+			distributeNewDice(player, 10);
+	
+		publishStartOfGame(state);
+
+		while (livingPlayers().size() > 1)
+			step();
+
+		publishEndOfGame(state);
+	}
+
+	protected void step()
+	{
+		publishStep();
+
 		for (Player player : players)
 		{
 			if (!livingPlayers().contains(player))
 				continue;
+
+			publishStartOfTurn(player);
 
 			Move move;
 
 			do {
 				List<Move> moves = state.generatePossibleMoves(player);
 
-				System.out.println("Player " + player + " has possible moves:");
 				for (Move aMove : moves)
 					System.out.println("\t" + aMove);
 
 				move = player.decide(moves, state);
 
+				publishMove(move);
+				
 				// move == null -> player finishes his turn.
 
-				System.out.println("Player " + player + " will play move " + move);
-				
 				if (move != null)
-					state = state.apply(move);
+					setState(state.apply(move));
 			} while(move != null);
 
+			publishEndOfTurn(player);
+
 			distributeNewDice(player);
+
+			publishState(state);
 		}
 	}
 
-	public List<Player> livingPlayers()
+	protected List<Player> livingPlayers()
 	{
 		List<Player> alive = new Vector<Player>();
 
@@ -57,12 +91,12 @@ class Game
 		return alive;
 	}
 
-	public void distributeNewDice(Player player)
+	protected void distributeNewDice(Player player)
 	{
 		distributeNewDice(player, Util.countLargestCluster(state.countries, player));
 	}
 
-	public void distributeNewDice(Player player, int dice)
+	protected void distributeNewDice(Player player, int dice)
 	{
 		List<Country> countries = state.getCountries(player);
 
@@ -94,5 +128,53 @@ class Game
 			if (diceAdded == 0)
 				break;
 		}
+	}
+
+	protected void setState(GameState state)
+	{
+		this.state = state;
+		publishState(state);
+	}
+	
+	protected void publishStep()
+	{
+		for (GameEventListener listener : listeners)
+			listener.onStep();
+	}
+
+	protected void publishMove(Move move)
+	{
+		for (GameEventListener listener : listeners)
+			listener.onMove(move);
+	}
+
+	protected void publishState(GameState state)
+	{
+		for (GameEventListener listener : listeners)
+			listener.onStateChange(state);
+	}
+
+	protected void publishStartOfTurn(Player player)
+	{
+		for (GameEventListener listener : listeners)
+			listener.onTurnStarted(player);
+	}
+
+	protected void publishEndOfTurn(Player player)
+	{
+		for (GameEventListener listener : listeners)
+			listener.onTurnEnded(player);
+	}
+
+	protected void publishStartOfGame(GameState state)
+	{
+		for (GameEventListener listener : listeners)
+			listener.onGameStarted(state);
+	}
+
+	protected void publishEndOfGame(GameState state)
+	{
+		for (GameEventListener listener : listeners)
+			listener.onGameEnded(state);
 	}
 }

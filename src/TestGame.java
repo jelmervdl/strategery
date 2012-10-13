@@ -14,46 +14,25 @@ class TestGame
 
 		MapReader reader = new MapReader(players);
 
+		TerminalGui gui = new TerminalGui();
+
+		String path = args.length > 0
+			? args[0]
+			: "../maps/1.txt";
+
 		try {
-			List<Country> countries = reader.read(args[0]);
+			List<Country> countries = reader.read(path);
 		
 			GameState state = new GameState(countries);
 
 			Game game = new Game(players, state);
+			game.addEventListener(gui);
 
-			for (Player player : players)
-				game.distributeNewDice(player, 10);
-
-			do {
-				game.step();
-
-				System.out.print(game.state);
-
-				if (game.livingPlayers().size() == 1)
-				{
-					System.out.println("We have a winner!");
-					break;
-				}
-			}
-			while (confirmContinue());
+			game.play();
 		}
 		catch (IOException e) {
 			System.out.println("Could not read map: " + e.getMessage());
 			return;
-		}
-	}
-
-	static private boolean confirmContinue()
-	{
-		try {
-			java.io.BufferedReader stdin = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
-			System.out.println("Press enter to continue...");
-			String line = stdin.readLine();
-			return true;
-		}
-		catch (java.io.IOException e)
-		{
-			return false;
 		}
 	}
 }
