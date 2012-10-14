@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.IOException;
 
-class TestGame
+public class TestGame
 {
 	static public void main(String[] args)
 	{

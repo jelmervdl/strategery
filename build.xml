@@ -9,7 +9,7 @@
         <javac srcdir="src" destdir="build/classes"/>
     </target>
 
-    <target name="jar">
+    <target name="jar" depends="compile">
         <mkdir dir="build/jar"/>
         <jar destfile="build/jar/TestGame.jar" basedir="build/classes">
             <manifest>
@@ -18,8 +18,9 @@
         </jar>
     </target>
 
-    <target name="run">
-        <java jar="build/jar/Game.jar" fork="true"/>
+    <target name="run" depends="compile">
+        <!-- <java jar="build/jar/Game.jar" fork="true"/> -->
+        <java classname="TestGame" classpath="build/classes" args="maps/1.txt"/>
     </target>
 
 </project>
