@@ -227,6 +227,11 @@ class GameState
 		return countries.get(countries.indexOf(country));
 	}
 
+	public List<Country> getCountries()
+	{
+		return countries;
+	}
+
 	public List<Country> getCountries(Player player)
 	{
 		List<Country> playerCountries = new Vector<Country>();
