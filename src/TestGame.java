@@ -10,7 +10,7 @@ public class TestGame
 		players.add(new RandomPlayer("b"));
 		players.add(new RandomPlayer("c"));
 		players.add(new RandomPlayer("d"));
-		players.add(new TerminalPlayer("e"));
+		players.add(new TDPlayer("e"));
 
 		MapReader reader = new MapReader(players);
 

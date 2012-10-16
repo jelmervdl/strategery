@@ -69,7 +69,7 @@ class Game
 				// move == null -> player finishes his turn.
 
 				if (move != null)
-					setState(state.apply(move));
+					setState(state.apply(move, false));
 			} while(move != null);
 
 			publishEndOfTurn(player);

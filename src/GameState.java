@@ -30,14 +30,24 @@ class GameState
 				country.neighbours.set(i, getCountry(country.neighbours.get(i)));
 	}
 
-	public GameState apply(Move move)
+	public GameState apply(Move move, Boolean Expected)
 	{
 		GameState state = new GameState(this);
 
-		// fight battle (if there is one)
-		int attackingEyes = rollDice(move.attackingCountry.dice);
-		int defendingEyes = rollDice(move.defendingCountry.dice);
-
+        int attackingEyes;
+        int defendingEyes;
+        if(Expected)
+        {
+            attackingEyes = move.attackingCountry.dice;
+		    defendingEyes = move.defendingCountry.dice;
+            
+        }
+        else
+        {
+		    // fight battle (if there is one)
+		    attackingEyes = rollDice(move.attackingCountry.dice);
+		    defendingEyes = rollDice(move.defendingCountry.dice);
+        }
 		// Attacker wins
 		if (attackingEyes > defendingEyes)
 		{
