@@ -1,10 +1,10 @@
-import java.util.*;
-import java.io.IOException;
+import java.util.List;
+import java.util.Vector;
 import game.GameState;
 import game.Player;
 import game.RandomPlayer;
 
-class MapGeneration
+public class TestMapGeneration
 {
 	static public void main(String[] args)
 	{

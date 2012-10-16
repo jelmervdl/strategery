@@ -31,4 +31,8 @@
         </java>
     </target>
 
+    <target name="test-map-generation" depends="compile">
+        <java classname="TestMapGeneration" classpath="build/classes"/>
+    </target>
+
 </project>
