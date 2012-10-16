@@ -17,7 +17,7 @@ public class TestDescriptors
 
 		List<Descriptor> descriptors = new Vector<Descriptor>();
 		descriptors.add(new descriptors.Dominance());
-		descriptors.add(new descriptors.DominanceOnBorders());
+		descriptors.add(new descriptors.StrengthOnBorders());
 
 		MapReader reader = new MapReader(players);
 

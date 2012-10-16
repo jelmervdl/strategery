@@ -4,7 +4,7 @@ import game.Country;
 import game.GameState;
 import game.Player;
 
-public class DominanceOnBorders extends Descriptor
+public class StrengthOnBorders extends Descriptor
 {
 	public double describe(GameState state, Player player)
 	{
