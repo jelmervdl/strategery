@@ -9,7 +9,25 @@ class Country
 
 	public Vector<Country> neighbours;
 
+	public Vector<Hexagon> hexagons;
+
 	public int dice;
+
+	public int countID;
+
+	// generate country without specified player		
+	public Country(int dice, Vector<Hexagon> hexagons, int countID)
+	{
+		this.id = UUID.randomUUID();
+
+		this.neighbours = new Vector<Country>();
+		
+		this.hexagons = hexagons;
+
+		this.dice = dice;
+		
+		this.countID = countID;
+	}
 
 	// generate empty country		
 	public Country(Player player, int dice)
