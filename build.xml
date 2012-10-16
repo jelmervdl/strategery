@@ -20,7 +20,9 @@
 
     <target name="run" depends="compile">
         <!-- <java jar="build/jar/Game.jar" fork="true"/> -->
-        <java classname="TestGame" classpath="build/classes" args="maps/1.txt"/>
+        <java classname="TestGame" classpath="build/classes">
+            <arg value="maps/1.txt"/>
+        </java>
     </target>
 
 </project>
