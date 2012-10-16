@@ -25,4 +25,10 @@
         </java>
     </target>
 
+    <target name="test-descriptors" depends="compile">
+        <java classname="TestDescriptors" classpath="build/classes">
+            <arg value="maps/1.txt"/>
+        </java>
+    </target>
+
 </project>
