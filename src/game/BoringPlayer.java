@@ -1,6 +1,8 @@
+package game;
+
 import java.util.List;
 
-class BoringPlayer extends Player
+public class BoringPlayer extends Player
 {
 	public BoringPlayer(String name)
 	{

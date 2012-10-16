@@ -1,7 +1,9 @@
+package game;
+
 import java.util.Vector;
 import java.util.UUID;
 
-class Country
+public class Country
 {
 	private UUID id;
 

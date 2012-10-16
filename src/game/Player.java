@@ -1,6 +1,8 @@
+package game;
+
 import java.util.List;
 
-abstract class Player
+public abstract class Player
 {
 	String name;
 

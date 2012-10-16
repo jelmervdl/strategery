@@ -1,4 +1,6 @@
-interface GameEventListener
+package game;
+
+public interface GameEventListener
 {
 	public void onStep();
 

@@ -1,8 +1,10 @@
+package game;
+
 import java.util.Random;
 import java.util.List;
 import java.util.Vector;
 
-class GameState
+public class GameState
 {
 	List<Country> countries;
 

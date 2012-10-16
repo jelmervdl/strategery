@@ -1,4 +1,6 @@
-class Move
+package game;
+
+public class Move
 {
 	public Country attackingCountry;
 

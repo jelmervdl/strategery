@@ -1,5 +1,9 @@
 import java.util.*;
 import java.io.IOException;
+import game.*;
+import gui.terminal.TerminalGui;
+import gui.terminal.TerminalPlayer;
+import map.MapReader;
 
 public class TestGame
 {

@@ -1,7 +1,9 @@
+package game;
+
 import java.util.Random;
 import java.util.List;
 
-class RandomPlayer extends Player
+public class RandomPlayer extends Player
 {
 	public RandomPlayer(String name)
 	{

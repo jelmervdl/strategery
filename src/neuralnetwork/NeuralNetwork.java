@@ -1,6 +1,8 @@
+package neuralnetwork;
+
 import java.util.*;
 
-class NeuralNetwork
+public class NeuralNetwork
 {
 	List<Layer> layers;
 

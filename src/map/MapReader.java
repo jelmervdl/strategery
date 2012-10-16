@@ -1,7 +1,12 @@
+package map;
+
 import java.io.*;
 import java.util.*;
 
-class MapReader
+import game.Country;
+import game.Player;
+
+public class MapReader
 {
 	private class CountryContainer
 	{

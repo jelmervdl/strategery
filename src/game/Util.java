@@ -1,9 +1,11 @@
+package game;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-class Util
+public class Util
 {
 	static public int countLargestCluster(List<Country> countries, Player player)
 	{

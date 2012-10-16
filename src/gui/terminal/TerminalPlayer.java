@@ -1,9 +1,12 @@
+package gui.terminal;
+
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import game.*;
 
-class TerminalPlayer extends Player
+public class TerminalPlayer extends Player
 {
 	BufferedReader stdin;
 

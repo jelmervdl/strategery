@@ -1,6 +1,9 @@
-import java.util.*;
+package gui.terminal;
 
-class TerminalGui implements GameEventListener
+import java.util.*;
+import game.*;
+
+public class TerminalGui implements GameEventListener
 {
 	private int turns;
 

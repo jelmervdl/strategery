@@ -1,4 +1,5 @@
 import java.util.*;
+import neuralnetwork.NeuralNetwork;
 
 class TestNeuralNetwork
 {

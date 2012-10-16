@@ -1,9 +1,11 @@
+package game;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 import java.util.List;
 
-class Game
+public class Game
 {
 	GameState state;
 
