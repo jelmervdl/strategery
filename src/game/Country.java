@@ -3,6 +3,8 @@ package game;
 import java.util.Vector;
 import java.util.UUID;
 
+import map.Hexagon;
+
 public class Country
 {
 	private UUID id;

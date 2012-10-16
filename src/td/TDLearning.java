@@ -1,5 +1,11 @@
+package td;
+
 import java.util.*;
 import java.io.*;
+
+import game.GameState;
+import game.Move;
+import game.Player;
 
 class TDLearning
 {

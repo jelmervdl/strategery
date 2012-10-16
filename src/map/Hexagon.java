@@ -1,6 +1,13 @@
-public class Hexagon {
+package map;
+
+import game.Country;
+
+public class Hexagon
+{
 	public Country country; // country the hexagon belongs to
+
 	public int x;
+	
 	public int y;
 	
 	public Hexagon(int x, int y)

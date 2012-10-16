@@ -1,5 +1,8 @@
 import java.util.*;
 import java.io.IOException;
+import game.GameState;
+import game.Player;
+import game.RandomPlayer;
 
 class MapGeneration
 {

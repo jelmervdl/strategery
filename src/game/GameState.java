@@ -4,6 +4,8 @@ import java.util.Random;
 import java.util.List;
 import java.util.Vector;
 
+import map.Hexagon;
+
 public class GameState
 {
 	List<Country> countries;

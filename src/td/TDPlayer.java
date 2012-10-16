@@ -1,10 +1,14 @@
-import java.util.Random;
-import java.util.List;
+package td;
+
 import java.util.*;
 
-class TDPlayer extends Player
+import game.GameState;
+import game.Move;
+import game.Player;
+
+public class TDPlayer extends Player
 {
-    TDLearning td;
+    private TDLearning td;
     
 	public TDPlayer(String name)
     {

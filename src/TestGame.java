@@ -4,6 +4,7 @@ import game.*;
 import gui.terminal.TerminalGui;
 import gui.terminal.TerminalPlayer;
 import map.MapReader;
+import td.TDPlayer;
 
 public class TestGame
 {
