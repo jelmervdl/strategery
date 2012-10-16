@@ -32,24 +32,32 @@ public class GameState
 				country.neighbours.set(i, getCountry(country.neighbours.get(i)));
 	}
 
-	public GameState apply(Move move, Boolean Expected)
+	/**
+	 * Make a move, and generate the resulting state. If expected is true, it will
+	 * calculate the most likely outcome. Otherwise, it will actually play the game
+	 * with dice and everything.
+	 */
+	public GameState apply(Move move, Boolean expected)
 	{
+		// Clone the current gamestate.
 		GameState state = new GameState(this);
 
         int attackingEyes;
         int defendingEyes;
-        if(Expected)
+
+        // If we calculate the expected value, don't add the element of chance.
+        if(expected)
         {
             attackingEyes = move.attackingCountry.dice;
 		    defendingEyes = move.defendingCountry.dice;
-            
         }
+        // Otherwise, let's roll those dice.
         else
         {
-		    // fight battle (if there is one)
 		    attackingEyes = rollDice(move.attackingCountry.dice);
 		    defendingEyes = rollDice(move.defendingCountry.dice);
         }
+
 		// Attacker wins
 		if (attackingEyes > defendingEyes)
 		{
@@ -61,8 +69,6 @@ public class GameState
 
 			// Assign remaining dice to country
 			state.getCountry(move.defendingCountry).dice = remainingDice(attackingEyes - defendingEyes);
-
-			System.out.println("Attacker wins!");
 		}
 
 		// It's a draw
@@ -71,8 +77,6 @@ public class GameState
 			state.getCountry(move.attackingCountry).dice = 1;
 
 			state.getCountry(move.defendingCountry).dice = 1;
-
-			System.out.println("Draw!");
 		}
 
 		// Attacker loses
@@ -81,8 +85,6 @@ public class GameState
 			state.getCountry(move.attackingCountry).dice = 1;
 
 			state.getCountry(move.defendingCountry).dice = remainingDice(defendingEyes - attackingEyes);
-
-			System.out.println("Defender wins!");
 		}
 
 		return state;
