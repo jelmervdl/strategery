@@ -20,13 +20,13 @@ public class Country
 	public int countID;
 
 	// generate country without specified player		
-	public Country(int dice, Vector<Hexagon> hexagons, int countID)
+	public Country(int dice, int countID)
 	{
 		this.id = UUID.randomUUID();
 
 		this.neighbours = new Vector<Country>();
 		
-		this.hexagons = hexagons;
+		this.hexagons = new Vector<Hexagon>();
 
 		this.dice = dice;
 		
