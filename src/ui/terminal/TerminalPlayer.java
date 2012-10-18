@@ -1,4 +1,4 @@
-package gui.terminal;
+package ui.terminal;
 
 import java.util.List;
 import java.io.BufferedReader;

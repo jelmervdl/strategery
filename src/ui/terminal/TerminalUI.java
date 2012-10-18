@@ -1,9 +1,9 @@
-package gui.terminal;
+package ui.terminal;
 
 import java.util.*;
 import game.*;
 
-public class TerminalGui implements GameEventListener
+public class TerminalUI implements GameEventListener
 {
 	private int turns;
 
@@ -11,7 +11,7 @@ public class TerminalGui implements GameEventListener
 
 	private GameState currentState;
 
-	public TerminalGui()
+	public TerminalUI()
 	{
 		turns = 0;
 	}

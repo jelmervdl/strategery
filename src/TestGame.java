@@ -1,8 +1,8 @@
 import java.util.*;
 import java.io.IOException;
 import game.*;
-import gui.terminal.TerminalGui;
-import gui.terminal.TerminalPlayer;
+import ui.terminal.TerminalUI;
+import ui.terminal.TerminalPlayer;
 import map.MapReader;
 import td.TDPlayer;
 
@@ -19,7 +19,7 @@ public class TestGame
 
 		MapReader reader = new MapReader(players);
 
-		TerminalGui gui = new TerminalGui();
+		TerminalUI gui = new TerminalUI();
 
 		String path = args.length > 0
 			? args[0]

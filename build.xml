@@ -6,7 +6,10 @@
 
     <target name="compile">
         <mkdir dir="build/classes"/>
-        <javac srcdir="src" destdir="build/classes"/>
+        <javac srcdir="src" destdir="build/classes" includeantruntime="false">
+            <compilerarg value="-Xlint:unchecked"/>
+            <compilerarg value="-Xlint:deprecation"/>
+        </javac>
     </target>
 
     <target name="jar" depends="compile">
@@ -33,6 +36,10 @@
 
     <target name="test-map-generation" depends="compile">
         <java classname="TestMapGeneration" classpath="build/classes"/>
+    </target>
+
+    <target name="test-gui" depends="compile">
+        <java classname="TestGUI" classpath="build/classes" fork="true"/>
     </target>
 
 </project>
