@@ -42,4 +42,8 @@
         <java classname="TestGUI" classpath="build/classes" fork="true"/>
     </target>
 
+    <target name="test-neural-network" depends="compile">
+        <java classname="TestNeuralNetwork" classpath="build/classes"/>
+    </target>
+
 </project>

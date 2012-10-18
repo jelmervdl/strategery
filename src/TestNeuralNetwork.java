@@ -1,7 +1,7 @@
 import java.util.*;
 import neuralnetwork.NeuralNetwork;
 
-class TestNeuralNetwork
+public class TestNeuralNetwork
 {
 	static private class Sample
 	{
