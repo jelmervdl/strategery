@@ -33,7 +33,7 @@ public class TestGame
 			Game game = new Game(players, state);
 			game.addEventListener(gui);
 
-			game.play();
+			game.run();
 		}
 		catch (IOException e) {
 			System.out.println("Could not read map: " + e.getMessage());

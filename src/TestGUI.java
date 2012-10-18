@@ -7,25 +7,19 @@ import java.util.Vector;
 
 import javax.swing.JFrame;
 
+import game.Game;
 import game.GameState;
 import game.Player;
 import game.RandomPlayer;
 import map.MapGenerator;
+import ui.graphical.MainWindow;
 import ui.graphical.MapPanel;
 
 public class TestGUI
 {
 	public static void main(String[] args)
 	{
-		JFrame frame = new JFrame();
-		frame.setTitle("Random map");
-		frame.setSize(500, 500);
-
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
+		MainWindow mainWindow = new MainWindow();
 
 		// Generate some players
 		List<Player> players = new Vector<Player>();
@@ -36,15 +30,11 @@ public class TestGUI
 		MapGenerator generator = new MapGenerator(players);
 		GameState state = generator.generate(16, 3.5);
 
-		// Add the map panel
-		MapPanel mapPanel = new MapPanel();
-		mapPanel.setState(state);
+		Game game = new Game(players, state);
+		game.addEventListener(mainWindow);
 
-		// .. to the window
-		Container contentPane = frame.getContentPane();
-		contentPane.add(mapPanel);
+		mainWindow.setVisible(true);
 
-		// and show it.
-		frame.setVisible(true);
+		new Thread(game).start();
 	}
 }

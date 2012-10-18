@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.Vector;
 import java.util.List;
 
-public class Game
+public class Game implements Runnable
 {
 	GameState state;
 
@@ -32,7 +32,7 @@ public class Game
 		listeners.remove(listener);
 	}
 
-	public void play()
+	public void run()
 	{
 		for (Player player : players)
 			distributeNewDice(player, 10);

@@ -18,6 +18,7 @@ public class MapPanel extends JPanel
 	public void setState(GameState state)
 	{
 		this.state = state;
+		repaint();
 	}
 
 	private Polygon buildHexagon(int px, int py)
@@ -52,7 +53,9 @@ public class MapPanel extends JPanel
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		for (Country country : state.getCountries())
-			paintCountry(country, g);
+
+		if (state != null)
+			for (Country country : state.getCountries())
+				paintCountry(country, g);
 	}
 }

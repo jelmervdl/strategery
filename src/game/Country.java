@@ -43,6 +43,8 @@ public class Country
 
 		this.neighbours = new Vector<Country>();
 
+		this.hexagons = new Vector<Hexagon>();
+
 		this.dice = dice;
 	}
 
@@ -52,6 +54,7 @@ public class Country
 		id = other.id;
 		player = other.player;
 		neighbours = new Vector<Country>(other.neighbours);
+		this.hexagons = other.hexagons;
 		dice = other.dice;
 	}
 
