@@ -66,7 +66,7 @@ public class MapGenerator
 		// Expanding landmass
 		while((AverageNeighbours(countries) < nBorders || Continent(countries.get(0)).size() < countries.size()) && (filledHexagons < gridSize*gridSize))
 		{
-			System.out.println(AverageNeighbours(countries));
+			// System.out.println(AverageNeighbours(countries));
 			for(int i = 0; i < totalCountries; i++)
 			{
 				Vector<Hexagon> hexNeighbours = new Vector<Hexagon>();
@@ -92,28 +92,28 @@ public class MapGenerator
 		
 		DistributeCountries(countries);
 		
-		PrintNeighbours(countries);
+		// PrintNeighbours(countries);
 		
 		// Printing grid
-		for(int y = 0; y < gridSize; y++)
-		{
-			if(y % 2 == 1)
-			{
-				System.out.print(" ");
-			}
-			for(int x = 0; x < gridSize; x++)
-			{
-				char ch = ' ';
-				if(grid[x][y] != null && grid[x][y].country != null)
-				{
-					ch = (char)(grid[x][y].country.countID + 64);
-				}
+		// for(int y = 0; y < gridSize; y++)
+		// {
+		// 	if(y % 2 == 1)
+		// 	{
+		// 		System.out.print(" ");
+		// 	}
+		// 	for(int x = 0; x < gridSize; x++)
+		// 	{
+		// 		char ch = ' ';
+		// 		if(grid[x][y] != null && grid[x][y].country != null)
+		// 		{
+		// 			ch = (char)(grid[x][y].country.countID + 64);
+		// 		}
 				
-				System.out.print(ch + " ");
-			}
-			System.out.println();
-		}
-		System.out.println();
+		// 		System.out.print(ch + " ");
+		// 	}
+		// 	System.out.println();
+		// }
+		// System.out.println();
 
 		return new GameState(countries);
 	}
