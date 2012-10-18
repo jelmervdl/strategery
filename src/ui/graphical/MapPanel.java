@@ -5,9 +5,12 @@ import game.GameState;
 import game.Player;
 import map.Hexagon;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Polygon;
+
+import java.util.Map;
 
 import javax.swing.JPanel;
 
@@ -15,9 +18,17 @@ public class MapPanel extends JPanel
 {
 	private GameState state;
 
+	private Map<Country,Color> highlights;
+
 	public void setState(GameState state)
 	{
 		this.state = state;
+		repaint();
+	}
+
+	public void setHighlights(Map<Country,Color> highlights)
+	{
+		this.highlights = highlights;
 		repaint();
 	}
 
@@ -42,12 +53,16 @@ public class MapPanel extends JPanel
 
 	private void paintCountry(Country country, Graphics g)
 	{
-		// Paint with the county's national color
-		g.setColor(country.getPlayer().getColor());
+		if (highlights != null && highlights.containsKey(country))
+			g.setColor(highlights.get(country));
+		else
+			g.setColor(country.getPlayer().getColor());
 
-		// .. and draw each hexagon! For the Queen!
 		for (Hexagon hexagon : country.getHexagons())
-			g.fillPolygon(buildHexagon(hexagon.x, hexagon.y));
+		{
+			Polygon polygon = buildHexagon(hexagon.x, hexagon.y);
+			g.fillPolygon(polygon);
+		}
 	}
 
 	public void paintComponent(Graphics g)

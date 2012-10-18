@@ -1,8 +1,12 @@
 package game;
 
+import java.util.List;
+
 public interface GameEventListener
 {
 	public void onStep();
+
+	public void onChooseMove(List<Move> moves);
 
 	public void onMove(Move move);
 

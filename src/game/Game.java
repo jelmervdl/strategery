@@ -32,6 +32,11 @@ public class Game implements Runnable
 		listeners.remove(listener);
 	}
 
+	public GameState getState()
+	{
+		return state;
+	}
+
 	public void run()
 	{
 		for (Player player : players)
@@ -61,9 +66,8 @@ public class Game implements Runnable
 			do {
 				List<Move> moves = state.generatePossibleMoves(player);
 
-				for (Move aMove : moves)
-					System.out.println("\t" + aMove);
-
+				publishPossibleMoves(moves);
+				
 				move = player.decide(moves, state);
 
 				publishMove(move);
@@ -142,6 +146,12 @@ public class Game implements Runnable
 	{
 		for (GameEventListener listener : listeners)
 			listener.onStep();
+	}
+
+	protected void publishPossibleMoves(List<Move> moves)
+	{
+		for (GameEventListener listener : listeners)
+			listener.onChooseMove(moves);
 	}
 
 	protected void publishMove(Move move)

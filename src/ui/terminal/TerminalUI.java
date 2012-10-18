@@ -26,6 +26,13 @@ public class TerminalUI implements GameEventListener
 		++turns;
 	}
 
+	public void onChooseMove(List<Move> moves)
+	{
+		System.out.println("Possible moves:");
+		for (Move move : moves)
+			System.out.println("\t" + move);
+	}
+
 	public void onMove(Move move)
 	{
 		System.out.println("Player " + currentPlayer + " will play move " + move);

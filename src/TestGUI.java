@@ -19,8 +19,6 @@ public class TestGUI
 {
 	public static void main(String[] args)
 	{
-		MainWindow mainWindow = new MainWindow();
-
 		// Generate some players
 		List<Player> players = new Vector<Player>();
 		for (int i = 0; i < 5; ++i)
@@ -31,10 +29,10 @@ public class TestGUI
 		GameState state = generator.generate(16, 3.5);
 
 		Game game = new Game(players, state);
-		game.addEventListener(mainWindow);
-
+		
+		MainWindow mainWindow = new MainWindow(game);
 		mainWindow.setVisible(true);
 
-		new Thread(game).start();
+		mainWindow.startGame();
 	}
 }

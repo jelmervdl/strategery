@@ -17,6 +17,16 @@ public class Move
 		this.defendingCountry = defender;
 	}
 
+	public Country getAttackingCountry()
+	{
+		return attackingCountry;
+	}
+
+	public Country getDefendingCountry()
+	{
+		return defendingCountry;
+	}
+
 	public boolean isEndOfTurn()
 	{
 		return this.attackingCountry == null || this.defendingCountry == null;
