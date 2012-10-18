@@ -6,14 +6,26 @@ public class Move
 
 	public Country defendingCountry;
 
+	public Move()
+	{
+		// do nothing.
+	}
+
 	public Move(Country attacker, Country defender)
 	{
 		this.attackingCountry = attacker;
 		this.defendingCountry = defender;
 	}
 
+	public boolean isEndOfTurn()
+	{
+		return this.attackingCountry == null || this.defendingCountry == null;
+	}
+
 	public String toString()
 	{
-		return "[Move " + attackingCountry + " attacks " + defendingCountry + "]";
+		return isEndOfTurn()
+			? "[Move end of turn]"
+			: "[Move " + attackingCountry + " attacks " + defendingCountry + "]";
 	}
 }

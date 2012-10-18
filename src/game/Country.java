@@ -1,5 +1,6 @@
 package game;
 
+import java.util.List;
 import java.util.Vector;
 import java.util.UUID;
 
@@ -54,12 +55,22 @@ public class Country
 		dice = other.dice;
 	}
 
+	public Player getPlayer()
+	{
+		return player;
+	}
+
+	public List<Hexagon> getHexagons()
+	{
+		return hexagons;
+	}
+
 	public int maximumDice()
 	{
 		return 7;
 	}
 
-	public Vector<Country> enemyNeighbours()
+	public List<Country> enemyNeighbours()
 	{
 		Vector<Country> enemies = new Vector<Country>();
 
