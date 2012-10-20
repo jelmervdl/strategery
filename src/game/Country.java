@@ -68,6 +68,11 @@ public class Country
 		return hexagons;
 	}
 
+	public List<Country> getNeighbours()
+	{
+		return neighbours;
+	}
+
 	public int maximumDice()
 	{
 		return 7;

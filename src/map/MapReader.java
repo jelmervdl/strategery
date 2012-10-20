@@ -5,6 +5,7 @@ import java.util.*;
 
 import game.Country;
 import game.Player;
+import map.Hexagon;
 
 public class MapReader
 {
@@ -20,6 +21,16 @@ public class MapReader
 
 			this.neighbours = new Vector<Integer>();
 		}
+
+		public void addNeighbour(int countryId)
+		{
+			neighbours.add(countryId);
+		}
+
+		public void addHexagon(int x, int y)
+		{
+			country.hexagons.add(new Hexagon(country, x, y));
+		}
 	}
 
 	private List<Player> players;
@@ -29,7 +40,7 @@ public class MapReader
 		this.players = players;
 	}
 
-	public List<Country> read(String file) throws IOException
+	public List<Country> read(File file) throws IOException
 	{
 		Map<Integer, CountryContainer> countryMap = new HashMap<Integer, CountryContainer>();
 
@@ -41,6 +52,9 @@ public class MapReader
 		String line;
 		while ((line = br.readLine()) != null)  
 		{
+			// if (line.matches("# (\\d+) players"))
+			// test if players.size() is equal to matched number
+
 			// Skip comments and white lines.
 			if (line.startsWith("#") || line.trim().equals(""))
 				continue;
@@ -52,7 +66,7 @@ public class MapReader
 
 			// Index 1: player id
 			Integer playerId = scanner.nextInt();
-			Player player = players.get(playerId - 1);
+			Player player = players.get(playerId);
 
 			CountryContainer country = new CountryContainer(player);
 
@@ -60,7 +74,28 @@ public class MapReader
 
 			// Rest of the numbers: neighbouring country ids.
 			while (scanner.hasNextInt())
-				country.neighbours.add(scanner.nextInt());
+				country.addNeighbour(scanner.nextInt());
+
+			if (scanner.hasNext(";"))
+			{
+				// Skipping "hexagons"
+				scanner.next();
+
+				while (true)
+				{
+					if (!scanner.hasNextInt())
+						break;
+
+					int x = scanner.nextInt();
+
+					if (!scanner.hasNextInt())
+						break;
+					
+					int y = scanner.nextInt();
+
+					country.addHexagon(x, y);
+				}
+			}
 		}
 
 		List<Country> countries = new Vector<Country>();

@@ -35,7 +35,7 @@
     </target>
 
     <target name="test-map-generation" depends="compile">
-        <java classname="TestMapGeneration" classpath="build/classes"/>
+        <java classname="TestMapGeneration" classpath="build/classes" fork="true"/>
     </target>
 
     <target name="test-gui" depends="compile">
