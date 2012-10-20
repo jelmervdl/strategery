@@ -144,7 +144,6 @@ public class TestMapGeneration extends JFrame
 	{
 		MapReader reader = new MapReader(getPlayers());
 		List<Country> countries = reader.read(file);
-		System.out.println("Read "  + countries.size() + " countries");
 		setState(new GameState(countries));
 	}
 
