@@ -76,6 +76,7 @@ public class MapReader
 			while (scanner.hasNextInt())
 				country.addNeighbour(scanner.nextInt());
 
+			// If there is a ; after the neighbour ids, the hexagon coordinates follow
 			if (scanner.hasNext(";"))
 			{
 				// Skipping "hexagons"

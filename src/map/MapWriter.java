@@ -15,6 +15,8 @@ public class MapWriter
 
 		out.println("# Dumping " + countries.size() + " countries");
 
+		// Find all the players used in the map.
+		// (this way we can use their index in the list as id's)
 		List<Player> players = collectPlayers(countries);
 
 		out.println("# " + players.size() + " players");
@@ -31,6 +33,7 @@ public class MapWriter
 			for (Country neighbour : country.getNeighbours())
 				out.print(" " + getIndex(countries, neighbour));
 
+			// hexagons (if there are any specified)
 			if (country.getHexagons().size() > 0)
 			{
 				out.print(" ;");
