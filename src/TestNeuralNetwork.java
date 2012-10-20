@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.*;
 import neuralnetwork.NeuralNetwork;
 
@@ -16,7 +17,7 @@ public class TestNeuralNetwork
 		}
 	}
 
-	static public void main(String[] args)
+	static public void main(String[] args) throws Exception
 	{
 		NeuralNetwork network = new NeuralNetwork(new int[]{2,2,1});
 
@@ -26,14 +27,31 @@ public class TestNeuralNetwork
 		samples.add(new Sample(new double[]{0.0, 1.0}, new double[]{1.0}));
 		samples.add(new Sample(new double[]{0.0, 0.0}, new double[]{0.0}));
 
-		train(network, samples);
+		File weightsFile = args.length > 0 ? new File(args[0]) : null;
+
+		if (weightsFile != null && weightsFile.exists())
+		{
+			network.readWeights(weightsFile);
+			System.out.println("Weigths read from " + weightsFile.getName());
+		}
+		else
+		{
+			train(network, samples);
+			System.out.println("Weights trained");
+		}
+
+		if (weightsFile != null && !weightsFile.exists())
+		{
+			network.writeWeights(weightsFile);
+			System.out.println("Weigths written to " + weightsFile.getName());
+		}
 
 		test(network, samples);
 	}
 
 	static private void train(NeuralNetwork network, List<Sample> samples)
 	{
-		for (int epoch = 0; epoch < 10000; ++epoch)
+		for (int epoch = 0; epoch < 1000; ++epoch)
 		{
 			Collections.shuffle(samples);
 
@@ -43,11 +61,7 @@ public class TestNeuralNetwork
 
 				network.forwardPropagate();
 
-				// System.out.println("Sample: " + sample.output[0]
-				// 	+ "\tNetwork: " + network.output().output(0)
-				// 	+ "\tDiff: " + (sample.output[0] - network.output().output(0)));
-
-				network.backPropagate(sample.output, 0.01);
+				network.backPropagate(sample.output, 0.1);
 			}
 		}
 	}

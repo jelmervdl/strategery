@@ -46,4 +46,14 @@
         <java classname="TestNeuralNetwork" classpath="build/classes"/>
     </target>
 
+    <target name="test-neural-network-io" depends="compile">
+        <delete file="build/weights.dat"/>
+        <java classname="TestNeuralNetwork" classpath="build/classes">
+            <arg value="build/weights.dat"/>
+        </java>
+        <java classname="TestNeuralNetwork" classpath="build/classes">
+            <arg value="build/weights.dat"/>
+        </java>
+    </target>
+
 </project>

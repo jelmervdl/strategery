@@ -1,6 +1,13 @@
 package neuralnetwork;
 
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Vector;
 
 public class NeuralNetwork
 {
@@ -12,15 +19,15 @@ public class NeuralNetwork
 	{
 		layers = new Vector<Layer>();
 
-		for (int size : layerSizes)
-			layers.add(new Layer(size, new Exp()));
+		for (int i = 0; i < layerSizes.length; ++i)
+			layers.add(new Layer(layerSizes[i], i == 0 ? new Linear() : new Exp()));
 
 		weights = new Vector<double[][]>();
 
 		for (int i = 0; i < layers.size() - 1; ++i)
 			weights.add(new double[layers.get(i).size() + 1][layers.get(i + 1).size()]);
 
-		randomizeWeights(0.3);
+		randomizeWeights(0.5);
 	}
 
 	public Layer input()
@@ -31,6 +38,36 @@ public class NeuralNetwork
 	public Layer output()
 	{
 		return layers.get(layers.size() - 1);
+	}
+
+	public void readWeights(File file) throws IOException
+	{
+		Scanner in = new Scanner(file);
+
+		for (int l = 0; l < layers.size() - 1; ++l)
+		{
+			double[][] w = weights.get(l);
+
+			for (int i = 0; i < layers.get(l).size() + 1; ++i)
+				for (int j = 0; j < layers.get(l + 1).size(); ++j)
+					w[i][j] = in.nextDouble();
+		}
+	}
+
+	public void writeWeights(File file) throws IOException
+	{
+		PrintWriter out = new PrintWriter(file);
+
+		for (int l = 0; l < layers.size() - 1; ++l)
+		{
+			double[][] w = weights.get(l);
+
+			for (int i = 0; i < layers.get(l).size() + 1; ++i)
+				for (int j = 0; j < layers.get(l + 1).size(); ++j)
+					out.print(w[i][j] + " ");
+		}
+
+		out.close();
 	}
 
 	public void forwardPropagate()
@@ -116,7 +153,7 @@ public class NeuralNetwork
 	{
 		Random random = new Random();
 
-		for (int l = 0; l < layers.size() - 2; ++l)
+		for (int l = 0; l < layers.size() - 1; ++l)
 			for (int i = 0; i < layers.get(l).size(); ++i)
 				for (int j = 0; j < layers.get(l + 1).size(); ++j)
 					weights.get(l)[i][j] = (2 * random.nextDouble() - .5) * range;
