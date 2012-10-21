@@ -253,13 +253,29 @@ public class MapGenerator
 		Vector<Country> copy = new Vector<Country>(countries);
 		int neighbours = 1;
 		int count = 0;
+		boolean reverse = false;
 		while(!copy.isEmpty())
 		{
 			for(int i = copy.size() - 1; i >= 0 ; i--)
 			{
 				if (copy.get(i).neighbours.size() == neighbours)
 				{
-					copy.get(i).player = players.get(count++ % players.size());
+					if (reverse)
+					{
+						copy.get(i).player = players.get(players.size() - 1 - (count++ % players.size()));
+						if(count % players.size() == 0)
+						{
+							reverse = false;
+						}
+					}
+					else
+					{
+						copy.get(i).player = players.get(count++ % players.size());	
+						if(count % players.size() == 0)
+						{
+							reverse = true;
+						}					
+					}
 					copy.remove(i);
 				}
 			}
