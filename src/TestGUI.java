@@ -11,6 +11,7 @@ import game.Game;
 import game.GameState;
 import game.Player;
 import game.RandomPlayer;
+import game.SimplePlayer;
 import map.MapGenerator;
 import ui.graphical.MainWindow;
 import ui.graphical.MapPanel;
@@ -21,12 +22,13 @@ public class TestGUI
 	{
 		// Generate some players
 		List<Player> players = new Vector<Player>();
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < 4; ++i)
 			players.add(new RandomPlayer("Player " + i));
+		players.add(new SimplePlayer("SimplePlayer"));
 
 		// Generate a map
 		MapGenerator generator = new MapGenerator(players);
-		GameState state = generator.generate(16, 3.5);
+		GameState state = generator.generate(4, 3.5);
 
 		Game game = new Game(players, state);
 		
