@@ -30,12 +30,12 @@ public class NeuralNetwork
 		randomizeWeights(0.5);
 	}
 
-	public Layer input()
+	public Layer getInput()
 	{
 		return layers.get(0);
 	}
 
-	public Layer output()
+	public Layer getOutput()
 	{
 		return layers.get(layers.size() - 1);
 	}
@@ -78,7 +78,7 @@ public class NeuralNetwork
 
 	public void backPropagate(double[] target, double learningSpeed)
 	{
-		double[] oError = calculateError(output(), target, learningSpeed);
+		double[] oError = calculateError(getOutput(), target, learningSpeed);
 
 		for (int l = layers.size() - 2; l >= 0; --l)
 		{
@@ -99,12 +99,12 @@ public class NeuralNetwork
 
 			// add weighted inputs
 			for (int i = 0; i < former.size(); ++i)  
-				tmp += w[i][o] * former.output(i);
+				tmp += w[i][o] * former.getValue(i);
 
 			// add bias and calculate output
 			tmp += w[former.size()][o];
 
-			next.setInput(o, tmp);
+			next.setValue(o, tmp);
 		}
 	}
 
@@ -113,7 +113,7 @@ public class NeuralNetwork
 		double[] oError = new double[output.size()];
 
 		for (int o = 0; o < output.size(); ++o)
-			oError[o] = learningSpeed * (target[o] - output.output(o)) * output.derivative(o);
+			oError[o] = learningSpeed * (target[o] - output.getValue(o)) * output.getDerivative(o);
 
 		return oError;
 	}
@@ -132,12 +132,12 @@ public class NeuralNetwork
 				input_error += w[i][o] * oError[o];
 
 				// Update the weight
-				if (former.output(i) != 0.0)
-					w[i][o] += former.output(i) * oError[o];
+				if (former.getValue(i) != 0.0)
+					w[i][o] += former.getValue(i) * oError[o];
 			}
 
 			// Pass the error through the layers function
-			iError[i] = input_error * former.derivative(i);
+			iError[i] = input_error * former.getDerivative(i);
 		}
 
 		return iError;

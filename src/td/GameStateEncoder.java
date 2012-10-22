@@ -30,6 +30,11 @@ public class GameStateEncoder
         this.descriptors = descriptors;
     }
 
+    public List<Descriptor> getDescriptors()
+    {
+        return descriptors;
+    }
+
     public double[] encode(GameState state, Player player)
     {
         double[] stateValue = new double[descriptors.size()];

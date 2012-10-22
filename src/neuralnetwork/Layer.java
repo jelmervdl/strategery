@@ -26,9 +26,14 @@ public class Layer
 		return size;
 	}
 
-	public double[] values()
+	public double[] getValues()
 	{
 		return out;
+	}
+
+	public double getValue(int index)
+	{
+		return out[index];
 	}
 
 	public void setValues(double[] values)
@@ -36,25 +41,18 @@ public class Layer
 		if (values.length != size)
 			throw new RuntimeException("Layer expects " + size + " inputs, but got only " + values.length);
 
-		in = values;
-
 		for (int i = 0; i < size; ++i)
-			out[i] = function.output(in[i]);
+			setValue(i, values[i]);
 	}
 
-	public double output(int n)
-	{
-		return out[n];
-	}
-
-	public double derivative(int n)
-	{
-		return function.derivative(in[n], out[n]);
-	}
-
-	public void setInput(int n, double value)
+	public void setValue(int n, double value)
 	{
 		in[n] = value;
 		out[n] = function.output(value);
+	}
+
+	public double getDerivative(int n)
+	{
+		return function.derivative(in[n], out[n]);
 	}
 }

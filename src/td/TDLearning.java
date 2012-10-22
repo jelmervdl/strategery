@@ -7,13 +7,28 @@ import game.GameState;
 import game.Move;
 import game.Player;
 
+import neuralnetwork.Layer;
+import neuralnetwork.NeuralNetwork;
+
 class TDLearning
 {
     private GameStateEncoder encoder;
 
+    private NeuralNetwork network;
+
     public TDLearning()
     {
+        // The encoder turns a GameState instance into a set of doubles.
         encoder = GameStateEncoder.buildDefaultEncoder();
+
+        // Configuration of layers of the neural network
+        int dimensions[] = new int[] {
+            encoder.getDescriptors().size(), // input layer
+            10, // hidden layer
+            1 // output layer
+        };
+
+        network = new NeuralNetwork(dimensions);
     }
 
     public HashMap<Move, Double> mapValueToMove(Player player, GameState state, List<Move> moves)
@@ -54,12 +69,15 @@ class TDLearning
     {
         // Use describers to describe a gameState to values between -1 and 1 to use as input for the NN
         double[] input = encoder.encode(state, player);
-		    
-
-        //NN calculeert de value van een gamestates
+		
+        // Set the output of the descriptors as the input for the neural network
+        network.getInput().setValues(input);
         
+        // Let the network calculate a value
+        network.forwardPropagate();
 
-        return 0;
+        // Return the output of the network
+        return network.getOutput().getValue(0);
     }
 
     public void adjustNetwork(Move move, Double expectedValue, GameState state)

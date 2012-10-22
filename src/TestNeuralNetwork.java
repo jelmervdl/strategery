@@ -57,7 +57,7 @@ public class TestNeuralNetwork
 
 			for (Sample sample : samples)
 			{
-				network.input().setValues(sample.input);
+				network.getInput().setValues(sample.input);
 
 				network.forwardPropagate();
 
@@ -72,11 +72,11 @@ public class TestNeuralNetwork
 
 		for (Sample sample : samples)
 		{
-			network.input().setValues(sample.input);
+			network.getInput().setValues(sample.input);
 
 			network.forwardPropagate();
 
-			double diff = sample.output[0] - network.output().output(0);
+			double diff = sample.output[0] - network.getOutput().getValue(0);
 
 			error += diff * diff;
 		}
