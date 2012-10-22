@@ -12,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.geom.GeneralPath;
 
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,13 +124,6 @@ public class MapPanel extends JPanel
 		}
 	}
 
-	public MapPanel()
-	{
-		super();
-
-		highlights = new HashMap<Country, Color>();
-	}
-
 	public void setState(GameState state)
 	{
 		this.state = state;
@@ -163,23 +157,23 @@ public class MapPanel extends JPanel
 
 	private void drawHexagon(Graphics2D g, Hexagon h)
 	{
-		final Coordinate p = new Coordinate(h.x, h.y);
+		Coordinate p = new Coordinate(h.x, h.y);
 
-		final Country country = hexagonIndex.get(p).country;
+		Country country = hexagonIndex.get(p).country;
 
-		final double c = 8,
+		double c = 8,
 			   a = .5 * c,
 			   b = Math.sin(45) * c,
 			   x = p.x * 2*b + (p.y % 2) * b,
 			   y = p.y * 3*a;
 
-		final Side[] sides = {
-			new Side(p.left(), 		(int) (x + 0),   (int) (y + a)), 		// left
-			new Side(p.topLeft(), 	(int) (x + b),   (int) (y + 0)),		// top-left
-			new Side(p.topRight(), 	(int) (x + 2*b), (int) (y + a)),		// top-right
-			new Side(p.right(), 		(int) (x + 2*b), (int) (y + a + c)),// right
-			new Side(p.bottomRight(),(int) (x + b),   (int) (y + 2 * c)),	// bottom-right
-			new Side(p.bottomLeft(),	(int) (x + 0),   (int) (y + a + c))	// bottom-left
+		Side[] sides = {
+			new Side(p.left(), 			(int) (x + 0),   (int) (y + a)),
+			new Side(p.topLeft(), 		(int) (x + b),   (int) (y + 0)),
+			new Side(p.topRight(), 		(int) (x + 2*b), (int) (y + a)),
+			new Side(p.right(), 		(int) (x + 2*b), (int) (y + a + c)),
+			new Side(p.bottomRight(),	(int) (x + b),   (int) (y + 2 * c)),
+			new Side(p.bottomLeft(),	(int) (x + 0),   (int) (y + a + c))
 		};
 
 		// The body
@@ -207,6 +201,53 @@ public class MapPanel extends JPanel
 		g.draw(path);
 	}
 
+	private void drawDiceOnHexagon(Graphics2D g, int dice, Hexagon h)
+	{
+		double c = 8,
+			   a = .5 * c,
+			   b = Math.sin(45) * c,
+			   x = h.x * 2*b + (h.y % 2) * b,
+			   y = h.y * 3*a;
+
+		g.drawString(Integer.toString(dice), (float) x, (float) (y + 2 * c));
+	}
+
+	private void clearCanvas(Graphics g)
+	{
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, getWidth(), getHeight());
+	}
+
+	private Hexagon findCentermostHexagon(List<Hexagon> hexagons)
+	{
+		int sx = 0, sy = 0;
+
+		for (Hexagon hexagon : hexagons)
+		{
+			sx += hexagon.x;
+			sy += hexagon.y;
+		}
+
+		// Average dx,dy, or, the center.
+		double ax = (double) sx / hexagons.size();
+		double ay = (double) sy / hexagons.size();
+
+		double smallestDistance = Double.POSITIVE_INFINITY;
+		Hexagon closestHexagon = null;
+
+		for (Hexagon h : hexagons)
+		{
+			double distance = (ax - h.x) * (ax - h.x) + (ay - h.y) * (ay - h.y);
+			if (distance < smallestDistance)
+			{
+				smallestDistance = distance;
+				closestHexagon = h;
+			}
+		}
+
+		return closestHexagon;
+	}
+
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
@@ -214,7 +255,17 @@ public class MapPanel extends JPanel
 		if (state == null)
 			return;
 
-		for (Hexagon hexagon : hexagonIndex.values())
-			drawHexagon((Graphics2D) g, hexagon);
+		for (Country country : state.getCountries())
+		{
+			for (Hexagon hexagon : country.getHexagons())
+				drawHexagon((Graphics2D) g, hexagon);
+
+			Hexagon center = findCentermostHexagon(country.getHexagons());
+			// Hexagon center = country.getHexagons().get(0);
+
+			drawDiceOnHexagon((Graphics2D) g, country.dice, center);
+		}
+
+		// for (Country country : state.getCountries())
 	}
 }
