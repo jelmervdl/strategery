@@ -61,7 +61,7 @@ public class MapPanel extends JPanel
 			# _ 5 6 7
 			#  _ 8 9
 
-			0: 1 1
+			0: 1 1 // y % 2 == 1
 			1: 1 0 
 			2: 2 0
 			3: 0 1
@@ -123,6 +123,13 @@ public class MapPanel extends JPanel
 		}
 	}
 
+	public MapPanel()
+	{
+		super();
+
+		highlights = new HashMap<Country, Color>();
+	}
+
 	public void setState(GameState state)
 	{
 		this.state = state;
@@ -138,11 +145,13 @@ public class MapPanel extends JPanel
 
 	private void reindex()
 	{
-		hexagonIndex = new HashMap<Coordinate,Hexagon>();
+		Map<Coordinate,Hexagon> index = new HashMap<Coordinate,Hexagon>();
 
 		for (Country country : state.getCountries())
 			for (Hexagon hexagon : country.getHexagons())
-				hexagonIndex.put(new Coordinate(hexagon.x, hexagon.y), hexagon);
+				index.put(new Coordinate(hexagon.x, hexagon.y), hexagon);
+
+		hexagonIndex = index;
 	}
 
 	private boolean isSameCountry(Coordinate p, Country country)
@@ -154,28 +163,31 @@ public class MapPanel extends JPanel
 
 	private void drawHexagon(Graphics2D g, Hexagon h)
 	{
-		Coordinate p = new Coordinate(h.x, h.y);
+		final Coordinate p = new Coordinate(h.x, h.y);
 
-		Country country = hexagonIndex.get(p).country;
+		final Country country = hexagonIndex.get(p).country;
 
-		double c = 8,
+		final double c = 8,
 			   a = .5 * c,
 			   b = Math.sin(45) * c,
 			   x = p.x * 2*b + (p.y % 2) * b,
 			   y = p.y * 3*a;
 
-		Side[] sides = new Side[6];
-		sides[0] = new Side(p.left(), 		(int) (x + 0),   (int) (y + a)); 		// left
-		sides[1] = new Side(p.topLeft(), 	(int) (x + b),   (int) (y + 0));		// top-left
-		sides[2] = new Side(p.topRight(), 	(int) (x + 2*b), (int) (y + a));		// top-right
-		sides[3] = new Side(p.right(), 		(int) (x + 2*b), (int) (y + a + c));	// right
-		sides[4] = new Side(p.bottomRight(),(int) (x + b),   (int) (y + 2 * c));	// bottom-right
-		sides[5] = new Side(p.bottomLeft(),	(int) (x + 0),   (int) (y + a + c));	// bottom-left
+		final Side[] sides = {
+			new Side(p.left(), 		(int) (x + 0),   (int) (y + a)), 		// left
+			new Side(p.topLeft(), 	(int) (x + b),   (int) (y + 0)),		// top-left
+			new Side(p.topRight(), 	(int) (x + 2*b), (int) (y + a)),		// top-right
+			new Side(p.right(), 		(int) (x + 2*b), (int) (y + a + c)),// right
+			new Side(p.bottomRight(),(int) (x + b),   (int) (y + 2 * c)),	// bottom-right
+			new Side(p.bottomLeft(),	(int) (x + 0),   (int) (y + a + c))	// bottom-left
+		};
 
+		// The body
 		Polygon poly = new Polygon();
 		for (Side side : sides)
 			poly.addPoint(side.x, side.y);
 		
+		// The border
 		GeneralPath path = new GeneralPath();
 		path.moveTo((int) (x + 0),   (int) (y + a + c));
 		for (Side side : sides)
