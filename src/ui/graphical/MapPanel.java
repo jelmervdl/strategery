@@ -54,6 +54,73 @@ public class MapPanel extends JPanel
 			return x == ((Coordinate) other).x
 				&& y == ((Coordinate) other).y;
 		}
+
+		/*
+			# _ 1 2
+			#  3 0 4
+			# _ 5 6 7
+			#  _ 8 9
+
+			0: 1 1
+			1: 1 0 
+			2: 2 0
+			3: 0 1
+			4: 2 1
+			5: 1 2
+			6: 2 2 // y % 2 == 0
+			7: 3 2
+			8: 1 3
+			9: 2 3
+		*/
+
+		public Coordinate left()
+		{
+			return new Coordinate(x - 1, y);
+		}
+
+		public Coordinate right()
+		{
+			return new Coordinate(x + 1, y);
+		}
+
+		public Coordinate topLeft()
+		{
+			return y % 2 == 0
+				? new Coordinate(x - 1, y - 1)
+				: new Coordinate(x    , y - 1);
+		}
+
+		public Coordinate topRight()
+		{
+			return y % 2 == 0
+				? new Coordinate(x    , y - 1)
+				: new Coordinate(x + 1, y - 1);
+		}
+
+		public Coordinate bottomLeft()
+		{
+			return y % 2 == 0
+				? new Coordinate(x - 1, y + 1)
+				: new Coordinate(x    , y + 1);
+		}
+
+		public Coordinate bottomRight()
+		{
+			return y % 2 == 0
+				? new Coordinate(x    , y + 1)
+				: new Coordinate(x + 1, y + 1);
+		}
+	}
+
+	private class Side extends Coordinate
+	{
+		public Coordinate neighbour;
+
+		public Side(Coordinate neighbour, int x, int y)
+		{
+			super(x, y);
+			this.neighbour = neighbour;
+		}
 	}
 
 	public void setState(GameState state)
@@ -78,34 +145,45 @@ public class MapPanel extends JPanel
 				hexagonIndex.put(new Coordinate(hexagon.x, hexagon.y), hexagon);
 	}
 
+	private boolean isSameCountry(Coordinate p, Country country)
+	{
+		return hexagonIndex.containsKey(p)
+			? hexagonIndex.get(p).country == country
+			: false;
+	}
+
 	private void drawHexagon(Graphics2D g, Hexagon h)
 	{
+		Coordinate p = new Coordinate(h.x, h.y);
+
+		Country country = hexagonIndex.get(p).country;
+
 		double c = 8,
 			   a = .5 * c,
 			   b = Math.sin(45) * c,
-			   x = h.x * 2*b + (h.y % 2) * b,
-			   y = h.y * 3*a;
+			   x = p.x * 2*b + (p.y % 2) * b,
+			   y = p.y * 3*a;
 
-		Country country = hexagonIndex.get(new Coordinate(h.x, h.y)).country;
+		Side[] sides = new Side[6];
+		sides[0] = new Side(p.left(), 		(int) (x + 0),   (int) (y + a)); 		// left
+		sides[1] = new Side(p.topLeft(), 	(int) (x + b),   (int) (y + 0));		// top-left
+		sides[2] = new Side(p.topRight(), 	(int) (x + 2*b), (int) (y + a));		// top-right
+		sides[3] = new Side(p.right(), 		(int) (x + 2*b), (int) (y + a + c));	// right
+		sides[4] = new Side(p.bottomRight(),(int) (x + b),   (int) (y + 2 * c));	// bottom-right
+		sides[5] = new Side(p.bottomLeft(),	(int) (x + 0),   (int) (y + a + c));	// bottom-left
 
 		Polygon poly = new Polygon();
-		poly.addPoint((int) (x + 0),   (int) (y + a));
-		poly.addPoint((int) (x + b),   (int) (y + 0));
-		poly.addPoint((int) (x + 2*b), (int) (y + a));
-		poly.addPoint((int) (x + 2*b), (int) (y + a + c));
-		poly.addPoint((int) (x + b),   (int) (y + 2*c));
-		poly.addPoint((int) (x + 0),   (int) (y + a + c));
-
+		for (Side side : sides)
+			poly.addPoint(side.x, side.y);
+		
 		GeneralPath path = new GeneralPath();
 		path.moveTo((int) (x + 0),   (int) (y + a + c));
-		path.lineTo((int) (x + 0),   (int) (y + a));
-		path.lineTo((int) (x + b),   (int) (y + 0));
-		path.lineTo((int) (x + 2*b), (int) (y + a));
-		path.lineTo((int) (x + 2*b), (int) (y + a + c));
-		path.lineTo((int) (x + b),   (int) (y + 2*c));
-		path.lineTo((int) (x + 0),   (int) (y + a + c));
-		// path.closePath();
-
+		for (Side side : sides)
+			if (!isSameCountry(side.neighbour, country))
+				path.lineTo(side.x, side.y);
+			else
+				path.moveTo(side.x, side.y);
+		
 		if (highlights != null && highlights.containsKey(country))
 			g.setColor(highlights.get(country));
 		else
