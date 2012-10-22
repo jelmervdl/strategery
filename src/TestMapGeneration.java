@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -34,6 +35,8 @@ import ui.graphical.MapPanel;
 
 public class TestMapGeneration extends JFrame
 {
+	private JFileChooser filePicker;
+
 	private MapPanel mapPanel;
 
 	private GameState state;
@@ -52,6 +55,7 @@ public class TestMapGeneration extends JFrame
 		});
 
 		mapPanel = new MapPanel();
+		getContentPane().add(mapPanel);
 
 		JMenuBar bar = new JMenuBar();
 		setJMenuBar(bar);
@@ -92,7 +96,8 @@ public class TestMapGeneration extends JFrame
 			}
 		});
 
-		getContentPane().add(mapPanel);
+		filePicker = new JFileChooser("./maps");
+		filePicker.setFileFilter(new FileNameExtensionFilter("Strategery maps", "map"));
 	}
 
 	private void generateMap()
@@ -106,7 +111,6 @@ public class TestMapGeneration extends JFrame
 
 	private void saveMap()
 	{
-		JFileChooser filePicker = new JFileChooser();
 		int response = filePicker.showSaveDialog(this);
 
 		if (response == JFileChooser.APPROVE_OPTION)
@@ -121,7 +125,6 @@ public class TestMapGeneration extends JFrame
 
 	private void loadMap()
 	{
-		JFileChooser filePicker = new JFileChooser();
 		int response = filePicker.showOpenDialog(this);
 
 		if (response == JFileChooser.APPROVE_OPTION)
