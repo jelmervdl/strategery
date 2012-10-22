@@ -1,5 +1,4 @@
 package td;
-//package descriptors;
 
 import java.util.*;
 import java.io.*;
@@ -8,13 +7,15 @@ import game.GameState;
 import game.Move;
 import game.Player;
 
-import descriptors.Descriptor;
-
-import td.Chance;
-
-
 class TDLearning
 {
+    private GameStateEncoder encoder;
+
+    public TDLearning()
+    {
+        encoder = GameStateEncoder.buildDefaultEncoder();
+    }
+
     public HashMap<Move, Double> mapValueToMove(Player player, GameState state, List<Move> moves)
     {
         // Initialize HashMap where the values get mapped to the possible moves
@@ -52,7 +53,7 @@ class TDLearning
     public double calcValueState(Player player, GameState state)
     {
         // Use describers to describe a gameState to values between -1 and 1 to use as input for the NN
-        double[] input = descriptors.DescriptGameState.assignValue(state, player);
+        double[] input = encoder.encode(state, player);
 		    
 
         //NN calculeert de value van een gamestates
