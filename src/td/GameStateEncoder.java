@@ -14,15 +14,17 @@ public class GameStateEncoder
 
     static GameStateEncoder buildDefaultEncoder()
     {
-        List<Descriptor> descriptorList = new Vector<Descriptor>();
-		descriptorList.add(new descriptors.Dominance());
-		descriptorList.add(new descriptors.StrengthOnBorders());
-		descriptorList.add(new descriptors.Connectedness());
-		descriptorList.add(new descriptors.ConnectedBalance());
-		descriptorList.add(new descriptors.CountryBalance());
-		descriptorList.add(new descriptors.EnemyCountryBalance());
-        
-        return new GameStateEncoder(descriptorList);
+        List<Descriptor> descriptors = new Vector<Descriptor>();
+        descriptors.add(new descriptors.Dominance());
+        descriptors.add(new descriptors.StrengthOnBorders());
+        descriptors.add(new descriptors.Connectedness());
+        descriptors.add(new descriptors.ConnectedBalance());
+        descriptors.add(new descriptors.CountryBalance());
+        descriptors.add(new descriptors.EnemyCountryBalance());
+        descriptors.add(new descriptors.EnemyDiceBalance());
+        descriptors.add(new descriptors.RemainingPlayers());
+
+        return new GameStateEncoder(descriptors);
     }
 
     public GameStateEncoder(List<Descriptor> descriptors)
