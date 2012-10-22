@@ -113,12 +113,17 @@ public class Game implements Runnable
 			}
 		});
 
+		boolean skipNonBorderCountries = true;
+
 		while (dice > 0)
 		{
 			int diceAdded = 0;
 
 			for (Country country : countries)
 			{
+				if (skipNonBorderCountries && country.enemyNeighbours().size() == 0)
+					continue;
+
 				if (country.dice < country.maximumDice())
 				{
 					country.dice++;
@@ -132,7 +137,10 @@ public class Game implements Runnable
 
 			// Stop if all countries are filled
 			if (diceAdded == 0)
-				break;
+				if (skipNonBorderCountries)
+					skipNonBorderCountries = false;
+				else
+					break;
 		}
 	}
 
