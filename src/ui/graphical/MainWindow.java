@@ -113,7 +113,7 @@ public class MainWindow extends JFrame implements GameEventListener
 
 	public void onStateChange(GameState state)
 	{
-		mapPanel.setHighlights(null);
+		// mapPanel.setHighlights(null);
 		setState(state);
 	}
 

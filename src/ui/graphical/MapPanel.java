@@ -151,15 +151,13 @@ public class MapPanel extends JPanel
 	private boolean isSameCountry(Coordinate p, Country country)
 	{
 		return hexagonIndex.containsKey(p)
-			? hexagonIndex.get(p).country == country
+			? hexagonIndex.get(p).country.equals(country)
 			: false;
 	}
 
-	private void drawHexagon(Graphics2D g, Hexagon h)
+	private void drawHexagon(Graphics2D g, Country country, Hexagon h, Color color)
 	{
 		Coordinate p = new Coordinate(h.x, h.y);
-
-		Country country = hexagonIndex.get(p).country;
 
 		double c = 8,
 			   a = .5 * c,
@@ -190,11 +188,7 @@ public class MapPanel extends JPanel
 			else
 				path.moveTo(side.x, side.y);
 		
-		if (highlights != null && highlights.containsKey(country))
-			g.setColor(highlights.get(country));
-		else
-			g.setColor(country.getPlayer().getColor());
-
+		g.setColor(color);
 		g.fillPolygon(poly);
 
 		g.setColor(Color.BLACK);
@@ -209,7 +203,7 @@ public class MapPanel extends JPanel
 			   x = h.x * 2*b + (h.y % 2) * b,
 			   y = h.y * 3*a;
 
-		g.drawString(Integer.toString(dice), (float) x, (float) (y + 2 * c));
+		g.drawString(Integer.toString(dice), (float) x + 2.5f, (float) (y + 2 * c) - 2f);
 	}
 
 	private void clearCanvas(Graphics g)
@@ -257,15 +251,16 @@ public class MapPanel extends JPanel
 
 		for (Country country : state.getCountries())
 		{
-			for (Hexagon hexagon : country.getHexagons())
-				drawHexagon((Graphics2D) g, hexagon);
-
+			Color fillColor = highlights != null && highlights.containsKey(country)
+				? highlights.get(country)
+				: country.getPlayer().getColor();
+			
 			Hexagon center = findCentermostHexagon(country.getHexagons());
-			// Hexagon center = country.getHexagons().get(0);
+
+			for (Hexagon hexagon : country.getHexagons())
+				drawHexagon((Graphics2D) g, country, hexagon, hexagon.equals(center) ? fillColor.darker() : fillColor);
 
 			drawDiceOnHexagon((Graphics2D) g, country.dice, center);
 		}
-
-		// for (Country country : state.getCountries())
 	}
 }
