@@ -21,8 +21,10 @@ public class StrengthOnBorders extends Descriptor
 				count += 1;
 			}
 		}
-
-		return sum / count;
+		if(count > 0)
+			return sum / count;
+		else
+			return -1;
 	}
 
 	/**
