@@ -14,7 +14,6 @@ public class TestDescriptors
 		players.add(new RandomPlayer("b"));
 		players.add(new RandomPlayer("c"));
 		players.add(new RandomPlayer("d"));
-		players.add(new RandomPlayer("e"));
 
 		List<Descriptor> descriptors = new Vector<Descriptor>();
 		descriptors.add(new descriptors.Dominance());

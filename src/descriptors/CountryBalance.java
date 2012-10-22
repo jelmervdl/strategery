@@ -20,6 +20,7 @@ public class CountryBalance extends Descriptor
 	{
 		// Count the number of countries for each player.
 		Map<Player, Integer> numberOfCountries = new HashMap<Player, Integer>();
+		
 		for (Country country : state.getCountries())
 			numberOfCountries.put(country.player,
 				numberOfCountries.containsKey(country.player)
@@ -29,10 +30,10 @@ public class CountryBalance extends Descriptor
 		// for (Map.Entry<Player, Integer> pair : numberOfCountries.entrySet())
 		// 	System.out.println("Player " + pair.getKey() + " has " + pair.getValue() + " countries");
 
-		return normalize((double) variance(numberOfCountries.values()) / state.getCountries().size(), 0, 1);
+		return normalize((double) variance(numberOfCountries.values(), state.getCountries().size()), 0, 1);
 	}
 
-	private double variance(Collection<Integer> numbers)
+	private double variance(Collection<Integer> numbers, int numCountries)
 	{
 		int sum = 0;
 		for (Integer number : numbers)
@@ -44,6 +45,11 @@ public class CountryBalance extends Descriptor
 		for (Integer number : numbers)
 			difference += Math.abs(number - mean);
 
-		return (double) difference / numbers.size();
+		int maxvariance = (numCountries/numbers.size() * (numbers.size()-1)) + (numCountries - numCountries/numbers.size());
+		
+		if (maxvariance > 0)
+			return (double) difference / maxvariance;
+		else
+			return 1;
 	}
 }
