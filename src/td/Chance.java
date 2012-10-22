@@ -1,3 +1,5 @@
+package td;
+
 public class Chance
 {
 	final static double[][] chanceTable = {
