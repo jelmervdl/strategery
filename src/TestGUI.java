@@ -28,7 +28,7 @@ public class TestGUI
 			players.add(new RandomPlayer("Player " + i));
 
 		// Yes, MainWindow is a player. Deal with it.
-		players.add(mainWindow);
+		players.add(mainWindow.getPlayer());
 
 		// Generate a map
 		MapGenerator generator = new MapGenerator(players);

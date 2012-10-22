@@ -11,6 +11,6 @@ public class BoringPlayer extends PlayerAdapter
 
 	public Move decide(List<Move> possibleMoves, GameState state)
 	{
-		return null;
+		return possibleMoves.get(0); // Always return the end-of-turn move.
 	}
 }

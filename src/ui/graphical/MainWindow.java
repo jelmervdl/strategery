@@ -16,12 +16,13 @@ import game.Game;
 import game.GameState;
 import game.Move;
 import game.Player;
+import game.PlayerAdapter;
 import game.RandomPlayer;
 import game.GameEventListener;
 
 import ui.graphical.MapPanel;
 
-public class MainWindow extends JFrame implements GameEventListener, Player
+public class MainWindow extends JFrame implements GameEventListener
 {
 	private Game game;
 
@@ -146,18 +147,22 @@ public class MainWindow extends JFrame implements GameEventListener, Player
 
 	}
 
-	/* Implementing the Player interface */
-
-	public Color getColor()
+	public Player getPlayer()
 	{
-		return Color.RED;
-	}
+		return new PlayerAdapter("GUI Player")
+		{
+			public Color getColor()
+			{
+				return Color.RED;
+			}
 
-	public Move decide(List<Move> possibleMoves, GameState state)
-	{
-		// Just for now a dummy implementation.
-		return possibleMoves.size() > 0
-			? possibleMoves.get(0)
-			: null;
+			public Move decide(List<Move> possibleMoves, GameState state)
+			{
+				// Just for now a dummy implementation.
+				return possibleMoves.size() > 0
+					? possibleMoves.get(0)
+					: null;
+			}
+		};
 	}
 }

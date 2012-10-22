@@ -81,11 +81,12 @@ public class Game implements Runnable
 
 				publishMove(move);
 				
-				// move == null -> player finishes his turn.
+				GameState result = state.apply(move, false);
+				
+				player.feedback(state, move, result);
 
-				if (move != null)
-					setState(state.apply(move, false));
-			} while(alive && move != null);
+				setState(result);
+			} while (alive && !move.isEndOfTurn());
 
 			publishEndOfTurn(player);
 

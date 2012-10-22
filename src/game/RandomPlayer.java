@@ -14,11 +14,9 @@ public class RandomPlayer extends PlayerAdapter
 	{
 		Random random = new Random();
 
-		// All possible moves plus the [end this turn]-move (the +1 which returns NULL)
-		int move = random.nextInt(possibleMoves.size() + 1);
+		// All possible moves plus the [end this turn]-move
+		int move = random.nextInt(possibleMoves.size());
 
-		return move == possibleMoves.size()
-			? null
-			: possibleMoves.get(move);
+		return possibleMoves.get(move);
 	}
 }

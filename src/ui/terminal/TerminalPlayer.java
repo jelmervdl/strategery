@@ -22,7 +22,7 @@ public class TerminalPlayer extends PlayerAdapter
 		System.out.println("Your turn! Which move will you play?");
 
 		for (int i = 0; i < possibleMoves.size(); ++i)
-			System.out.println((i + 1) + ". " + possibleMoves.get(i));
+			System.out.println(i + ". " + possibleMoves.get(i));
 
 		System.out.println("0. End of turn");
 		int moveIndex;
@@ -40,8 +40,6 @@ public class TerminalPlayer extends PlayerAdapter
 			moveIndex = 0;
 		}
 
-		return moveIndex == 0
-			? null
-			: possibleMoves.get(moveIndex - 1);
+		return possibleMoves.get(moveIndex - 1);
 	}
 }

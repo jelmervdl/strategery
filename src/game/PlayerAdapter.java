@@ -36,4 +36,9 @@ public abstract class PlayerAdapter implements Player
 			random.nextFloat(),
 			random.nextFloat());
 	}
+
+	public void feedback(GameState input, Move move, GameState result)
+	{
+		// do nothing :)
+	}
 }

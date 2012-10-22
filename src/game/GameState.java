@@ -46,6 +46,10 @@ public class GameState
 		// Clone the current gamestate.
 		GameState state = new GameState(this);
 
+		// If this is a non-move move, there is nothing to add :)
+		if (move.isEndOfTurn())
+			return state;
+
         int attackingEyes;
         int defendingEyes;
 
@@ -137,33 +141,31 @@ public class GameState
 	{
 		List<Move> moves = new Vector<Move>();
 
+		// The end-of-turn move
+		moves.add(new Move());
+
 		for (Country country : countries)
 		{
+			// Is this a country of the player who's turn it is?
 			if (country.player != player)
-			{
-				// System.out.println("Not same player");
 				continue;
-			}
-
+			
+			// Does the country have enough dice to attack?
 			if (country.dice <= 1)
-			{
-				// System.out.println("Not enough dice");
 				continue;
-			}
-
+			
 			List<Country> enemyNeighbours = country.enemyNeighbours();
 
+			// Does the country have any enemy neighbours?
 			if (enemyNeighbours.size() == 0)
-			{
-				// System.out.println("Not enough enemy neighbours");
 				continue;
-			}
-
+			
+			// If yes, then add a move for each enemy neighbour it can attack.
 			for (Country enemyCountry : enemyNeighbours)
 				moves.add(new Move(country, enemyCountry));
 		}
 
-		return moves; 
+		return moves;
 	}
 
 	public Country getCountry(Country country)
