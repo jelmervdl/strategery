@@ -1,7 +1,9 @@
 package game;
 
+import java.util.HashSet;
 import java.util.Random;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import td.Chance;
 
@@ -9,19 +11,20 @@ public class GameState
 {
 	List<Country> countries;
 
-	public GameState()
-	{
-		this.countries = new Vector<Country>();
-	}
+	int numberOfPlayers;
 
 	public GameState(List<Country> countries)
 	{
 		this.countries = countries;
+
+		this.numberOfPlayers = countPlayers(countries);
 	}
 
 	public GameState(GameState other)
 	{
 		countries = new Vector<Country>();
+
+		numberOfPlayers = other.numberOfPlayers;
 
 		// Copy all the countries
 		for (Country country : other.countries)
@@ -184,6 +187,11 @@ public class GameState
 		return playerCountries;
 	}
 
+	public int getNumberOfPlayers()
+	{
+		return numberOfPlayers;
+	}
+
 	public String toString()
 	{
 		String out = "[GameState countries:\n";
@@ -194,6 +202,16 @@ public class GameState
 		out += "]";
 
 		return out;
+	}
+
+	private int countPlayers(List<Country> countries)
+	{
+		Set<Player> players = new HashSet<Player>();
+
+		for (Country country : countries)
+			players.add(country.getPlayer());
+
+		return players.size();
 	}
 
 	private int rollDice(int dice)
