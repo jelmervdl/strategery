@@ -29,8 +29,8 @@ public class ConnectedBalance extends Descriptor
 
 			int clusterSize = Util.countCluster(country, countedCountries);
 
-			if (!largestClusterSizes.containsKey(country.player) || clusterSize > largestClusterSizes.get(country.player))
-				largestClusterSizes.put(country.player, clusterSize);
+			if (!largestClusterSizes.containsKey(country.getPlayer()) || clusterSize > largestClusterSizes.get(country.getPlayer()))
+				largestClusterSizes.put(country.getPlayer(), clusterSize);
 		}
 
 		return normalize((double) variance(largestClusterSizes.values()) / state.getCountries().size(), 0, 1);

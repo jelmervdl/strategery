@@ -14,7 +14,7 @@ public class Util
 
 		for (Country country : countries)
 		{
-			if (country.player != player)
+			if (!country.getPlayer().equals(player))
 				continue;
 
 			if (countedCountries.contains(country))
@@ -36,7 +36,7 @@ public class Util
 		countedCountries.add(country);
 
 		for (Country neighbour : country.neighbours)
-			if (neighbour.player == country.player)
+			if (neighbour.getPlayer().equals(country.getPlayer()))
 				if (!countedCountries.contains(neighbour))
 					count += countCluster(neighbour, countedCountries);
 

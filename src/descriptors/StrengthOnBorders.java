@@ -32,8 +32,8 @@ public class StrengthOnBorders extends Descriptor
 	 */
 	private double calculateDominanceBetween(Country me, Country other)
 	{
-		int max = Math.max(me.maximumDice(), other.maximumDice());
+		int max = Math.max(me.getMaximumDice(), other.getMaximumDice());
 
-		return (double) (me.dice - other.dice) / max;
+		return (double) (me.getDice() - other.getDice()) / max;
 	}
 } 

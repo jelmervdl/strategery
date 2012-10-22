@@ -218,7 +218,7 @@ public class MapGenerator
 	{
 		for(int i = 0; i < countries.size(); i++)
 		{
-			System.out.print((char)(countries.get(i).countID+64) + " owned by " + countries.get(i).player + ". Neighbours: ");
+			System.out.print((char)(countries.get(i).countID+64) + " owned by " + countries.get(i).getPlayer() + ". Neighbours: ");
 			Vector<Country> neighbours = countries.get(i).neighbours;
 			for(int j = 0; j < neighbours.size(); j++)
 			{
@@ -262,7 +262,7 @@ public class MapGenerator
 				{
 					if (reverse)
 					{
-						copy.get(i).player = players.get(players.size() - 1 - (count++ % players.size()));
+						copy.get(i).setPlayer(players.get(players.size() - 1 - (count++ % players.size())));
 						if(count % players.size() == 0)
 						{
 							reverse = false;
@@ -270,7 +270,7 @@ public class MapGenerator
 					}
 					else
 					{
-						copy.get(i).player = players.get(count++ % players.size());	
+						copy.get(i).setPlayer(players.get(count++ % players.size()));
 						if(count % players.size() == 0)
 						{
 							reverse = true;

@@ -10,13 +10,13 @@ public class Country
 {
 	private UUID id;
 
-	public Player player;
+	private Player player;
+
+	private int dice;
 
 	public Vector<Country> neighbours;
 
 	public Vector<Hexagon> hexagons;
-
-	public int dice;
 
 	public int countID;
 
@@ -29,7 +29,7 @@ public class Country
 		
 		this.hexagons = new Vector<Hexagon>();
 
-		this.dice = dice;
+		setDice(dice);
 		
 		this.countID = countID;
 	}
@@ -39,13 +39,13 @@ public class Country
 	{
 		this.id = UUID.randomUUID();
 
-		this.player = player;
+		setPlayer(player);
+
+		setDice(dice);
 
 		this.neighbours = new Vector<Country>();
 
 		this.hexagons = new Vector<Hexagon>();
-
-		this.dice = dice;
 	}
 
 	public Country(Country other)
@@ -63,6 +63,11 @@ public class Country
 		return player;
 	}
 
+	public void setPlayer(Player player)
+	{
+		this.player = player;
+	}
+
 	public List<Hexagon> getHexagons()
 	{
 		return hexagons;
@@ -73,7 +78,20 @@ public class Country
 		return neighbours;
 	}
 
-	public int maximumDice()
+	public int getDice()
+	{
+		return dice;
+	}
+
+	public void setDice(int dice)
+	{
+		if (dice > getMaximumDice())
+			throw new RuntimeException("Trying to assign more dice than the maximum number of dice to " + this);
+
+		this.dice = dice;
+	}
+
+	public int getMaximumDice()
 	{
 		return 7;
 	}
@@ -83,7 +101,7 @@ public class Country
 		Vector<Country> enemies = new Vector<Country>();
 
 		for (Country neighbour : neighbours)
-			if (neighbour.player != player)
+			if (!neighbour.getPlayer().equals(player))
 				enemies.add(neighbour);
 
 		return enemies;

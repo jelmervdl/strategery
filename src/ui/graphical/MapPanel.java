@@ -346,7 +346,7 @@ public class MapPanel extends JPanel
 			for (Hexagon hexagon : country.getHexagons())
 				drawHexagon(g2d, country, hexagon, hexagon.equals(center) ? fillColor.darker() : fillColor);
 
-			drawDiceOnHexagon(g2d, country.dice, center);
+			drawDiceOnHexagon(g2d, country.getDice(), center);
 		}
 	}
 }

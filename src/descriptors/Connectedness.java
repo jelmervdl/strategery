@@ -31,7 +31,7 @@ public class Connectedness extends Descriptor
 			if (clusterSize > largestClusterSize)
 				largestClusterSize = clusterSize;
 
-			if (country.player == player)
+			if (country.getPlayer().equals(player))
 				if (clusterSize > myLargestClusterSize)
 					myLargestClusterSize = clusterSize;
 		}

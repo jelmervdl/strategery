@@ -54,45 +54,45 @@ public class GameState
         int defendingEyes;
 
         // If we calculate the expected value, don't add the element of chance.
-        if(expected)
+        if (expected)
         {
-            attackingEyes = move.attackingCountry.dice;
-		    defendingEyes = move.defendingCountry.dice;
+            attackingEyes = move.attackingCountry.getDice();
+		    defendingEyes = move.defendingCountry.getDice();
         }
         // Otherwise, let's roll those dice.
         else
         {
-		    attackingEyes = rollDice(move.attackingCountry.dice);
-		    defendingEyes = rollDice(move.defendingCountry.dice);
+		    attackingEyes = rollDice(move.attackingCountry.getDice());
+		    defendingEyes = rollDice(move.defendingCountry.getDice());
         }
 
 		// Attacker wins
 		if (attackingEyes > defendingEyes)
 		{
 			// Take the country!
-			state.getCountry(move.defendingCountry).player = move.attackingCountry.player;
+			state.getCountry(move.defendingCountry).setPlayer(move.attackingCountry.getPlayer());
 
 			// Reset attacking country dice to 1 (as the army has moved to the defending country)
-			state.getCountry(move.attackingCountry).dice = 1;
+			state.getCountry(move.attackingCountry).setDice(1);
 
 			// Assign remaining dice to country
-			state.getCountry(move.defendingCountry).dice = remainingDice(attackingEyes - defendingEyes);
+			state.getCountry(move.defendingCountry).setDice(remainingDice(attackingEyes - defendingEyes));
 		}
 
 		// It's a draw
 		else if (attackingEyes == defendingEyes)
 		{
-			state.getCountry(move.attackingCountry).dice = 1;
+			state.getCountry(move.attackingCountry).setDice(1);
 
-			state.getCountry(move.defendingCountry).dice = 1;
+			state.getCountry(move.defendingCountry).setDice(1);
 		}
 
 		// Attacker loses
 		else
 		{
-			state.getCountry(move.attackingCountry).dice = 1;
+			state.getCountry(move.attackingCountry).setDice(1);
 
-			state.getCountry(move.defendingCountry).dice = remainingDice(defendingEyes - attackingEyes);
+			state.getCountry(move.defendingCountry).setDice(remainingDice(defendingEyes - attackingEyes));
 		}
 
 		return state;
@@ -102,36 +102,36 @@ public class GameState
     {
         // Clone the current gamestate.
 		GameState state = new GameState(this);
-        int attackingEyes = move.attackingCountry.dice;
-	    int defendingEyes = move.defendingCountry.dice;
+        int attackingEyes = move.attackingCountry.getDice();
+	    int defendingEyes = move.defendingCountry.getDice();
     
         // Attacker wins
-        if (i ==1)
+        if (i == 1)
         {
             // Take the country!
-			state.getCountry(move.defendingCountry).player = move.attackingCountry.player;
+			state.getCountry(move.defendingCountry).setPlayer(move.attackingCountry.getPlayer());
 
 			// Reset attacking country dice to 1 (as the army has moved to the defending country)
-			state.getCountry(move.attackingCountry).dice = 1;
+			state.getCountry(move.attackingCountry).setDice(1);
 
 			// Assign remaining dice to country
-			state.getCountry(move.defendingCountry).dice = remainingDice(Chance.diceRemainingAttacker(attackingEyes, defendingEyes));
+			state.getCountry(move.defendingCountry).setDice(remainingDice(Chance.diceRemainingAttacker(attackingEyes, defendingEyes)));
         }
         
         // It's a draw
 		else if (i == 2)
 		{
-			state.getCountry(move.attackingCountry).dice = 1;
+			state.getCountry(move.attackingCountry).setDice(1);
 
-			state.getCountry(move.defendingCountry).dice = 1;
+			state.getCountry(move.defendingCountry).setDice(1);
 		}   
 
         // Attacker loses
 		else if (i == 3)
 		{
-			state.getCountry(move.attackingCountry).dice = 1;
+			state.getCountry(move.attackingCountry).setDice(1);
 
-			state.getCountry(move.defendingCountry).dice = remainingDice(Chance.diceRemainingDefender(attackingEyes, defendingEyes));
+			state.getCountry(move.defendingCountry).setDice(remainingDice(Chance.diceRemainingDefender(attackingEyes, defendingEyes)));
 		}   
       
         return state;
@@ -147,11 +147,11 @@ public class GameState
 		for (Country country : countries)
 		{
 			// Is this a country of the player who's turn it is?
-			if (country.player != player)
+			if (!country.getPlayer().equals(player))
 				continue;
 			
 			// Does the country have enough dice to attack?
-			if (country.dice <= 1)
+			if (country.getDice() <= 1)
 				continue;
 			
 			List<Country> enemyNeighbours = country.enemyNeighbours();
@@ -183,7 +183,7 @@ public class GameState
 		List<Country> playerCountries = new Vector<Country>();
 
 		for (Country country : countries)
-			if (country.player == player)
+			if (country.getPlayer().equals(player))
 				playerCountries.add(country);
 
 		return playerCountries;

@@ -134,9 +134,9 @@ public class Game implements Runnable
 				if (skipNonBorderCountries && country.enemyNeighbours().size() == 0)
 					continue;
 
-				if (country.dice < country.maximumDice())
+				if (country.getDice() < country.getMaximumDice())
 				{
-					country.dice++;
+					country.setDice(country.getDice() + 1);
 					dice--;
 					diceAdded++;
 				}

@@ -27,7 +27,10 @@ public class MapWriter
 			out.print(getIndex(countries, country));
 
 			// player id
-			out.print(" " + getIndex(players, country.player));
+			out.print(" " + getIndex(players, country.getPlayer()));
+
+			// number of dice
+			out.print(" " + country.getDice());
 
 			// neighbouring countries
 			for (Country neighbour : country.getNeighbours())

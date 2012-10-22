@@ -19,7 +19,7 @@ public class SimplePlayer extends PlayerAdapter
 			if (move.isEndOfTurn())
 				continue;
 			
-			int diff = move.getAttackingCountry().dice - move.getDefendingCountry().dice;
+			int diff = move.getAttackingCountry().getDice() - move.getDefendingCountry().getDice();
 			if (diff > largestDiceDifference)
 			{
 				bestMove = move;

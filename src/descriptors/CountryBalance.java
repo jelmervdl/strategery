@@ -20,9 +20,9 @@ public class CountryBalance extends Descriptor
 		Map<Player, Integer> numberOfCountries = new HashMap<Player, Integer>();
 		
 		for (Country country : state.getCountries())
-			numberOfCountries.put(country.player,
-				numberOfCountries.containsKey(country.player)
-					? numberOfCountries.get(country.player) + 1
+			numberOfCountries.put(country.getPlayer(),
+				numberOfCountries.containsKey(country.getPlayer())
+					? numberOfCountries.get(country.getPlayer()) + 1
 					: 1);
 		
 		int playerCount = 0;

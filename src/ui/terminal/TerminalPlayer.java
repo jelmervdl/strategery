@@ -33,7 +33,7 @@ public class TerminalPlayer extends PlayerAdapter
 
 				String line = stdin.readLine();
 				moveIndex = Integer.parseInt(line);
-			} while (moveIndex < 0 || moveIndex > possibleMoves.size());
+			} while (moveIndex < 0 || moveIndex >= possibleMoves.size());
 		}
 		catch (IOException e)
 		{

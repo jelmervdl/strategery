@@ -19,12 +19,13 @@ public class EnemyCountryBalance extends Descriptor
 		// Count the number of countries for each player.
 		Map<Player, Integer> numberOfCountries = new HashMap<Player, Integer>();
 		int numCountries = 0;
+
 		for (Country country : state.getCountries())
-			if(country.player != player)
+			if(!country.getPlayer().equals(player))
 			{
-				numberOfCountries.put(country.player,
-						numberOfCountries.containsKey(country.player)
-						? numberOfCountries.get(country.player) + 1
+				numberOfCountries.put(country.getPlayer(),
+						numberOfCountries.containsKey(country.getPlayer())
+						? numberOfCountries.get(country.getPlayer()) + 1
 								: 1);
 				numCountries++;
 			}

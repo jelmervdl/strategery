@@ -19,16 +19,16 @@ public class EnemyDiceBalance extends Descriptor
 		// Count the number of countries for each player.
 		Map<Player, Integer> numberOfDice = new HashMap<Player, Integer>();
 		for (Country country : state.getCountries())
-			if(country.player != player)
+			if (!country.getPlayer().equals(player))
 			{
-				numberOfDice.put(country.player,
-						numberOfDice.containsKey(country.player)
-						? numberOfDice.get(country.player) + country.dice
-								: country.dice);
+				numberOfDice.put(country.getPlayer(),
+						numberOfDice.containsKey(country.getPlayer())
+						? numberOfDice.get(country.getPlayer()) + country.getDice()
+								: country.getDice());
 			}
 		
 		int playerCount = 0;
-		while ( numberOfDice.size() < state.getNumberOfPlayers())
+		while (numberOfDice.size() < state.getNumberOfPlayers())
 			numberOfDice.put(new RandomPlayer("empty"+playerCount++), 0);
 
 		return normalize((double) variance(numberOfDice.values()), 0, 1);

@@ -48,8 +48,8 @@ class TDLearning
     public double getExpectedValueState(Player player, GameState state, Move move)
     {
         
-        int attackingEyes = move.attackingCountry.dice;
-	    int defendingEyes = move.defendingCountry.dice;
+        int attackingEyes = move.getAttackingCountry().getDice();
+	    int defendingEyes = move.getDefendingCountry().getDice();
         double expectedValue = 0;
 
         // Calculate the expected value on the chances of winning losing and playing a draw with the values of the states as their result

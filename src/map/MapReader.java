@@ -22,6 +22,11 @@ public class MapReader
 			this.neighbours = new Vector<Integer>();
 		}
 
+		public void setDice(int dice)
+		{
+			country.setDice(dice);
+		}
+
 		public void addNeighbour(int countryId)
 		{
 			neighbours.add(countryId);
@@ -69,6 +74,9 @@ public class MapReader
 			Player player = players.get(playerId);
 
 			CountryContainer country = new CountryContainer(player);
+
+			// Index 2: number of dice
+			country.setDice(scanner.nextInt());
 
 			countryMap.put(countryId, country);
 
