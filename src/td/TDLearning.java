@@ -85,7 +85,11 @@ class TDLearning
         double rewardValue;
         double targetValue;
         
-        //trainNN(state, targetValue);
+        // First, call calcValueState so the network has the state inside its nodes
+        // calcValueState()
+
+        // then, backwardPropagate the correct output
+        // network.backwardPropagate({targetValue}, learningSpeed);
     }
 
 }
