@@ -2,36 +2,34 @@ package descriptors;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import game.Country;
 import game.GameState;
 import game.Player;
-import game.Util;
 
-public class CountryBalance extends Descriptor
+public class EnemyDiceBalance extends Descriptor
 {
 	/**
-	 * Describe how equally the countries is divided among the players.
+	 * Describe how equally the dices are distributed among the enemy players.
 	 */
 	public double describe(GameState state, Player player)
 	{
 		// Count the number of countries for each player.
-		Map<Player, Integer> numberOfCountries = new HashMap<Player, Integer>();
-		
+		Map<Player, Integer> numberOfDices = new HashMap<Player, Integer>();
 		for (Country country : state.getCountries())
-			numberOfCountries.put(country.player,
-				numberOfCountries.containsKey(country.player)
-					? numberOfCountries.get(country.player) + 1
-					: 1);
+			if(country.player != player)
+			{
+				numberOfDices.put(country.player,
+						numberOfDices.containsKey(country.player)
+						? numberOfDices.get(country.player) + country.dice
+								: country.dice);
+			}
 		
-
-		// for (Map.Entry<Player, Integer> pair : numberOfCountries.entrySet())
-		// 	System.out.println("Player " + pair.getKey() + " has " + pair.getValue() + " countries");
-
-		return normalize((double) variance(numberOfCountries.values()), 0, 1);
+		if (!numberOfDices.isEmpty())
+			return normalize((double) variance(numberOfDices.values()), 0, 1);
+		else
+			return normalize(1, 0, 1);
 	}
 
 	private double variance(Collection<Integer> numbers)
@@ -45,7 +43,7 @@ public class CountryBalance extends Descriptor
 		double difference = 0;
 		for (Integer number : numbers)
 			difference += Math.abs(number - mean);
-
+		
 		double maxvariance = mean * (numbers.size()-2) + sum;
 		
 		if (maxvariance > 0)

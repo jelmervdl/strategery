@@ -28,12 +28,12 @@ public class EnemyCountryBalance extends Descriptor
 				numCountries++;
 			}
 		if (!numberOfCountries.isEmpty())
-			return normalize((double) variance(numberOfCountries.values(), numCountries), 0, 1);
+			return normalize((double) variance(numberOfCountries.values()), 0, 1);
 		else
 			return normalize(1, 0, 1);
 	}
 
-	private double variance(Collection<Integer> numbers, int numCountries)
+	private double variance(Collection<Integer> numbers)
 	{
 		int sum = 0;
 		for (Integer number : numbers)
@@ -44,7 +44,7 @@ public class EnemyCountryBalance extends Descriptor
 		double difference = 0;
 		for (Integer number : numbers)
 			difference += Math.abs(number - mean);
-		int maxvariance = (numCountries/numbers.size() * (numbers.size()-1)) + (numCountries - numCountries/numbers.size());
+		double maxvariance = mean * (numbers.size()-2) + sum;
 		
 		if (maxvariance > 0)
 			return (double) difference / maxvariance;
