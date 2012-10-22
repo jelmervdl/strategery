@@ -22,6 +22,7 @@ public class TestDescriptors
 		descriptors.add(new descriptors.Connectedness());
 		descriptors.add(new descriptors.ConnectedBalance());
 		descriptors.add(new descriptors.CountryBalance());
+		descriptors.add(new descriptors.EnemyCountryBalance());
 
 		MapReader reader = new MapReader(players);
 
