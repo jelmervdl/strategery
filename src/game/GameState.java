@@ -206,7 +206,7 @@ public class GameState
 		return out;
 	}
 
-	private int countPlayers(List<Country> countries)
+	public int countPlayers(List<Country> countries)
 	{
 		Set<Player> players = new HashSet<Player>();
 
