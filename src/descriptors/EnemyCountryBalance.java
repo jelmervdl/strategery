@@ -7,6 +7,7 @@ import java.util.Map;
 import game.Country;
 import game.GameState;
 import game.Player;
+import game.RandomPlayer;
 
 public class EnemyCountryBalance extends Descriptor
 {
@@ -27,10 +28,12 @@ public class EnemyCountryBalance extends Descriptor
 								: 1);
 				numCountries++;
 			}
-		if (!numberOfCountries.isEmpty())
-			return normalize((double) variance(numberOfCountries.values()), 0, 1);
-		else
-			return normalize(1, 0, 1);
+		
+		int playerCount = 0;
+		while ( numberOfCountries.size() < state.getNumberOfPlayers())
+			numberOfCountries.put(new RandomPlayer("empty"+playerCount++), 0);
+
+		return normalize((double) variance(numberOfCountries.values()), 0, 1);
 	}
 
 	private double variance(Collection<Integer> numbers)

@@ -2,14 +2,12 @@ package descriptors;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import game.Country;
 import game.GameState;
 import game.Player;
-import game.Util;
+import game.RandomPlayer;
 
 public class CountryBalance extends Descriptor
 {
@@ -27,9 +25,9 @@ public class CountryBalance extends Descriptor
 					? numberOfCountries.get(country.player) + 1
 					: 1);
 		
-
-		// for (Map.Entry<Player, Integer> pair : numberOfCountries.entrySet())
-		// 	System.out.println("Player " + pair.getKey() + " has " + pair.getValue() + " countries");
+		int playerCount = 0;
+		while ( numberOfCountries.size() < state.getNumberOfPlayers())
+			numberOfCountries.put(new RandomPlayer("empty"+playerCount++), 0);
 
 		return normalize((double) variance(numberOfCountries.values()), 0, 1);
 	}

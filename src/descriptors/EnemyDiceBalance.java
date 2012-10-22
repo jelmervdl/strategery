@@ -7,6 +7,7 @@ import java.util.Map;
 import game.Country;
 import game.GameState;
 import game.Player;
+import game.RandomPlayer;
 
 public class EnemyDiceBalance extends Descriptor
 {
@@ -16,20 +17,21 @@ public class EnemyDiceBalance extends Descriptor
 	public double describe(GameState state, Player player)
 	{
 		// Count the number of countries for each player.
-		Map<Player, Integer> numberOfDices = new HashMap<Player, Integer>();
+		Map<Player, Integer> numberOfDice = new HashMap<Player, Integer>();
 		for (Country country : state.getCountries())
 			if(country.player != player)
 			{
-				numberOfDices.put(country.player,
-						numberOfDices.containsKey(country.player)
-						? numberOfDices.get(country.player) + country.dice
+				numberOfDice.put(country.player,
+						numberOfDice.containsKey(country.player)
+						? numberOfDice.get(country.player) + country.dice
 								: country.dice);
 			}
 		
-		if (!numberOfDices.isEmpty())
-			return normalize((double) variance(numberOfDices.values()), 0, 1);
-		else
-			return normalize(1, 0, 1);
+		int playerCount = 0;
+		while ( numberOfDice.size() < state.getNumberOfPlayers())
+			numberOfDice.put(new RandomPlayer("empty"+playerCount++), 0);
+
+		return normalize((double) variance(numberOfDice.values()), 0, 1);
 	}
 
 	private double variance(Collection<Integer> numbers)
