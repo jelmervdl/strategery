@@ -29,11 +29,11 @@ class TDLearning
         double expectedValue = 0;
 
         //win
-        expectedValue +=  Chance.chanceTable(attackingEyes, defendingEyes)* CalcValue(state.expectedState(move,1));
+        expectedValue += Chance.chanceTable(attackingEyes, defendingEyes) * calcValue(state.expectedState(move, 1));
         //draw
-        expectedValue +=  Chance.chanceTable(attackingEyes, defendingEyes)* CalcValue(state.expectedState(move,2));
+        expectedValue += Chance.chanceTable(attackingEyes, defendingEyes) * calcValue(state.expectedState(move, 2));
         //lose        
-        expectedValue +=  Chance.chanceTable(attackingEyes, defendingEyes)* CalcValue(state.expectedState(move,3));
+        expectedValue += Chance.chanceTable(attackingEyes, defendingEyes) * calcValue(state.expectedState(move, 3));
         
         return expectedValue;    
     }
@@ -45,7 +45,7 @@ class TDLearning
         
         //trainNN(state, targetValue);
     }
-    public double CalcValue(GameState state)
+    public double calcValue(GameState state)
     {
         return 0;
     }
