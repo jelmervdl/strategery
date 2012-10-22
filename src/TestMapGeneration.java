@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
@@ -55,6 +57,15 @@ public class TestMapGeneration extends JFrame
 		});
 
 		mapPanel = new MapPanel();
+		mapPanel.addEventListener(new MapPanel.EventListener() {
+			public void countryClicked(Country country)
+			{
+				HashSet<Country> map = new HashSet<Country>();
+				if (country != null)
+					map.add(country);
+				mapPanel.setHighlights(map);
+			}
+		});
 		getContentPane().add(mapPanel);
 
 		JMenuBar bar = new JMenuBar();

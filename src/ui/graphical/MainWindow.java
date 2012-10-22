@@ -5,9 +5,8 @@ import java.awt.Container;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -82,15 +81,15 @@ public class MainWindow extends JFrame implements GameEventListener
 
 	public void onChooseMove(List<Move> moves)
 	{
-		Map<Country,Color> highlights = new HashMap<Country, Color>();
+		HashSet<Country> highlights = new HashSet<Country>();
 		
 		for (Move move : moves)
 		{
 			if (move.isEndOfTurn())
 				continue;
 			
-			highlights.put(move.getAttackingCountry(), Color.ORANGE);
-			highlights.put(move.getDefendingCountry(), Color.PINK);
+			highlights.add(move.getAttackingCountry());
+			highlights.add(move.getDefendingCountry());
 		}
 
 		mapPanel.setHighlights(highlights);
@@ -99,12 +98,12 @@ public class MainWindow extends JFrame implements GameEventListener
 
 	public void onMove(Move move)
 	{
-		Map<Country,Color> highlights = new HashMap<Country, Color>();
+		HashSet<Country> highlights = new HashSet<Country>();
 
 		if (move != null && !move.isEndOfTurn())
 		{
-			highlights.put(move.getAttackingCountry(), Color.RED);
-			highlights.put(move.getDefendingCountry(), Color.GREEN);
+			highlights.add(move.getAttackingCountry());
+			highlights.add(move.getDefendingCountry());
 		}
 
 		mapPanel.setHighlights(highlights);

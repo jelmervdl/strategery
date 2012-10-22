@@ -5,16 +5,24 @@ import game.GameState;
 import game.Player;
 import map.Hexagon;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.geom.GeneralPath;
 
-import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -24,7 +32,14 @@ public class MapPanel extends JPanel
 
 	private Map<Coordinate,Hexagon> hexagonIndex;
 
-	private Map<Country,Color> highlights;
+	private Set<Country> highlights;
+
+	private HashSet<EventListener> eventListeners;
+
+	public interface EventListener
+	{
+		public void countryClicked(Country country);
+	}
 
 	private class Coordinate
 	{
@@ -124,6 +139,38 @@ public class MapPanel extends JPanel
 		}
 	}
 
+	public MapPanel()
+	{
+		super();
+
+		highlights = new HashSet<Country>();
+
+		eventListeners = new HashSet<EventListener>();
+
+		addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e)
+			{
+				Country country = getCountryAt(e.getPoint());
+				publishCountryClicked(country);
+			}
+		});
+	}
+	public void addEventListener(EventListener listener)
+	{
+		eventListeners.add(listener);
+	}
+
+	public void removeEventListener(EventListener listener)
+	{
+		eventListeners.remove(listener);
+	}
+
+	private void publishCountryClicked(Country country)
+	{
+		for (EventListener listener : eventListeners)
+			listener.countryClicked(country);
+	}
+
 	public void setState(GameState state)
 	{
 		this.state = state;
@@ -131,9 +178,14 @@ public class MapPanel extends JPanel
 		repaint();
 	}
 
-	public void setHighlights(Map<Country,Color> highlights)
+	public void setHighlights(Set<Country> highlights)
 	{
+		// I hate nullpointers, therefore I ignore them.
+		if (highlights == null)
+			highlights = new HashSet<Country>();
+
 		this.highlights = highlights;
+
 		repaint();
 	}
 
@@ -148,11 +200,34 @@ public class MapPanel extends JPanel
 		hexagonIndex = index;
 	}
 
-	private boolean isSameCountry(Coordinate p, Country country)
+	private Country getCountryAt(Coordinate p)
 	{
 		return hexagonIndex.containsKey(p)
-			? hexagonIndex.get(p).country.equals(country)
-			: false;
+			? hexagonIndex.get(p).country
+			: null;
+	}
+
+	private Country getCountryAt(Point p)
+	{
+		if (state == null)
+			return null;
+
+		double c = 8,
+			   a = .5 * c,
+			   b = Math.sin(45) * c,
+			   py = (double) p.y / (3 * a),
+			   px = (p.x + (py % 2) * b) / (2 * b);
+
+		Coordinate coordinate = new Coordinate((int) (px - .5), (int) (py - .5));
+
+		return getCountryAt(coordinate);
+	}
+
+	private boolean isSameCountry(Coordinate p, Country country)
+	{
+		Country found = getCountryAt(p);
+
+		return found != null && found.equals(country);
 	}
 
 	private void drawHexagon(Graphics2D g, Country country, Hexagon h, Color color)
@@ -246,21 +321,32 @@ public class MapPanel extends JPanel
 	{
 		super.paintComponent(g);
 
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		Stroke defaultStroke = g2d.getStroke();
+		Stroke fatStroke = new BasicStroke(2);
+
 		if (state == null)
 			return;
 
 		for (Country country : state.getCountries())
 		{
-			Color fillColor = highlights != null && highlights.containsKey(country)
-				? highlights.get(country)
-				: country.getPlayer().getColor();
+			Color fillColor = country.getPlayer().getColor();
+
+			// If there are highlighted countries, and I'm not one of them, dimm my background.
+			if (highlights.size() != 0 && !highlights.contains(country))
+				fillColor = new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), 96);
+
+			// Use fat stroke for highlighted countries.
+			g2d.setStroke(highlights.contains(country) ? fatStroke : defaultStroke);
 			
 			Hexagon center = findCentermostHexagon(country.getHexagons());
 
 			for (Hexagon hexagon : country.getHexagons())
-				drawHexagon((Graphics2D) g, country, hexagon, hexagon.equals(center) ? fillColor.darker() : fillColor);
+				drawHexagon(g2d, country, hexagon, hexagon.equals(center) ? fillColor.darker() : fillColor);
 
-			drawDiceOnHexagon((Graphics2D) g, country.dice, center);
+			drawDiceOnHexagon(g2d, country.dice, center);
 		}
 	}
 }
