@@ -22,7 +22,7 @@ public class Chance
 		{4,     3,     2,     2,     2,     1,     1}
 	};
 
-	final static int[][] diceRemaining = {
+	final static int[][] diceRemainingDefender = {
 		{1,     1,     1,     2,     2,     3,     4},
 		{1,     1,     1,     1,     2,     2,     3},
 		{1,     1,     1,     1,     1,     2,     2},
@@ -43,8 +43,8 @@ public class Chance
 		return diceRemainingAttacker[dice1][dice2];
 	}
 
-	public static int diceRemaining(int dice1, int dice2)
+	public static int diceRemainingDefender(int dice1, int dice2)
 	{
-		return diceRemaining[dice1][dice2];
+		return diceRemainingDefender[dice1][dice2];
 	}        
 }

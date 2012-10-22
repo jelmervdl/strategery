@@ -3,6 +3,7 @@ package game;
 import java.util.Random;
 import java.util.List;
 import java.util.Vector;
+import td.Chance;
 
 public class GameState
 {
@@ -89,6 +90,45 @@ public class GameState
 
 		return state;
 	}
+
+    public GameState expectedState(Move move, int i)
+    {
+        // Clone the current gamestate.
+		GameState state = new GameState(this);
+        int attackingEyes = move.attackingCountry.dice;
+	    int defendingEyes = move.defendingCountry.dice;
+    
+        // Attacker wins
+        if (i ==1)
+        {
+            // Take the country!
+			state.getCountry(move.defendingCountry).player = move.attackingCountry.player;
+
+			// Reset attacking country dice to 1 (as the army has moved to the defending country)
+			state.getCountry(move.attackingCountry).dice = 1;
+
+			// Assign remaining dice to country
+			state.getCountry(move.defendingCountry).dice = remainingDice(Chance.diceRemainingAttacker(attackingEyes, defendingEyes));
+        }
+        
+        // It's a draw
+		else if (i == 2)
+		{
+			state.getCountry(move.attackingCountry).dice = 1;
+
+			state.getCountry(move.defendingCountry).dice = 1;
+		}   
+
+        // Attacker loses
+		else if (i == 3)
+		{
+			state.getCountry(move.attackingCountry).dice = 1;
+
+			state.getCountry(move.defendingCountry).dice = remainingDice(Chance.diceRemainingDefender(attackingEyes, defendingEyes));
+		}   
+      
+        return state;
+    }
 
 	public List<Move> generatePossibleMoves(Player player)
 	{

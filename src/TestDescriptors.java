@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.File;
 import java.io.IOException;
 import descriptors.Descriptor;
 import game.*;
@@ -29,7 +30,7 @@ public class TestDescriptors
 			: "../maps/1.txt";
 
 		try {
-			List<Country> countries = reader.read(path);
+			List<Country> countries = reader.read(new File(path));
 		
 			GameState state = new GameState(countries);
 
