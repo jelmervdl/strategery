@@ -2,7 +2,7 @@ package game;
 
 import java.util.List;
 
-public class BoringPlayer extends Player
+public class BoringPlayer extends PlayerAdapter
 {
 	public BoringPlayer(String name)
 	{

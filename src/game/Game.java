@@ -13,6 +13,8 @@ public class Game implements Runnable
 
 	List<GameEventListener> listeners;
 
+	boolean alive;
+
 	public Game(List<Player> players, GameState state)
 	{
 		this.state = state;
@@ -39,15 +41,22 @@ public class Game implements Runnable
 
 	public void run()
 	{
+		alive = true;
+
 		for (Player player : players)
 			distributeNewDice(player, 10);
 	
 		publishStartOfGame(state);
 
-		while (livingPlayers().size() > 1)
+		while (alive && livingPlayers().size() > 1)
 			step();
 
 		publishEndOfGame(state);
+	}
+
+	public void stop()
+	{
+		alive = false;
 	}
 
 	protected void step()
@@ -76,7 +85,7 @@ public class Game implements Runnable
 
 				if (move != null)
 					setState(state.apply(move, false));
-			} while(move != null);
+			} while(alive && move != null);
 
 			publishEndOfTurn(player);
 

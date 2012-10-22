@@ -2,7 +2,7 @@ package game;
 
 import java.util.List;
 
-public class SimplePlayer extends Player
+public class SimplePlayer extends PlayerAdapter
 {
 	public SimplePlayer(String name)
 	{

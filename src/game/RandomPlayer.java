@@ -3,7 +3,7 @@ package game;
 import java.util.Random;
 import java.util.List;
 
-public class RandomPlayer extends Player
+public class RandomPlayer extends PlayerAdapter
 {
 	public RandomPlayer(String name)
 	{

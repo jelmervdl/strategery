@@ -21,7 +21,7 @@ import game.GameEventListener;
 
 import ui.graphical.MapPanel;
 
-public class MainWindow extends JFrame implements GameEventListener
+public class MainWindow extends JFrame implements GameEventListener, Player
 {
 	private Game game;
 
@@ -29,7 +29,7 @@ public class MainWindow extends JFrame implements GameEventListener
 
 	private MapPanel mapPanel;
 
-	public MainWindow(Game game)
+	public MainWindow()
 	{
 		super();
 
@@ -44,12 +44,22 @@ public class MainWindow extends JFrame implements GameEventListener
 
 		mapPanel = new MapPanel();
 		getContentPane().add(mapPanel);
+	}
+
+	public void setGame(Game game)
+	{
+		if (this.game != null)
+		{
+			this.game.removeEventListener(this);
+			this.game.stop();
+		}
 
 		this.game = game;
-		setState(game.getState());
-		game.addEventListener(this);
+		setState(this.game.getState());
+		
+		this.game.addEventListener(this);
 
-		gameThread = new Thread(game);
+		this.gameThread = new Thread(this.game);
 	}
 
 	public void setState(GameState state)
@@ -134,5 +144,20 @@ public class MainWindow extends JFrame implements GameEventListener
 	public void onGameEnded(GameState state)
 	{
 
+	}
+
+	/* Implementing the Player interface */
+
+	public Color getColor()
+	{
+		return Color.RED;
+	}
+
+	public Move decide(List<Move> possibleMoves, GameState state)
+	{
+		// Just for now a dummy implementation.
+		return possibleMoves.size() > 0
+			? possibleMoves.get(0)
+			: null;
 	}
 }

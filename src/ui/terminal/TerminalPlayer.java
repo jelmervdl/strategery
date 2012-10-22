@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import game.*;
 
-public class TerminalPlayer extends Player
+public class TerminalPlayer extends PlayerAdapter
 {
 	BufferedReader stdin;
 

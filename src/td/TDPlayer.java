@@ -4,9 +4,9 @@ import java.util.*;
 
 import game.GameState;
 import game.Move;
-import game.Player;
+import game.PlayerAdapter;
 
-public class TDPlayer extends Player
+public class TDPlayer extends PlayerAdapter
 {
     private TDLearning td;
     

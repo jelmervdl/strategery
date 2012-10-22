@@ -20,11 +20,15 @@ public class TestGUI
 {
 	public static void main(String[] args)
 	{
+		MainWindow mainWindow = new MainWindow();
+
 		// Generate some players
 		List<Player> players = new Vector<Player>();
 		for (int i = 0; i < 4; ++i)
 			players.add(new RandomPlayer("Player " + i));
-		players.add(new SimplePlayer("SimplePlayer"));
+
+		// Yes, MainWindow is a player. Deal with it.
+		players.add(mainWindow);
 
 		// Generate a map
 		MapGenerator generator = new MapGenerator(players);
@@ -32,7 +36,7 @@ public class TestGUI
 
 		Game game = new Game(players, state);
 		
-		MainWindow mainWindow = new MainWindow(game);
+		mainWindow.setGame(game);
 		mainWindow.setVisible(true);
 
 		mainWindow.startGame();
