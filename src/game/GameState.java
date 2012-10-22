@@ -210,6 +210,6 @@ public class GameState
 
 	private int remainingDice(int eyes)
 	{
-		return (int) Math.ceil(eyes / 6.0);
+		return (int) Math.max(1,Math.round(eyes / 6.0));
 	}
 }
