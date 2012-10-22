@@ -16,12 +16,27 @@ public class TDPlayer extends Player
         td = new TDLearning();
 	}
 
+
 	public Move decide(List<Move> possibleMoves, GameState state)
 	{
-        List<GameState> states = new Vector<GameState>();		
-        states = td.getMoves(this, state);
-        System.out.println(states);
+        HashMap<Move, Double> possibleStates = new HashMap<Move, Double>();		
+        possibleStates = td.getMoves(this, state);
+        Move move = selectAction(possibleStates);        
+        td.adjustNetwork(move, possibleStates.get(move), state);       
+        return move;
+    }
+    public Move selectAction(HashMap<Move, Double> possibleStates)
+    {
+        Move move = null;
+        double max = 0;
+        // apply policy
+        for (Map.Entry<Move, Double> pair : possibleStates.entrySet())
+		 	if(pair.getValue()>max)
+            {
+                max = pair.getValue();
+                move = pair.getKey();
+            }        
+        return move;
         
-        return possibleMoves.get(0);
     }
 }
