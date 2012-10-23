@@ -25,6 +25,7 @@ public class TestDescriptors
 		descriptors.add(new descriptors.EnemyDiceBalance());
 		descriptors.add(new descriptors.RemainingPlayers());
 		descriptors.add(new descriptors.ConnectednessAverage());
+		descriptors.add(new descriptors.DiceDominance());
 
 		MapReader reader = new MapReader(players);
 

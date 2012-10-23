@@ -24,6 +24,7 @@ public class GameStateEncoder
         descriptors.add(new descriptors.EnemyDiceBalance());
         descriptors.add(new descriptors.RemainingPlayers());
         descriptors.add(new descriptors.ConnectednessAverage());
+        descriptors.add(new descriptors.DiceDominance());
 
         return new GameStateEncoder(descriptors);
     }
