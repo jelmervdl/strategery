@@ -47,8 +47,8 @@ public class GameStateEncoder
         {
             stateValue[i] = descriptors.get(i).describe(state, player);
 
-            if (Double.isNaN(stateValue[i]))
-                throw new RuntimeException("Descriptor " + descriptors.get(i) + " encoded tot NaN.");
+            if (stateValue[i] < -1.0 || stateValue[i] > 1.0)
+                throw new RuntimeException("Descriptor " + descriptors.get(i) + " returns a value outside of the range <-1,1>.");
         }
         
         return stateValue;

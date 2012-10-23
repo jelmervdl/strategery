@@ -69,7 +69,7 @@ class TDLearning
             expectedValue += Chance.chanceTable(defendingEyes, attackingEyes) * calcValueState(player,state.expectedState(move, 3));
         }
         
-        return expectedValue;    
+        return expectedValue;
     }
 
     public double calcValueState(Player player, GameState state)

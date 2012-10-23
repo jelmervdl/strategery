@@ -56,18 +56,15 @@ public class Layer
 
 	public void setValue(int n, double value)
 	{
-		if (value < -1.0 || value > 1.0)
-			throw new RuntimeException("Cannot set value " + value + " to layer " + getName() + ":" + n);
+		// if (value < -1.0 || value > 1.0)
+		// 	throw new RuntimeException("Cannot set value " + value + " to layer " + getName() + ":" + n);
 
 		in[n] = value;
 
 		out[n] = function.output(value);
 
-		if (Double.isNaN(out[n]))
-			throw new RuntimeException("Setting value " + n + " in layer " + getName() + " resulted in a NaN output");
-
-		if (Double.isInfinite(out[n]))
-			throw new RuntimeException("Setting value (" + value + ") " + n + " in layer " + getName() + " resulted in a Infinite output");
+		if (out[n] < -1.0 || out[n] > 1.0)
+			throw new RuntimeException("Cannot set value " + value + " to layer " + getName() + ":" + n + " because the output falls out of range <-1,1>");
 	}
 
 	public double getDerivative(int n)

@@ -17,6 +17,6 @@ public abstract class Descriptor
 	 */
 	protected double normalize(double value, double min, double max)
 	{
-		return ((value / (max - min)) * 2) - 1;
+		return Math.max(Math.min(((value / (max - min)) * 2) - 1, 1), -1);
 	}
 }
