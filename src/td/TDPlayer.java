@@ -44,10 +44,21 @@ public class TDPlayer extends PlayerAdapter
 
     public Move selectAction(HashMap<Move, Double> possibleStates)
     {
+        Random random = new Random();
+        
+        // Exploration strategy is to choose a random move. (yes, this is crude)
+        if (random.nextDouble() < 0.1)
+        {
+            int index = random.nextInt(possibleStates.size());
+            for (Move move : possibleStates.keySet())
+                if (index-- == 0)
+                    return move;
+        }
+        
+        // apply policy
         Move move = null;
         double max = Double.NEGATIVE_INFINITY;
 
-        // apply policy
         for (Map.Entry<Move, Double> pair : possibleStates.entrySet())
         {
             if (pair.getValue() > max)

@@ -86,9 +86,6 @@ class TDLearning
         // Return the output of the network
         double output = network.getOutput().getValue(0);
 
-        if (Double.isNaN(output))
-            throw new RuntimeException("getValueState returned not a number");
-
         return output;
     }
 
@@ -104,7 +101,7 @@ class TDLearning
         // then, backwardPropagate the correct output
         network.backPropagate(targetValue, learningSpeed);
 
-        System.out.println("Error: " + (rewardValue - targetValue[0]));
+        // System.out.println("Error: " + (rewardValue - targetValue[0]));
     }
 
 }

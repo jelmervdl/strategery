@@ -20,7 +20,7 @@ public class NeuralNetwork
 		layers = new Vector<Layer>();
 
 		for (int i = 0; i < layerSizes.length; ++i)
-			layers.add(new Layer(layerSizes[i], i == 0 ? new Linear() : new Exp(), "Layer " + i));
+			layers.add(new Layer(layerSizes[i], i == 0 ? new Linear() : new TanH(), "Layer " + i));
 
 		weights = new Vector<double[][]>();
 

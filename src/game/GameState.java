@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.Vector;
 import td.Chance;
 
@@ -187,6 +188,16 @@ public class GameState
 				playerCountries.add(country);
 
 		return playerCountries;
+	}
+
+	public Set<Player> getPlayers()
+	{
+		Set<Player> players = new HashSet<Player>();
+
+		for (Country country : countries)
+			players.add(country.getPlayer());
+
+		return players;
 	}
 
 	public int getNumberOfPlayers()
