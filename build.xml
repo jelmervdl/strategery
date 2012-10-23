@@ -23,7 +23,8 @@
 
     <target name="run" depends="compile">
         <!-- <java jar="build/jar/Game.jar" fork="true"/> -->
-        <java classname="TestGame" classpath="build/classes">
+        <java classname="TestGame" classpath="build/classes" fork="false">
+            <jvmarg value="-ea"/>
             <arg value="maps/1.txt"/>
         </java>
     </target>

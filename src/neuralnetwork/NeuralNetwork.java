@@ -20,14 +20,14 @@ public class NeuralNetwork
 		layers = new Vector<Layer>();
 
 		for (int i = 0; i < layerSizes.length; ++i)
-			layers.add(new Layer(layerSizes[i], i == 0 ? new Linear() : new Exp()));
+			layers.add(new Layer(layerSizes[i], i == 0 ? new Linear() : new Exp(), "Layer " + i));
 
 		weights = new Vector<double[][]>();
 
 		for (int i = 0; i < layers.size() - 1; ++i)
 			weights.add(new double[layers.get(i).size() + 1][layers.get(i + 1).size()]);
 
-		randomizeWeights(0.5);
+		randomizeWeights(0.05);
 	}
 
 	public Layer getInput()
@@ -80,6 +80,10 @@ public class NeuralNetwork
 	{
 		double[] oError = calculateError(getOutput(), target, learningSpeed);
 
+		for (double n : oError)
+			if (Double.isNaN(n))
+				throw new RuntimeException("calculateError resulted in NaN");
+
 		for (int l = layers.size() - 2; l >= 0; --l)
 		{
 			double[] iError = backPropagateLayer(layers.get(l), layers.get(l + 1), weights.get(l), oError, learningSpeed);
@@ -98,8 +102,13 @@ public class NeuralNetwork
 			double tmp = 0;
 
 			// add weighted inputs
-			for (int i = 0; i < former.size(); ++i)  
+			for (int i = 0; i < former.size(); ++i)
+			{
+				if (Double.isNaN(w[i][o]))
+					throw new RuntimeException("weight is NaN");
+
 				tmp += w[i][o] * former.getValue(i);
+			}
 
 			// add bias and calculate output
 			tmp += w[former.size()][o];
@@ -113,7 +122,24 @@ public class NeuralNetwork
 		double[] oError = new double[output.size()];
 
 		for (int o = 0; o < output.size(); ++o)
+		{
+			if (Double.isNaN(target[o]))
+				throw new RuntimeException("target[o] is NaN");
+
+			if (Double.isNaN(output.getValue(o)))
+				throw new RuntimeException("output.getValue(o) is NaN");
+
+			if (Double.isNaN(output.getDerivative(o)))
+				throw new RuntimeException("output.getDerivative(o) is NaN");
+
+			if (Double.isNaN(learningSpeed))
+				throw new RuntimeException("learningSpeed is NaN");
+
+			if (Double.isNaN(target[o] - output.getValue(o)))
+				throw new RuntimeException("target[o] - output.getValue(o) is NaN: " + target[o] + " minus " + output.getValue(o));
+
 			oError[o] = learningSpeed * (target[o] - output.getValue(o)) * output.getDerivative(o);
+		}
 
 		return oError;
 	}
