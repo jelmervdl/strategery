@@ -27,7 +27,7 @@ public class NeuralNetwork
 		for (int i = 0; i < layers.size() - 1; ++i)
 			weights.add(new double[layers.get(i).size() + 1][layers.get(i + 1).size()]);
 
-		randomizeWeights(0.1);
+		randomizeWeights(0.3);
 	}
 
 	public Layer getInput()

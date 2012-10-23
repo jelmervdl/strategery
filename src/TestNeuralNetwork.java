@@ -51,7 +51,7 @@ public class TestNeuralNetwork
 
 	static private void train(NeuralNetwork network, List<Sample> samples)
 	{
-		for (int epoch = 0; epoch < 1000; ++epoch)
+		for (int epoch = 0; epoch < 10000; ++epoch)
 		{
 			Collections.shuffle(samples);
 
@@ -61,7 +61,7 @@ public class TestNeuralNetwork
 
 				network.forwardPropagate();
 
-				network.backPropagate(sample.output, 0.1);
+				network.backPropagate(sample.output, 0.05);
 			}
 		}
 	}
