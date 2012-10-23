@@ -80,16 +80,17 @@ class TDLearning
         return network.getOutput().getValue(0);
     }
 
-    public void adjustNetwork(Move move, Double expectedValue, GameState state)
+    public void adjustNetwork(Player player, Move move, Double expectedValue, GameState state)
     {
-        double rewardValue;
-        double targetValue;
+        // double[] rewardValue;
+        double[] targetValue = {expectedValue};
+        double learningSpeed = 0.05;
         
         // First, call calcValueState so the network has the state inside its nodes
-        // calcValueState()
+        calcValueState(player, state);
 
         // then, backwardPropagate the correct output
-        // network.backwardPropagate({targetValue}, learningSpeed);
+        network.backPropagate(targetValue, learningSpeed);
     }
 
 }

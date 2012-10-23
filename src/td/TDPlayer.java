@@ -24,7 +24,7 @@ public class TDPlayer extends PlayerAdapter
         // From the list of values mapped to the moves select the best move according to policy
         Move move = selectAction(possibleStates);
         // Adjust the NN for the move it just did.        
-        td.adjustNetwork(move, possibleStates.get(move), state);       
+        td.adjustNetwork(this, move, possibleStates.get(move), state);       
         
         // return the move that is to be executed
         return move;
