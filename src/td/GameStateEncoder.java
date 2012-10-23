@@ -42,7 +42,12 @@ public class GameStateEncoder
         double[] stateValue = new double[descriptors.size()];
 
         for (int i = 0; i < descriptors.size(); ++i)
+        {
             stateValue[i] = descriptors.get(i).describe(state, player);
+
+            if (Double.isNaN(stateValue[i]))
+                throw new RuntimeException("Descriptor " + descriptors.get(i) + " encoded tot NaN.");
+        }
         
         return stateValue;
     }

@@ -84,7 +84,12 @@ class TDLearning
         network.forwardPropagate();
 
         // Return the output of the network
-        return network.getOutput().getValue(0);
+        double output = network.getOutput().getValue(0);
+
+        if (Double.isNaN(output))
+            throw new RuntimeException("getValueState returned not a number");
+
+        return output;
     }
 
     public void adjustNetwork(Player player, Move move, double expectedValue, GameState state)
