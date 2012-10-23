@@ -65,7 +65,8 @@ public class TerminalUI implements GameEventListener
 
 	public void onGameEnded(GameState state)
 	{
-		System.out.println("The game has ended");
+		Player winningPlayer = state.getCountries().get(0).getPlayer();
+		System.out.println("The game has ended: " + winningPlayer + " is the winner");
 		currentState = state;
 	}
 
