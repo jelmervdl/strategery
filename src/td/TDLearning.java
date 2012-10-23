@@ -47,20 +47,27 @@ class TDLearning
 
     public double getExpectedValueState(Player player, GameState state, Move move)
     {
-        
-        int attackingEyes = move.getAttackingCountry().getDice();
-	    int defendingEyes = move.getDefendingCountry().getDice();
         double expectedValue = 0;
 
+        // If this is the end move, the state does not change.
+        if (move.isEndOfTurn())
+        {
+            expectedValue = calcValueState(player, state);
+        }
         // Calculate the expected value on the chances of winning losing and playing a draw with the values of the states as their result
+        else
+        {
+            int attackingEyes = move.getAttackingCountry().getDice();
+    	    int defendingEyes = move.getDefendingCountry().getDice();
 
-        //win
-        expectedValue += Chance.chanceTable(attackingEyes, defendingEyes) * calcValueState(player,state.expectedState(move, 1));
-        //draw
-        double drawChance = 1-Chance.chanceTable(attackingEyes, defendingEyes)-Chance.chanceTable(defendingEyes, attackingEyes);
-        expectedValue += drawChance * calcValueState(player,state.expectedState(move, 2));
-        //lose        
-        expectedValue += Chance.chanceTable(defendingEyes, attackingEyes) * calcValueState(player,state.expectedState(move, 3));
+            //win
+            expectedValue += Chance.chanceTable(attackingEyes, defendingEyes) * calcValueState(player,state.expectedState(move, 1));
+            //draw
+            double drawChance = 1-Chance.chanceTable(attackingEyes, defendingEyes)-Chance.chanceTable(defendingEyes, attackingEyes);
+            expectedValue += drawChance * calcValueState(player,state.expectedState(move, 2));
+            //lose        
+            expectedValue += Chance.chanceTable(defendingEyes, attackingEyes) * calcValueState(player,state.expectedState(move, 3));
+        }
         
         return expectedValue;    
     }
@@ -80,17 +87,19 @@ class TDLearning
         return network.getOutput().getValue(0);
     }
 
-    public void adjustNetwork(Player player, Move move, Double expectedValue, GameState state)
+    public void adjustNetwork(Player player, Move move, double expectedValue, GameState state)
     {
         // double[] rewardValue;
         double[] targetValue = {expectedValue};
         double learningSpeed = 0.05;
         
         // First, call calcValueState so the network has the state inside its nodes
-        calcValueState(player, state);
+        double rewardValue = calcValueState(player, state);
 
         // then, backwardPropagate the correct output
         network.backPropagate(targetValue, learningSpeed);
+
+        System.out.println("Error: " + (rewardValue - targetValue[0]));
     }
 
 }

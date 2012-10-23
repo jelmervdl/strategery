@@ -41,7 +41,7 @@ public class GameStateEncoder
     {
         double[] stateValue = new double[descriptors.size()];
 
-        for (int i = 0; 0 < descriptors.size(); ++i)
+        for (int i = 0; i < descriptors.size(); ++i)
             stateValue[i] = descriptors.get(i).describe(state, player);
         
         return stateValue;

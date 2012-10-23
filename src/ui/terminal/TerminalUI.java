@@ -19,8 +19,8 @@ public class TerminalUI implements GameEventListener
 	public void onStep()
 	{
 		// This will block on commandline input.
-		if (!confirm())
-			System.exit(0);
+		// if (!confirm())
+			// System.exit(0);
 
 		// Count the number of turns of the game.
 		++turns;

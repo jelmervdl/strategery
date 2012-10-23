@@ -18,13 +18,16 @@ public class TDPlayer extends PlayerAdapter
 
 	public Move decide(List<Move> possibleMoves, GameState state)
 	{
-        HashMap<Move, Double> possibleStates = new HashMap<Move, Double>();		
         // Calculate the value of the states resulting from the possible moves.        
-        possibleStates = td.mapValueToMove(this, state, possibleMoves);
+        HashMap<Move, Double> possibleStates = td.mapValueToMove(this, state, possibleMoves);
+        assert possibleStates != null : "possbleStates is null";
+        
         // From the list of values mapped to the moves select the best move according to policy
         Move move = selectAction(possibleStates);
+        assert move != null : "move is null";
+
         // Adjust the NN for the move it just did.        
-        td.adjustNetwork(this, move, possibleStates.get(move), state);       
+        td.adjustNetwork(this, move, possibleStates.get(move), state);
         
         // return the move that is to be executed
         return move;
@@ -44,14 +47,17 @@ public class TDPlayer extends PlayerAdapter
     public Move selectAction(HashMap<Move, Double> possibleStates)
     {
         Move move = null;
-        double max = 0;
+        double max = Double.NEGATIVE_INFINITY;
         // apply policy
         for (Map.Entry<Move, Double> pair : possibleStates.entrySet())
-		 	if(pair.getValue()>max)
+        {
+		 	if(pair.getValue() > max)
             {
                 max = pair.getValue();
                 move = pair.getKey();
-            }        
+            }
+        }
+
         return move;
         
     }

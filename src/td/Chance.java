@@ -35,16 +35,16 @@ public class Chance
 	// Chance of winning with X dice against Y dice
 	public static double chanceTable(int dice1, int dice2)
 	{	
-		return chanceTable[dice1][dice2];
+		return chanceTable[dice1 - 1][dice2 - 1];
 	}
 
 	public static int diceRemainingAttacker(int dice1, int dice2)
 	{
-		return diceRemainingAttacker[dice1][dice2];
+		return diceRemainingAttacker[dice1 - 1][dice2 - 1];
 	}
 
 	public static int diceRemainingDefender(int dice1, int dice2)
 	{
-		return diceRemainingDefender[dice1][dice2];
+		return diceRemainingDefender[dice1 - 1][dice2 - 1];
 	}        
 }

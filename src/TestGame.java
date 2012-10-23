@@ -12,11 +12,11 @@ public class TestGame
 	static public void main(String[] args)
 	{
 		List<Player> players = new Vector<Player>();
+		players.add(new TDPlayer("e"));
 		players.add(new RandomPlayer("a"));
 		players.add(new RandomPlayer("b"));
 		players.add(new RandomPlayer("c"));
 		players.add(new RandomPlayer("d"));
-		players.add(new TDPlayer("e"));
 
 		MapReader reader = new MapReader(players);
 
