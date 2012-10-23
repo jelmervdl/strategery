@@ -23,6 +23,7 @@ public class GameStateEncoder
         descriptors.add(new descriptors.EnemyCountryBalance());
         descriptors.add(new descriptors.EnemyDiceBalance());
         descriptors.add(new descriptors.RemainingPlayers());
+        descriptors.add(new descriptors.ConnectednessAverage());
 
         return new GameStateEncoder(descriptors);
     }
