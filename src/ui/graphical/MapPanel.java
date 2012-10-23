@@ -34,11 +34,34 @@ public class MapPanel extends JPanel
 
 	private Set<Country> highlights;
 
-	private HashSet<EventListener> eventListeners;
+	private HashSet<ActionListener> eventListeners;
 
-	public interface EventListener
+	public interface ActionListener
 	{
-		public void countryClicked(Country country);
+		public void actionPerformed(ActionEvent event);
+	}
+
+	public class ActionEvent
+	{
+		private Country country;
+
+		private MapPanel source;
+
+		public ActionEvent(MapPanel source, Country country)
+		{
+			this.source = source;
+			this.country = country;
+		}
+
+		public Country getCountry()
+		{
+			return country;
+		}
+
+		public MapPanel getSource()
+		{
+			return source;
+		}
 	}
 
 	private class Coordinate
@@ -145,30 +168,30 @@ public class MapPanel extends JPanel
 
 		highlights = new HashSet<Country>();
 
-		eventListeners = new HashSet<EventListener>();
+		eventListeners = new HashSet<ActionListener>();
 
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e)
 			{
 				Country country = getCountryAt(e.getPoint());
-				publishCountryClicked(country);
+				publishActionEvent(new MapPanel.ActionEvent((MapPanel) e.getSource(), country));
 			}
 		});
 	}
-	public void addEventListener(EventListener listener)
+	public void addActionListener(ActionListener listener)
 	{
 		eventListeners.add(listener);
 	}
 
-	public void removeEventListener(EventListener listener)
+	public void removeActionListener(ActionListener listener)
 	{
 		eventListeners.remove(listener);
 	}
 
-	private void publishCountryClicked(Country country)
+	private void publishActionEvent(ActionEvent event)
 	{
-		for (EventListener listener : eventListeners)
-			listener.countryClicked(country);
+		for (ActionListener listener : eventListeners)
+			listener.actionPerformed(event);
 	}
 
 	public void setState(GameState state)

@@ -53,6 +53,7 @@ public class MainWindow extends JFrame implements GameEventListener
 		{
 			this.game.removeEventListener(this);
 			this.game.stop();
+			this.gameThread.interrupt();
 		}
 
 		this.game = game;
@@ -158,10 +159,32 @@ public class MainWindow extends JFrame implements GameEventListener
 
 			public Move decide(List<Move> possibleMoves, GameState state)
 			{
-				// Just for now a dummy implementation.
-				return possibleMoves.size() > 0
-					? possibleMoves.get(0)
-					: null;
+				if (possibleMoves.size() == 1)
+					return possibleMoves.get(0);
+
+				// Get attacking country
+				HashSet<Country> attackingCountries = new HashSet<Country>();
+				for (Move move : possibleMoves)
+					if (!move.isEndOfTurn())
+						attackingCountries.add(move.getAttackingCountry());
+
+				Country attackingCountry = CountrySelector.run(mapPanel, attackingCountries);
+
+				// Get defending country (or attacked country)
+				HashSet<Country> defendingCountries = new HashSet<Country>();
+				for (Move move : possibleMoves)
+					if (move.getAttackingCountry().equals(attackingCountry))
+						defendingCountries.add(move.getDefendingCountry());
+
+				Country defendingCountry = CountrySelector.run(mapPanel, defendingCountries);
+				
+				// Return that move.
+				for (Move move : possibleMoves)
+					if (move.getAttackingCountry().equals(attackingCountry)
+						&& move.getDefendingCountry().equals(defendingCountry))
+						return move;
+
+				throw new RuntimeException("Could not find move in list of possible moves");
 			}
 		};
 	}

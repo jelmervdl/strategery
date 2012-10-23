@@ -57,12 +57,12 @@ public class TestMapGeneration extends JFrame
 		});
 
 		mapPanel = new MapPanel();
-		mapPanel.addEventListener(new MapPanel.EventListener() {
-			public void countryClicked(Country country)
+		mapPanel.addActionListener(new MapPanel.ActionListener() {
+			public void actionPerformed(MapPanel.ActionEvent e)
 			{
 				HashSet<Country> map = new HashSet<Country>();
-				if (country != null)
-					map.add(country);
+				if (e.getCountry() != null)
+					map.add(e.getCountry());
 				mapPanel.setHighlights(map);
 			}
 		});
