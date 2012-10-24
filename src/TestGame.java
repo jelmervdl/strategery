@@ -6,19 +6,18 @@ import ui.terminal.TerminalUI;
 import ui.terminal.TerminalPlayer;
 import map.MapGenerator;
 import td.TDPlayer;
+import csv.CSVWriter;
 
 public class TestGame 
 {
 	static public void main(String[] args)
 	{
-		final TDPlayer tdPlayer = new TDPlayer("td");
+		final TDPlayer tdPlayer = new TDPlayer("TD");
 
 		List<Player> players = new Vector<Player>();
 		players.add(tdPlayer);
-		players.add(new SimplePlayer("Simple a"));
-		players.add(new SimplePlayer("Simple b"));
-		players.add(new SimplePlayer("Simple c"));
-		players.add(new RandomPlayer("Random d"));
+		players.add(new RandomPlayer("Random"));
+		players.add(new SimplePlayer("Simple"));
 
 		TerminalUI gui = new TerminalUI();
 
@@ -29,11 +28,14 @@ public class TestGame
 		for (Player player : players)
 			scores.put(player, 0);
 
-		for (int i = 0; i < 500; ++i)
-		{
-			// Generate a random map
-			GameState state = generator.generate(4, 3.5);
+		// Generate a random map
+		GameState state = generator.generate(4, 2.5);
 
+		CSVWriter writer = new CSVWriter(System.out);
+		writer.writeln(players);
+
+		for (int i = 0; i < 50000; ++i)
+		{
 			final Game game = new Game(players, state);
 			game.addEventListener(new GameEventAdapter() {
 				public void onTurnEnded(GameState state)
@@ -55,6 +57,15 @@ public class TestGame
 			});
 			// game.addEventListener(gui);
 			game.run();
+
+			if (i % 100 == 0)
+			{
+				List<Integer> currentScores = new Vector<Integer>(players.size());
+				for (Player player : players)
+					currentScores.add(scores.get(player));
+
+				writer.writeln(currentScores);
+			}
 		}
 
 		// Print total scores table
