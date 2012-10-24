@@ -5,11 +5,15 @@ import java.util.*;
 import game.GameState;
 import game.Move;
 import game.PlayerAdapter;
+import descriptors.Descriptor;
+import descriptors.Dominance;
 
 public class TDPlayer extends PlayerAdapter
 {
     private TDLearning td;
     
+    private GameState previousState;
+
 	public TDPlayer(String name)
     {
 		super(name);
@@ -18,14 +22,14 @@ public class TDPlayer extends PlayerAdapter
 
 	public Move decide(List<Move> possibleMoves, GameState state)
 	{
+        if (previousState != null)
+            evaluatePreviousMove(state);
+
         // Calculate the value of the states resulting from the possible moves.        
         HashMap<Move, Double> possibleStates = td.mapValueToMove(this, state, possibleMoves);
         
         // From the list of values mapped to the moves select the best move according to policy
         Move move = selectAction(possibleStates);
-        
-        // Adjust the NN for the move it just did.
-        td.adjustNetwork(this, move, possibleStates.get(move), state);
         
         // return the move that is to be executed
         return move;
@@ -40,6 +44,11 @@ public class TDPlayer extends PlayerAdapter
         // Otherwise, we could store the move chosen, and when decide
         // is called again, use the 'new' state as resulting state which
         // is the state after all other players have made their move.
+
+        // I don't know if this is the right place for this. We might want to
+        // do this to the most likely outcome instead of the real outcome
+        // of a move. But I'm doing it anyway. Just because.
+        previousState = result;
     }
 
     public Move selectAction(HashMap<Move, Double> possibleStates)
@@ -69,5 +78,19 @@ public class TDPlayer extends PlayerAdapter
         }
 
         return move;
+    }
+
+    private void evaluatePreviousMove(GameState outcome)
+    {
+        // Adjust the NN for the move it just did.
+        td.adjustNetwork(this, previousState, calculateReward(outcome));
+    }
+
+    private double calculateReward(GameState state)
+    {
+        // Missuse the Dominance descriptor as reward function.
+        Descriptor rewardFunction = new Dominance();
+
+        return rewardFunction.describe(state, this);
     }
 }
