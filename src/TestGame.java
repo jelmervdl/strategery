@@ -7,6 +7,7 @@ import ui.terminal.TerminalPlayer;
 import map.MapGenerator;
 import td.TDPlayer;
 import csv.CSVWriter;
+import descriptors.Dominance;
 
 public class TestGame 
 {
@@ -18,6 +19,7 @@ public class TestGame
 		players.add(tdPlayer);
 		players.add(new RandomPlayer("Random"));
 		players.add(new SimplePlayer("Simple"));
+		players.add(new DescriptorPlayer("Dominance", new Dominance()));
 
 		TerminalUI gui = new TerminalUI();
 
@@ -28,14 +30,14 @@ public class TestGame
 		for (Player player : players)
 			scores.put(player, 0);
 
-		// Generate a random map
-		GameState state = generator.generate(4, 2.5);
-
 		CSVWriter writer = new CSVWriter(System.out);
 		writer.writeln(players);
 
-		for (int i = 0; i < 50000; ++i)
+		for (int i = 0; i < 10000; ++i)
 		{
+			// Generate a random map
+			GameState state = generator.generate(4, 2.5);
+			
 			final Game game = new Game(players, state);
 			game.addEventListener(new GameEventAdapter() {
 				public void onTurnEnded(GameState state)
