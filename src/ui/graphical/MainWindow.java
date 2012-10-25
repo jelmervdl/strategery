@@ -168,19 +168,20 @@ public class MainWindow extends JFrame implements GameEventListener
 					if (!move.isEndOfTurn())
 						attackingCountries.add(move.getAttackingCountry());
 
-				Country attackingCountry = CountrySelector.run(mapPanel, attackingCountries);
+				Country attackingCountry = CountrySelector.run(gameThread, mapPanel, attackingCountries);
 
 				// Get defending country (or attacked country)
 				HashSet<Country> defendingCountries = new HashSet<Country>();
 				for (Move move : possibleMoves)
-					if (move.getAttackingCountry().equals(attackingCountry))
+					if (!move.isEndOfTurn() && move.getAttackingCountry().equals(attackingCountry))
 						defendingCountries.add(move.getDefendingCountry());
 
-				Country defendingCountry = CountrySelector.run(mapPanel, defendingCountries);
+				Country defendingCountry = CountrySelector.run(gameThread, mapPanel, defendingCountries);
 				
 				// Return that move.
 				for (Move move : possibleMoves)
-					if (move.getAttackingCountry().equals(attackingCountry)
+					if (!move.isEndOfTurn()
+						&& move.getAttackingCountry().equals(attackingCountry)
 						&& move.getDefendingCountry().equals(defendingCountry))
 						return move;
 

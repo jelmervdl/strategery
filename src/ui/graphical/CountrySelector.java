@@ -45,7 +45,7 @@ class CountrySelector implements MapPanel.ActionListener
 		selection = country;
 	}
 
-	static public Country run(MapPanel panel, Set<Country> countries)
+	static public Country run(Thread gameThread, MapPanel panel, Set<Country> countries)
 	{
 		CountrySelector selector = new CountrySelector(countries);
 		panel.addActionListener(selector);
@@ -53,7 +53,7 @@ class CountrySelector implements MapPanel.ActionListener
 
 		try {
 			while (!selector.hasSelection())
-				Thread.sleep(100);
+				gameThread.sleep(100);
 		} catch (InterruptedException e) {
 			return null;
 		}

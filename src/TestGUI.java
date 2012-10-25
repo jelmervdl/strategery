@@ -24,11 +24,9 @@ public class TestGUI
 
 		// Generate some players
 		List<Player> players = new Vector<Player>();
+		players.add(mainWindow.getPlayer());
 		for (int i = 0; i < 4; ++i)
 			players.add(new RandomPlayer("Player " + i));
-
-		// Yes, MainWindow is a player. Deal with it.
-		players.add(mainWindow.getPlayer());
 
 		// Generate a map
 		MapGenerator generator = new MapGenerator(players);
