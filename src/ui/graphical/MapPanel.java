@@ -8,12 +8,15 @@ import map.Hexagon;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.geom.GeneralPath;
@@ -35,6 +38,16 @@ public class MapPanel extends JPanel
 	private Set<Country> highlights;
 
 	private HashSet<ActionListener> eventListeners;
+
+	private double c;
+
+	private double a;
+
+	private double b;
+
+	private int mapWidth;
+
+	private int mapHeight;
 
 	public interface ActionListener
 	{
@@ -177,6 +190,14 @@ public class MapPanel extends JPanel
 				publishActionEvent(new MapPanel.ActionEvent((MapPanel) e.getSource(), country));
 			}
 		});
+
+		addComponentListener(new ComponentAdapter() {
+			public void componentResized(ComponentEvent e)
+			{
+				calculateScale();
+				repaint();
+			}
+		});
 	}
 	public void addActionListener(ActionListener listener)
 	{
@@ -198,6 +219,7 @@ public class MapPanel extends JPanel
 	{
 		this.state = state;
 		reindex();
+		calculateScale();
 		repaint();
 	}
 
@@ -212,13 +234,50 @@ public class MapPanel extends JPanel
 		repaint();
 	}
 
+	private void calculateScale()
+	{
+		if (state == null)
+			return;
+
+		// c calculated using width
+		// 2 * b = 1 hexagon
+		// 2 * b * mapWidth == getWidth()
+		// 2 * Math.sin(45) * c * mapWidth  == getWidth()
+		// c = getWidth() / (2 * Math.sin(45) * mapWidth)
+
+		// c calculated using height
+		// 0.5 * c + mapHeight * 1.5 * c = getHeight()
+		// c + mapHeight * 3 * c = getHeight() * 2
+		// (3 * mapHeight + 1) * c = getHeight * 2
+		// c = (getHeight * 2) / (3 * mapHeight + 1)
+
+		c = Math.min(
+			(double) getWidth() / (2.0 * Math.sin(45) * (mapWidth + .5)), // c calculated using width
+			(double) getHeight() / (1.5 * mapHeight + 0.5) // c calculated using height
+		);
+
+		a = .5 * c;
+		b = Math.sin(45) * c;
+	}
+
 	private void reindex()
 	{
 		Map<Coordinate,Hexagon> index = new HashMap<Coordinate,Hexagon>();
+		mapWidth = 0;
+		mapHeight = 0;
 
 		for (Country country : state.getCountries())
 			for (Hexagon hexagon : country.getHexagons())
+			{
 				index.put(new Coordinate(hexagon.x, hexagon.y), hexagon);
+
+				// +1 because offset 0 == size 1.
+				if (hexagon.x + 1 > mapWidth)
+					mapWidth = hexagon.x + 1;
+
+				if (hexagon.y + 1 > mapHeight)
+					mapHeight = hexagon.y + 1;
+			}
 
 		hexagonIndex = index;
 	}
@@ -235,10 +294,7 @@ public class MapPanel extends JPanel
 		if (state == null)
 			return null;
 
-		double c = 8,
-			   a = .5 * c,
-			   b = Math.sin(45) * c,
-			   py = (double) p.y / (3 * a),
+		double py = (double) p.y / (3 * a),
 			   px = (p.x + (py % 2) * b) / (2 * b);
 
 		Coordinate coordinate = new Coordinate((int) (px - .5), (int) (py - .5));
@@ -257,10 +313,7 @@ public class MapPanel extends JPanel
 	{
 		Coordinate p = new Coordinate(h.x, h.y);
 
-		double c = 8,
-			   a = .5 * c,
-			   b = Math.sin(45) * c,
-			   x = p.x * 2*b + (p.y % 2) * b,
+		double x = p.x * 2*b + (p.y % 2) * b,
 			   y = p.y * 3*a;
 
 		Side[] sides = {
@@ -295,13 +348,14 @@ public class MapPanel extends JPanel
 
 	private void drawDiceOnHexagon(Graphics2D g, int dice, Hexagon h)
 	{
-		double c = 8,
-			   a = .5 * c,
-			   b = Math.sin(45) * c,
-			   x = h.x * 2*b + (h.y % 2) * b,
+		double x = h.x * 2*b + (h.y % 2) * b,
 			   y = h.y * 3*a;
 
-		g.drawString(Integer.toString(dice), (float) x + 2.5f, (float) (y + 2 * c) - 2f);
+		FontMetrics fm = getFontMetrics(getFont());
+		int textWidth = fm.stringWidth(Integer.toString(dice)),
+			textHeight = fm.getHeight();
+
+		g.drawString(Integer.toString(dice), (float) (x + b - .5 * textWidth), (float) (y + c + 1f/3 * textHeight));
 	}
 
 	private void clearCanvas(Graphics g)
