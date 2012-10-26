@@ -107,6 +107,11 @@ public class Country
 		return enemies;
 	}
 
+	public int hashCode()
+	{
+		return id.hashCode();
+	}
+
 	public boolean equals(Object other)
 	{
 		if (this == other)

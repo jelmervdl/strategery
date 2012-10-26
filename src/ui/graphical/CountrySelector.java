@@ -13,6 +13,9 @@ class CountrySelector implements MapPanel.ActionListener
 
 	public CountrySelector(Set<Country> options)
 	{
+		if (options.size() == 0)
+			throw new RuntimeException("Options set is empty");
+
 		this.options = options;
 	}
 
@@ -21,6 +24,8 @@ class CountrySelector implements MapPanel.ActionListener
 		if (event.getCountry() != null && options.contains(event.getCountry()))
 		{
 			setSelection(event.getCountry());
+
+			// Highlight selection
 			Set<Country> highlights = new HashSet<Country>();
 			highlights.add(event.getCountry());
 			event.getSource().setHighlights(highlights);
