@@ -1,5 +1,6 @@
 package ui.graphical;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.WindowAdapter;
@@ -20,7 +21,7 @@ import game.PlayerAdapter;
 import game.RandomPlayer;
 import game.GameEventListener;
 
-import ui.graphical.MapPanel;
+import td.GameStateEncoder;
 
 public class MainWindow extends JFrame implements GameEventListener
 {
@@ -29,6 +30,12 @@ public class MainWindow extends JFrame implements GameEventListener
 	private Thread gameThread;
 
 	private MapPanel mapPanel;
+
+	private DescriptorPanel descriptorPanel;
+
+	private JFrame descriptorWindow;
+
+	private Player player;
 
 	public MainWindow()
 	{
@@ -44,7 +51,13 @@ public class MainWindow extends JFrame implements GameEventListener
 		});
 
 		mapPanel = new MapPanel();
-		getContentPane().add(mapPanel);
+		getContentPane().add(mapPanel, BorderLayout.CENTER);
+
+		descriptorPanel = new DescriptorPanel(GameStateEncoder.buildDefaultEncoder().getDescriptors());
+		
+		descriptorWindow = new JFrame();
+		descriptorWindow.getContentPane().add(descriptorPanel);
+		descriptorWindow.setVisible(true);
 	}
 
 	public void setGame(Game game)
@@ -67,6 +80,7 @@ public class MainWindow extends JFrame implements GameEventListener
 	public void setState(GameState state)
 	{
 		mapPanel.setState(state);
+		descriptorPanel.update(state, player);
 	}
 
 	public void startGame()
@@ -150,43 +164,48 @@ public class MainWindow extends JFrame implements GameEventListener
 
 	public Player getPlayer()
 	{
-		return new PlayerAdapter("GUI Player")
+		if (player == null)
 		{
-			public Color getColor()
+			player = new PlayerAdapter("GUI Player")
 			{
-				return Color.RED;
-			}
+				public Color getColor()
+				{
+					return Color.RED;
+				}
 
-			public Move decide(List<Move> possibleMoves, GameState state)
-			{
-				if (possibleMoves.size() == 1)
-					return possibleMoves.get(0);
+				public Move decide(List<Move> possibleMoves, GameState state)
+				{
+					if (possibleMoves.size() == 1)
+						return possibleMoves.get(0);
 
-				// Get attacking country
-				HashSet<Country> attackingCountries = new HashSet<Country>();
-				for (Move move : possibleMoves)
-					if (!move.isEndOfTurn())
-						attackingCountries.add(move.getAttackingCountry());
+					// Get attacking country
+					HashSet<Country> attackingCountries = new HashSet<Country>();
+					for (Move move : possibleMoves)
+						if (!move.isEndOfTurn())
+							attackingCountries.add(move.getAttackingCountry());
 
-				Country attackingCountry = CountrySelector.run(gameThread, mapPanel, attackingCountries);
+					Country attackingCountry = CountrySelector.run(gameThread, mapPanel, attackingCountries);
 
-				// Get defending country (or attacked country)
-				HashSet<Country> defendingCountries = new HashSet<Country>();
-				for (Move move : possibleMoves)
-					if (!move.isEndOfTurn() && move.getAttackingCountry().equals(attackingCountry))
-						defendingCountries.add(move.getDefendingCountry());
+					// Get defending country (or attacked country)
+					HashSet<Country> defendingCountries = new HashSet<Country>();
+					for (Move move : possibleMoves)
+						if (!move.isEndOfTurn() && move.getAttackingCountry().equals(attackingCountry))
+							defendingCountries.add(move.getDefendingCountry());
 
-				Country defendingCountry = CountrySelector.run(gameThread, mapPanel, defendingCountries);
-				
-				// Return that move.
-				for (Move move : possibleMoves)
-					if (!move.isEndOfTurn()
-						&& move.getAttackingCountry().equals(attackingCountry)
-						&& move.getDefendingCountry().equals(defendingCountry))
-						return move;
+					Country defendingCountry = CountrySelector.run(gameThread, mapPanel, defendingCountries);
+					
+					// Return that move.
+					for (Move move : possibleMoves)
+						if (!move.isEndOfTurn()
+							&& move.getAttackingCountry().equals(attackingCountry)
+							&& move.getDefendingCountry().equals(defendingCountry))
+							return move;
 
-				throw new RuntimeException("Could not find move in list of possible moves");
-			}
-		};
+					throw new RuntimeException("Could not find move in list of possible moves");
+				}
+			};
+		}
+
+		return player;
 	}
 }

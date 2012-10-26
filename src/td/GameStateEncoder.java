@@ -12,7 +12,7 @@ public class GameStateEncoder
 {
     private List<Descriptor> descriptors;
 
-    static GameStateEncoder buildDefaultEncoder()
+    static public GameStateEncoder buildDefaultEncoder()
     {
         List<Descriptor> descriptors = new Vector<Descriptor>();
         descriptors.add(new descriptors.Dominance());
