@@ -1,25 +1,37 @@
+import csv.CSVWriter;
+
+import descriptors.Dominance;
+
 import java.util.*;
 import java.io.File;
 import java.io.IOException;
+
 import game.*;
+
+import map.MapGenerator;
+
+import td.TDLearning;
+import td.TDPlayer;
+
 import ui.terminal.TerminalUI;
 import ui.terminal.TerminalPlayer;
-import map.MapGenerator;
-import td.TDPlayer;
-import csv.CSVWriter;
-import descriptors.Dominance;
 
 public class TestGame 
 {
 	static public void main(String[] args)
 	{
-		final TDPlayer tdPlayer = new TDPlayer("TD");
+		final TDLearning brain = new TDLearning();
+
+		final TDPlayer tdPlayer = new TDPlayer("TD", brain);
 
 		List<Player> players = new Vector<Player>();
 		players.add(tdPlayer);
+		players.add(new TDPlayer("TD 2", brain));
+		players.add(new TDPlayer("TD 3", brain));
+		// players.add(new TDPlayer("TD 4", brain));
 		players.add(new RandomPlayer("Random"));
-		players.add(new SimplePlayer("Simple"));
-		players.add(new DescriptorPlayer("Dominance", new Dominance()));
+		// players.add(new SimplePlayer("Simple"));
+		// players.add(new DescriptorPlayer("Dominance", new Dominance()));
 
 		TerminalUI gui = new TerminalUI();
 
@@ -31,6 +43,7 @@ public class TestGame
 			scores.put(player, 0);
 
 		CSVWriter writer = new CSVWriter(System.out);
+		writer.write("Round");
 		writer.writeln(players);
 
 		for (int i = 0; i < 10000; ++i)
@@ -62,6 +75,8 @@ public class TestGame
 
 			if (i % 100 == 0)
 			{
+				writer.write(i);
+				
 				List<Integer> currentScores = new Vector<Integer>(players.size());
 				for (Player player : players)
 					currentScores.add(scores.get(player));

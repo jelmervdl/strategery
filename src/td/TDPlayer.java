@@ -14,15 +14,17 @@ public class TDPlayer extends PlayerAdapter
     
     private GameState previousState;
 
-	public TDPlayer(String name)
+	public TDPlayer(String name, TDLearning brain)
     {
 		super(name);
-        td = new TDLearning();
+        td = brain != null ? brain : new TDLearning();
 	}
 
 	public Move decide(List<Move> possibleMoves, GameState state)
 	{
-        if (previousState != null)
+        // If we remember our previous state, and this state is not directly after
+        // the previous state, learn from it.
+        if (previousState != null && !previousState.equals(state))
             evaluatePreviousMove(state);
 
         // Calculate the value of the states resulting from the possible moves.        

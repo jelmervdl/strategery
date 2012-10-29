@@ -7,32 +7,41 @@ public class CSVWriter
 {
 	PrintStream out;
 
-	int lineSize;
+	int columnCount;
+
+	int currentColumnCount;
 
 	public CSVWriter(PrintStream stream)
 	{
 		out = stream;
 
-		lineSize = -1;
+		columnCount = -1;
+
+		currentColumnCount = 0;
+	}
+
+	public void write(Object value)
+	{
+		if (currentColumnCount >= columnCount)
+			throw new RuntimeException("First line consisted of " + columnCount + " columns, but now trying to one more.");
+
+		if (currentColumnCount++ > 0)
+			out.print(",");
+
+		out.print(escape(value.toString()));
 	}
 
 	public void writeln(List values)
 	{
-		if (lineSize == -1)
-			lineSize = values.size();
-		else
-			if (lineSize != values.size())
-				throw new RuntimeException("First line consisted of " + lineSize + " columns, but now trying to print " + values.size() + " columns.");
-
 		for (int i = 0; i < values.size(); ++i)
-		{
-			if (i > 0)
-				out.print(",");
-
-			out.print(escape(values.get(i).toString()));
-		}
+			write(values.get(i));
 
 		out.println();
+
+		if (columnCount == -1)
+			columnCount = currentColumnCount;
+
+		currentColumnCount = 0;
 	}
 
 	private String escape(String value)

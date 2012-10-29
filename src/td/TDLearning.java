@@ -10,7 +10,7 @@ import game.Player;
 import neuralnetwork.Layer;
 import neuralnetwork.NeuralNetwork;
 
-class TDLearning
+public class TDLearning
 {
     private GameStateEncoder encoder;
 
@@ -24,7 +24,7 @@ class TDLearning
         // Configuration of layers of the neural network
         int dimensions[] = new int[] {
             encoder.getDescriptors().size(), // input layer
-            10, // hidden layer
+            40, // hidden layer
             1 // output layer
         };
 
@@ -93,7 +93,7 @@ class TDLearning
     {
         // double[] rewardValue;
         double[] targetValue = {awardedValue};
-        double learningSpeed = 0.1;
+        double learningSpeed = 0.05;
         
         // First, call calcValueState so the network has the state inside its nodes
         double rewardValue = calcValueState(player, state);
