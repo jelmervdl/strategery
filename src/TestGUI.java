@@ -25,7 +25,7 @@ public class TestGUI
 		// Generate some players
 		List<Player> players = new Vector<Player>();
 		players.add(mainWindow.getPlayer());
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < 3; ++i)
 			players.add(new RandomPlayer("Player " + i));
 
 		// Generate a map
