@@ -22,7 +22,7 @@ public class CSVWriter
 
 	public void write(Object value)
 	{
-		if (currentColumnCount >= columnCount)
+		if (columnCount != -1 && currentColumnCount >= columnCount)
 			throw new RuntimeException("First line consisted of " + columnCount + " columns, but now trying to one more.");
 
 		if (currentColumnCount++ > 0)
