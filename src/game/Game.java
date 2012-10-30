@@ -72,7 +72,7 @@ public class Game implements Runnable
 
 			Move move;
 
-			do {
+			// do {
 				List<Move> moves = state.generatePossibleMoves(player);
 
 				publishPossibleMoves(moves);
@@ -86,7 +86,7 @@ public class Game implements Runnable
 				player.feedback(state, move, result);
 
 				setState(result);
-			} while (alive && !move.isEndOfTurn());
+			// } while (alive && !move.isEndOfTurn());
 
 			publishEndOfTurn(player);
 

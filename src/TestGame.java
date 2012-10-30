@@ -26,11 +26,11 @@ public class TestGame
 
 		List<Player> players = new Vector<Player>();
 		players.add(tdPlayer);
-		players.add(new TDPlayer("TD 2", brain));
-		players.add(new TDPlayer("TD 3", brain));
+		// players.add(new TDPlayer("TD 2", brain));
+		// players.add(new TDPlayer("TD 3", brain));
 		// players.add(new TDPlayer("TD 4", brain));
-		players.add(new RandomPlayer("Random"));
-		// players.add(new SimplePlayer("Simple"));
+		// players.add(new RandomPlayer("Random"));
+		players.add(new SimplePlayer("Simple"));
 		// players.add(new DescriptorPlayer("Dominance", new Dominance()));
 
 		TerminalUI gui = new TerminalUI();
