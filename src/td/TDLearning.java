@@ -10,11 +10,15 @@ import game.Player;
 import neuralnetwork.Layer;
 import neuralnetwork.NeuralNetwork;
 
+import util.Instrument;
+
 public class TDLearning
 {
     private GameStateEncoder encoder;
 
     private NeuralNetwork network;
+
+    private Instrument error;
 
     public TDLearning()
     {
@@ -29,6 +33,14 @@ public class TDLearning
         };
 
         network = new NeuralNetwork(dimensions);
+        network.seed(0.1);
+
+        error = new Instrument();
+    }
+
+    public Instrument getError()
+    {
+        return error;
     }
 
     public HashMap<Move, Double> mapValueToMove(Player player, GameState state, List<Move> moves)
@@ -93,7 +105,7 @@ public class TDLearning
     {
         // double[] rewardValue;
         double[] targetValue = {awardedValue};
-        double learningSpeed = 0.05;
+        double learningSpeed = 0.01;
         
         // First, call calcValueState so the network has the state inside its nodes
         double rewardValue = calcValueState(player, state);
@@ -101,7 +113,7 @@ public class TDLearning
         // then, backwardPropagate the correct output
         network.backPropagate(targetValue, learningSpeed);
 
-        // System.out.println("Error: " + (rewardValue - awardedValue));
+        error.add(rewardValue - awardedValue);
     }
 
 }

@@ -31,11 +31,17 @@ public class CSVWriter
 		out.print(escape(value.toString()));
 	}
 
-	public void writeln(List values)
+	public void write(List values)
 	{
 		for (int i = 0; i < values.size(); ++i)
 			write(values.get(i));
+	}
 
+	public void endLine()
+	{
+		if (columnCount != -1 && currentColumnCount != columnCount)
+			throw new RuntimeException("Not enough columns for one line.");
+		
 		out.println();
 
 		if (columnCount == -1)

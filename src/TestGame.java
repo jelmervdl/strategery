@@ -26,11 +26,11 @@ public class TestGame
 
 		List<Player> players = new Vector<Player>();
 		players.add(tdPlayer);
-		players.add(new TDPlayer("TD 2", brain));
-		players.add(new TDPlayer("TD 3", brain));
+		// players.add(new TDPlayer("TD 2", brain));
+		// players.add(new TDPlayer("TD 3", brain));
 		// players.add(new TDPlayer("TD 4", brain));
 		players.add(new RandomPlayer("Random"));
-		// players.add(new SimplePlayer("Simple"));
+		players.add(new SimplePlayer("Simple"));
 		// players.add(new DescriptorPlayer("Dominance", new Dominance()));
 
 		TerminalUI gui = new TerminalUI();
@@ -44,9 +44,12 @@ public class TestGame
 
 		CSVWriter writer = new CSVWriter(System.out);
 		writer.write("Round");
-		writer.writeln(players);
+		writer.write(players);
+		writer.write("error");
+		writer.write("variance");
+		writer.endLine();
 
-		for (int i = 0; i < 10000; ++i)
+		for (int i = 0; i < 5000; ++i)
 		{
 			// Generate a random map
 			GameState state = generator.generate(4, 2.5);
@@ -77,11 +80,12 @@ public class TestGame
 			{
 				writer.write(i);
 				
-				List<Integer> currentScores = new Vector<Integer>(players.size());
 				for (Player player : players)
-					currentScores.add(scores.get(player));
+					writer.write(scores.get(player));
 
-				writer.writeln(currentScores);
+				writer.write(brain.getError().mean());
+				writer.write(brain.getError().variance());
+				writer.endLine();
 			}
 		}
 
