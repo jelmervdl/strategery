@@ -85,7 +85,7 @@ public class TDPlayer extends PlayerAdapter
     private void evaluatePreviousMove(GameState outcome)
     {
         // Adjust the NN for the move it just did.
-        td.adjustNetwork(this, previousState, calculateReward(outcome));
+        td.adjustNetwork(this, previousState, calculateReward(outcome) > calculateReward(previousState) ? 1 : -1);
     }
 
     private double calculateReward(GameState state)
