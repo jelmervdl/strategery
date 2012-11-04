@@ -105,7 +105,7 @@ public class TDLearning
     {
         // double[] rewardValue;
         double[] targetValue = {awardedValue};
-        double learningSpeed = 0.01;
+        double learningSpeed = 0.05;
         
         // First, call calcValueState so the network has the state inside its nodes
         double rewardValue = calcValueState(player, state);

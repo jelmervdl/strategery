@@ -49,7 +49,7 @@ public class TestGame
 		writer.write("variance");
 		writer.endLine();
 
-		for (int i = 0; i < 5000; ++i)
+		for (int i = 0; i < 50000; ++i)
 		{
 			// Generate a random map
 			GameState state = generator.generate(4, 2.5);
