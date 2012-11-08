@@ -31,7 +31,9 @@ public class TDPlayer extends PlayerAdapter
         HashMap<Move, Double> possibleStates = td.mapValueToMove(this, state, possibleMoves);
         
         // From the list of values mapped to the moves select the best move according to policy
-        Move move = selectAction(possibleStates);
+        Move move = shoudWeExplore()
+            ? explorePolicy(possibleStates)
+            : optimalPolicy(possibleStates);
         
         // return the move that is to be executed
         return move;
@@ -53,20 +55,23 @@ public class TDPlayer extends PlayerAdapter
         previousState = result;
     }
 
-    public Move selectAction(HashMap<Move, Double> possibleStates)
+    private boolean shoudWeExplore()
     {
-        Random random = new Random();
-        
-        // Exploration strategy is to choose a random move. (yes, this is crude)
-        if (random.nextDouble() < 0.1)
-        {
-            int index = random.nextInt(possibleStates.size());
-            for (Move move : possibleStates.keySet())
-                if (index-- == 0)
-                    return move;
-        }
-        
-        // apply policy
+        return new Random().nextDouble() < 0.1;
+    }
+
+    private Move explorePolicy(Map<Move, Double> possibleStates)
+    {
+        int index = new Random().nextInt(possibleStates.size());
+        for (Move move : possibleStates.keySet())
+            if (index-- == 0)
+                return move;
+
+        return null;
+    }
+
+    private Move optimalPolicy(Map<Move, Double> possibleStates)
+    {
         Move move = null;
         double max = Double.NEGATIVE_INFINITY;
 
