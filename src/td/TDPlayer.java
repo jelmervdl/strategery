@@ -1,5 +1,6 @@
 package td;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -98,20 +99,15 @@ public class TDPlayer extends PlayerAdapter
      */
     private void evaluatePreviousMove(GameState outcome)
     {
-        double gamma = 0.5;
+        double gamma = 0.25;
 
         // Find all the moves that could be made from this state
         List<Move> possibleMoves = outcome.generatePossibleMoves(this);
 
         Map<Move,Double> expectedValues = td.getExpectedValues(this, outcome, possibleMoves);
         
-        // Calculate the average expected value of the state we then enter
-        double expectedFutureValue = 0;
-
-        for (double value : expectedValues.values())
-            expectedFutureValue += value;
-
-        expectedFutureValue /= expectedValues.size();
+        // Calculate the maximum expected value of the state we then enter
+        double expectedFutureValue = Collections.max(expectedValues.values());
 
         // Adjust the NN for the move it just did to the actual value of the outcome of that
         // move plus what good it will do in the future.
@@ -123,7 +119,7 @@ public class TDPlayer extends PlayerAdapter
      */
     // private void evaluatePreviousMove(GameState outcome)
     // {
-    //     double gamma = 0;
+    //     double gamma = 0.25;
 
     //     // Find all the moves that could be made from this state
     //     List<Move> possibleMoves = outcome.generatePossibleMoves(this);
