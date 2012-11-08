@@ -18,9 +18,12 @@ import ui.terminal.TerminalPlayer;
 
 public class TestGame 
 {
-	static public void main(String[] args)
+	static public void main(String[] args) throws Exception
 	{
 		final TDLearning brain = new TDLearning();
+		
+		if (args.length > 0)
+			brain.getNeuralNetwork().readWeights(new File(args[0]));
 
 		final TDPlayer tdPlayer = new TDPlayer("TD", brain);
 
@@ -93,5 +96,8 @@ public class TestGame
 		System.out.println("Total scores:");
 		for (Player player : players)
 			System.out.println("Player " + player + ": \t" + scores.get(player));
+
+		if (args.length > 0)
+			brain.getNeuralNetwork().writeWeights(new File(args[0]));
 	}
 }
