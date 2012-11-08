@@ -1,23 +1,26 @@
 package td;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import descriptors.Descriptor;
+import descriptors.Dominance;
 
 import game.GameState;
 import game.Move;
 import game.PlayerAdapter;
-import descriptors.Descriptor;
-import descriptors.Dominance;
 
 public class TDPlayer extends PlayerAdapter
 {
-    private TDLearning td;
-    
     private GameState previousState;
 
-	public TDPlayer(String name, TDLearning brain)
+    private TDLearning td;
+
+    public TDPlayer(String name, TDLearning brain)
     {
 		super(name);
-        td = brain != null ? brain : new TDLearning();
+        td = brain;
 	}
 
 	public Move decide(List<Move> possibleMoves, GameState state)
@@ -27,14 +30,11 @@ public class TDPlayer extends PlayerAdapter
         if (previousState != null && !previousState.equals(state))
             evaluatePreviousMove(state);
 
-        // Calculate the value of the states resulting from the possible moves.        
-        Map<Move, Double> possibleStates = td.getExpectedValues(this, state, possibleMoves);
-        
         // From the list of values mapped to the moves select the best move according to policy
         Move move = shoudWeExplore()
-            ? explorePolicy(possibleStates)
-            : optimalPolicy(possibleStates);
-        
+            ? exploreMove(state, possibleMoves)
+            : chooseMove(state, possibleMoves);
+
         // return the move that is to be executed
         return move;
     }
@@ -60,22 +60,19 @@ public class TDPlayer extends PlayerAdapter
         return new Random().nextDouble() < 0.1;
     }
 
-    private Move explorePolicy(Map<Move, Double> possibleStates)
+    private Move exploreMove(GameState state, List<Move> moves)
     {
-        int index = new Random().nextInt(possibleStates.size());
-        for (Move move : possibleStates.keySet())
-            if (index-- == 0)
-                return move;
-
-        return null;
+        int index = new Random().nextInt(moves.size());
+        
+        return moves.get(index);
     }
 
-    private Move optimalPolicy(Map<Move, Double> possibleStates)
+    private Move chooseMove(GameState state, List<Move> moves)
     {
         Move move = null;
         double max = Double.NEGATIVE_INFINITY;
 
-        for (Map.Entry<Move, Double> pair : possibleStates.entrySet())
+        for (Map.Entry<Move, Double> pair : td.getExpectedValues(this, state, moves).entrySet())
         {
             if (pair.getValue() > max)
             {
@@ -87,17 +84,58 @@ public class TDPlayer extends PlayerAdapter
         return move;
     }
 
-    private void evaluatePreviousMove(GameState outcome)
-    {
-        // Adjust the NN for the move it just did.
-        td.adjustNetwork(this, previousState, calculateReward(outcome) > calculateReward(previousState) ? 1 : -1);
-    }
-
-    private double calculateReward(GameState state)
+    /**
+     * Calculate the actual value of the state for me.
+     */
+    private double getValue(GameState state)
     {
         // Missuse the Dominance descriptor as reward function.
-        Descriptor rewardFunction = new Dominance();
-
-        return rewardFunction.describe(state, this);
+        return new Dominance().describe(state, this);
     }
+
+    /**
+     * Off-policy learning.
+     */
+    private void evaluatePreviousMove(GameState outcome)
+    {
+        double gamma = 0.5;
+
+        // Find all the moves that could be made from this state
+        List<Move> possibleMoves = outcome.generatePossibleMoves(this);
+
+        Map<Move,Double> expectedValues = td.getExpectedValues(this, outcome, possibleMoves);
+        
+        // Calculate the average expected value of the state we then enter
+        double expectedFutureValue = 0;
+
+        for (double value : expectedValues.values())
+            expectedFutureValue += value;
+
+        expectedFutureValue /= expectedValues.size();
+
+        // Adjust the NN for the move it just did to the actual value of the outcome of that
+        // move plus what good it will do in the future.
+        td.adjustNetwork(this, previousState, getValue(outcome) + gamma * expectedFutureValue);
+    }
+
+    /**
+     * On-policy learning.
+     */
+    // private void evaluatePreviousMove(GameState outcome)
+    // {
+    //     double gamma = 0;
+
+    //     // Find all the moves that could be made from this state
+    //     List<Move> possibleMoves = outcome.generatePossibleMoves(this);
+
+    //     // Choose the best possible move using our current policy
+    //     Move bestPossibleMove = chooseMove(outcome, possibleMoves);
+
+    //     // Calculate the expected value of the state we then enter
+    //     double expectedFutureValue = td.getExpectedValue(this, outcome, bestPossibleMove);
+
+    //     // Adjust the NN for the move it just did to the actual value of the outcome of that
+    //     // move plus what good it will do in the future.
+    //     td.adjustNetwork(this, previousState, getValue(outcome) + gamma * expectedFutureValue);
+    // }
 }
