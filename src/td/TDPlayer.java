@@ -28,7 +28,7 @@ public class TDPlayer extends PlayerAdapter
             evaluatePreviousMove(state);
 
         // Calculate the value of the states resulting from the possible moves.        
-        HashMap<Move, Double> possibleStates = td.mapValueToMove(this, state, possibleMoves);
+        Map<Move, Double> possibleStates = td.getExpectedValues(this, state, possibleMoves);
         
         // From the list of values mapped to the moves select the best move according to policy
         Move move = shoudWeExplore()
