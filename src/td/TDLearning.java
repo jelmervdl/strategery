@@ -40,6 +40,11 @@ public class TDLearning
         error = new Instrument();
     }
 
+    public NeuralNetwork getNeuralNetwork()
+    {
+        return network;
+    }
+
     public Instrument getError()
     {
         return error;

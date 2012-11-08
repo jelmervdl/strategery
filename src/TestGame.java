@@ -21,8 +21,8 @@ public class TestGame
 	static public void main(String[] args) throws Exception
 	{
 		final TDLearning brain = new TDLearning();
-		
-		if (args.length > 0)
+
+		if (args.length > 0 && new File(args[0]).exists())
 			brain.getNeuralNetwork().readWeights(new File(args[0]));
 
 		final TDPlayer tdPlayer = new TDPlayer("TD", brain);
