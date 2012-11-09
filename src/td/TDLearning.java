@@ -37,7 +37,7 @@ public class TDLearning
         network = new NeuralNetwork(dimensions);
         network.seed(0.05);
 
-        error = new Instrument();
+        error = new Instrument(500);
     }
 
     public NeuralNetwork getNeuralNetwork()

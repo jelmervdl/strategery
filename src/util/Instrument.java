@@ -4,36 +4,47 @@ import java.util.ArrayList;
 
 public class Instrument
 {
-	private ArrayList<Double> values;
+	private double[] values;
 
-	public Instrument()
+	private int index;
+
+	private int size;
+
+	public Instrument(int capacity)
 	{
+		values = new double[capacity];
+
 		reset();
 	}
 
 	public void reset()
 	{
-		values = new ArrayList<Double>();
+		index = 0;
+
+		size = 0;
 	}
 
 	public void add(double value)
 	{
-		values.add(value);
+		values[index++ % values.length] = value;
+
+		if (size < values.length)
+			size++;
 	}
 
 	public double sum()
 	{
 		double sum = 0;
 
-		for (Double value : values)
-			sum += value;
+		for (int i = 0; i < size; ++i)
+			sum += values[i];
 
 		return sum;
 	}
 
 	public double mean()
 	{
-		return sum() / values.size();
+		return sum() / size;
 	}
 
 	public double variance()
@@ -41,9 +52,9 @@ public class Instrument
 		double diff = 0;
 		double mean = mean();
 
-		for (Double value : values)
-			diff += (value - mean) * (value - mean);
+		for (int i = 0; i < size; ++i)
+			diff += (values[i] - mean) * (values[i] - mean);
 
-		return Math.sqrt(diff / values.size());
+		return Math.sqrt(diff / size);
 	}
 }
