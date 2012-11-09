@@ -30,12 +30,12 @@ public class TDLearning
         // Configuration of layers of the neural network
         int dimensions[] = new int[] {
             encoder.getDescriptors().size(), // input layer
-            40, // hidden layer
+            10, // hidden layer
             1 // output layer
         };
 
         network = new NeuralNetwork(dimensions);
-        network.seed(0.1);
+        network.seed(0.05);
 
         error = new Instrument();
     }
@@ -104,7 +104,7 @@ public class TDLearning
     {
         // Use describers to describe a gameState to values between -1 and 1 to use as input for the NN
         double[] input = encoder.encode(state, player);
-		
+
         // Set the output of the descriptors as the input for the neural network
         network.getInput().setValues(input);
         
@@ -119,13 +119,13 @@ public class TDLearning
 
     public void adjustNetwork(Player player, GameState state, double actualValue)
     {
-        double learningSpeed = 0.1;
+        double learningSpeed = 0.001;
         
         // First, call calcValueState so the network has the state inside its nodes
         double currentExpectedValue = getExpectedValue(player, state);
         
         // then, backwardPropagate the correct output
-        double[] targetValue = {actualValue};
+        double[] targetValue = {actualValue + 0.8 * currentExpectedValue};
 
         network.backPropagate(targetValue, learningSpeed);
 

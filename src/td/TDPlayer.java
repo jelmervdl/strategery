@@ -58,7 +58,7 @@ public class TDPlayer extends PlayerAdapter
 
     private boolean shoudWeExplore()
     {
-        return new Random().nextDouble() < 0.1;
+        return new Random().nextDouble() < 0.005;
     }
 
     private Move exploreMove(GameState state, List<Move> moves)
@@ -95,24 +95,33 @@ public class TDPlayer extends PlayerAdapter
     }
 
     /**
-     * Off-policy learning.
+     * Stupid simple value learning.
      */
     private void evaluatePreviousMove(GameState outcome)
     {
-        double gamma = 0.25;
-
-        // Find all the moves that could be made from this state
-        List<Move> possibleMoves = outcome.generatePossibleMoves(this);
-
-        Map<Move,Double> expectedValues = td.getExpectedValues(this, outcome, possibleMoves);
-        
-        // Calculate the maximum expected value of the state we then enter
-        double expectedFutureValue = Collections.max(expectedValues.values());
-
-        // Adjust the NN for the move it just did to the actual value of the outcome of that
-        // move plus what good it will do in the future.
-        td.adjustNetwork(this, previousState, getValue(outcome) + gamma * expectedFutureValue);
+        // Adjust the NN for the move it just did to the actual value of the outcome of that move
+        td.adjustNetwork(this, previousState, getValue(outcome));
     }
+
+    /**
+     * Off-policy learning.
+     */
+    // private void evaluatePreviousMove(GameState outcome)
+    // {
+    //     double gamma = 0.25;
+
+    //     // Find all the moves that could be made from this state
+    //     List<Move> possibleMoves = outcome.generatePossibleMoves(this);
+
+    //     Map<Move,Double> expectedValues = td.getExpectedValues(this, outcome, possibleMoves);
+        
+    //     // Calculate the maximum expected value of the state we then enter
+    //     double expectedFutureValue = Collections.max(expectedValues.values());
+
+    //     // Adjust the NN for the move it just did to the actual value of the outcome of that
+    //     // move plus what good it will do in the future.
+    //     td.adjustNetwork(this, previousState, getValue(outcome) + gamma * expectedFutureValue);
+    // }
 
     /**
      * On-policy learning.
