@@ -89,6 +89,8 @@ public class TestGame
 				writer.write(brain.getError().mean());
 				writer.write(brain.getError().variance());
 				writer.endLine();
+
+				brain.getError().reset();
 			}
 		}
 
