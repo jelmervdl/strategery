@@ -125,7 +125,7 @@ public class TDLearning
         double currentExpectedValue = getExpectedValue(player, state);
         
         // then, backwardPropagate the correct output
-        double[] targetValue = {actualValue + 0.8 * currentExpectedValue};
+        double[] targetValue = {actualValue};
 
         network.backPropagate(targetValue, learningSpeed);
 

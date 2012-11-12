@@ -100,7 +100,7 @@ public class TDPlayer extends PlayerAdapter
     private void evaluatePreviousMove(GameState outcome)
     {
         // Adjust the NN for the move it just did to the actual value of the outcome of that move
-        td.adjustNetwork(this, previousState, getValue(outcome));
+        td.adjustNetwork(this, previousState, getValue(outcome) + 0.8 * td.getExpectedValue(this, outcome));
     }
 
     /**
