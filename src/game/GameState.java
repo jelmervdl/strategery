@@ -18,7 +18,7 @@ public class GameState
 	{
 		this.countries = countries;
 
-		this.numberOfPlayers = countPlayers(countries);
+		this.numberOfPlayers = getPlayers().size();
 	}
 
 	public GameState(GameState other)
@@ -217,14 +217,16 @@ public class GameState
 		return out;
 	}
 
-	public int countPlayers(List<Country> countries)
+	public boolean isWonBy(Player player)
 	{
-		Set<Player> players = new HashSet<Player>();
+		Set<Player> players = getPlayers();
 
-		for (Country country : countries)
-			players.add(country.getPlayer());
+		return players.size() == 1 && players.contains(player);
+	}
 
-		return players.size();
+	public boolean isFinished()
+	{
+		return getPlayers().size() == 1;
 	}
 
 	private int rollDice(int dice)

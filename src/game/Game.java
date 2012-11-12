@@ -41,14 +41,17 @@ public class Game implements Runnable
 
 	public void run()
 	{
+		// alive can be set to false to end this Java thread.
 		alive = true;
 
+		// Give each player 10 dice to start with
 		for (Player player : players)
 			distributeNewDice(player, 10);
 	
 		publishStartOfGame(state);
 
-		while (alive && livingPlayers().size() > 1)
+		// While there is no winner (and the thread hasn't been killed): play!
+		while (alive && !state.isFinished())
 			step();
 
 		publishEndOfGame(state);
@@ -63,8 +66,11 @@ public class Game implements Runnable
 	{
 		publishStep();
 
+		// For each player (using our List here, and not the getPlayers() set
+		// because the order of the players has to be maintained.)
 		for (Player player : players)
 		{
+			// If the player is dead, it can be skipped
 			if (!livingPlayers().contains(player))
 				continue;
 
@@ -72,6 +78,7 @@ public class Game implements Runnable
 
 			Move move;
 
+			// While the player plays moves (other than end-of-turn)
 			do {
 				List<Move> moves = state.generatePossibleMoves(player);
 
@@ -98,13 +105,13 @@ public class Game implements Runnable
 
 	protected List<Player> livingPlayers()
 	{
-		List<Player> alive = new Vector<Player>();
+		List<Player> living = new Vector<Player>();
 
 		for (Player player : players)
 			if (state.getCountries(player).size() > 0)
-				alive.add(player);
+				living.add(player);
 
-		return alive;
+		return living;
 	}
 
 	protected void distributeNewDice(Player player)
