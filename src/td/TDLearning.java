@@ -12,6 +12,7 @@ import game.Player;
 import neuralnetwork.Layer;
 import neuralnetwork.NeuralNetwork;
 
+import util.Configuration;
 import util.Instrument;
 
 public class TDLearning
@@ -22,20 +23,24 @@ public class TDLearning
 
     private Instrument error;
 
-    public TDLearning()
+    private Configuration config;
+
+    public TDLearning(Configuration configuration)
     {
         // The encoder turns a GameState instance into a set of doubles.
         encoder = GameStateEncoder.buildDefaultEncoder();
 
+        config = configuration;
+
         // Configuration of layers of the neural network
         int dimensions[] = new int[] {
             encoder.getDescriptors().size(), // input layer
-            10, // hidden layer
+            config.getInt("hidden_units", 10), // hidden layer
             1 // output layer
         };
 
         network = new NeuralNetwork(dimensions);
-        network.seed(0.05);
+        network.seed(config.getDouble("seed", 0.05));
 
         error = new Instrument(500);
     }
@@ -119,15 +124,13 @@ public class TDLearning
 
     public void adjustNetwork(Player player, GameState state, double actualValue)
     {
-        double learningSpeed = 0.001;
-        
         // First, call calcValueState so the network has the state inside its nodes
         double currentExpectedValue = getExpectedValue(player, state);
         
         // then, backwardPropagate the correct output
         double[] targetValue = {actualValue};
 
-        network.backPropagate(targetValue, learningSpeed);
+        network.backPropagate(targetValue, config.getDouble("learning_rate", 0.001));
 
         error.add(currentExpectedValue - actualValue);
     }

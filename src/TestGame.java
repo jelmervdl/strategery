@@ -16,16 +16,20 @@ import td.TDPlayer;
 import ui.terminal.TerminalUI;
 import ui.terminal.TerminalPlayer;
 
+import util.Configuration;
+
 public class TestGame 
 {
 	static public void main(String[] args) throws Exception
 	{
-		final TDLearning brain = new TDLearning();
+		final Configuration config = new Configuration();
 
 		if (args.length > 0 && new File(args[0]).exists())
-			brain.getNeuralNetwork().readWeights(new File(args[0]));
+			config.read(new File(args[0]));
 
-		final TDPlayer tdPlayer = new TDPlayer("TD", brain);
+		final TDLearning brain = new TDLearning(config.getSection("network"));
+
+		final TDPlayer tdPlayer = new TDPlayer("TD", brain, config.getSection("player"));
 
 		List<Player> players = new Vector<Player>();
 		players.add(tdPlayer);
@@ -52,7 +56,8 @@ public class TestGame
 		writer.write("variance");
 		writer.endLine();
 
-		for (int i = 1; i <= 2000; ++i)
+		int epochs = config.getInt("epochs", 2000);
+		for (int i = 1; i <= epochs; ++i)
 		{
 			// Generate a random map
 			GameState state = generator.generate(4, 2.5);
@@ -79,8 +84,7 @@ public class TestGame
 			// game.addEventListener(gui);
 			game.run();
 
-			// if (i % 100 == 0)
-			if (true)
+			if (i % 10 == 0)
 			{
 				writer.write(i);
 				
@@ -94,11 +98,9 @@ public class TestGame
 		}
 
 		// Print total scores table
-		System.out.println("Total scores:");
+		System.out.println();
+		System.out.println("# Total scores:");
 		for (Player player : players)
-			System.out.println("Player " + player + ": \t" + scores.get(player));
-
-		if (args.length > 0)
-			brain.getNeuralNetwork().writeWeights(new File(args[0]));
+			System.out.println("# Player " + player + ": \t" + scores.get(player));
 	}
 }

@@ -12,17 +12,27 @@ import game.GameState;
 import game.Move;
 import game.PlayerAdapter;
 
+import util.Configuration;
+
 public class TDPlayer extends PlayerAdapter
 {
     private GameState previousState;
 
     private TDLearning td;
 
-    public TDPlayer(String name, TDLearning brain)
+    private Configuration config;
+
+    public TDPlayer(String name, TDLearning brain, Configuration configuration)
     {
 		super(name);
         td = brain;
+        config = configuration;
 	}
+
+    public void setConfiguration(Configuration config)
+    {
+        this.config = config;
+    }
 
 	public Move decide(List<Move> possibleMoves, GameState state)
 	{
@@ -53,7 +63,7 @@ public class TDPlayer extends PlayerAdapter
 
     private boolean shoudWeExplore()
     {
-        return new Random().nextDouble() < 0.005;
+        return new Random().nextDouble() < config.getDouble("exploration_rate", 0.005);
     }
 
     private Move exploreMove(GameState state, List<Move> moves)
@@ -95,8 +105,8 @@ public class TDPlayer extends PlayerAdapter
     private void evaluatePreviousMove(GameState outcome)
     {
         double value = outcome.isWonBy(this)
-            ? 1.0
-            : getValue(outcome) + 0.8 * td.getExpectedValue(this, outcome);
+            ? config.getDouble("winning_reward", 1.0)
+            : getValue(outcome) + config.getDouble("gamma", 0.8) * td.getExpectedValue(this, outcome);
 
         // Adjust the NN for the move it just did to the actual value of the outcome of that move
         td.adjustNetwork(this, previousState, value);
