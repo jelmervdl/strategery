@@ -42,18 +42,13 @@ public class TDPlayer extends PlayerAdapter
 
     public void feedback(GameState state, Move move, GameState result)
     {
-        // should we train the network here? Now we know the input
-        // state (same as given to decide()), the move chosen, and
-        // the effect it had directly after doing the move.
-
-        // Otherwise, we could store the move chosen, and when decide
-        // is called again, use the 'new' state as resulting state which
-        // is the state after all other players have made their move.
-
-        // I don't know if this is the right place for this. We might want to
-        // do this to the most likely outcome instead of the real outcome
-        // of a move. But I'm doing it anyway. Just because.
-        previousState = result;
+        // If the chosen move results in us winning the game, learn so.
+        if (result.isWonBy(this))
+            evaluatePreviousMove(state);
+        // Otherwise, wait till the other players have played, and then
+        // learn the value of the game state we chose.
+        else
+            previousState = result;
     }
 
     private boolean shoudWeExplore()
@@ -99,8 +94,12 @@ public class TDPlayer extends PlayerAdapter
      */
     private void evaluatePreviousMove(GameState outcome)
     {
+        double value = outcome.isWonBy(this)
+            ? 1.0
+            : getValue(outcome) + 0.8 * td.getExpectedValue(this, outcome);
+
         // Adjust the NN for the move it just did to the actual value of the outcome of that move
-        td.adjustNetwork(this, previousState, getValue(outcome) + 0.8 * td.getExpectedValue(this, outcome));
+        td.adjustNetwork(this, previousState, value);
     }
 
     /**
