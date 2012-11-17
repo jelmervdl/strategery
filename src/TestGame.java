@@ -3,6 +3,7 @@ import csv.CSVWriter;
 import descriptors.Dominance;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -25,7 +26,7 @@ import util.Configuration;
 
 public class TestGame 
 {
-	static private class Experiment extends GameEventAdapter implements Runnable
+	static private class Experiment extends GameEventAdapter implements Callable<Double>
 	{
 		Configuration config;
 
@@ -64,6 +65,7 @@ public class TestGame
 		public void onTurnEnded(GameState state)
 		{
 			// No need to continue playing if TDPlayer is out of the game.
+			// Note that this might make the total scores table incomplete.
 			if (!state.getPlayers().contains(tdPlayer))
 				game.stop();
 		}
@@ -74,14 +76,14 @@ public class TestGame
 			scores.put(winner, scores.get(winner) + 1);
 		}
 
-		public void run()
+		public Double call()
 		{
 			resetScores();
 
 			writeHeaders();	
 
-			int epochs = config.getInt("epochs", 2000);
-			for (int i = 1; i <= epochs; ++i)
+			int games = config.getInt("games", 2000);
+			for (int i = 1; i <= games; ++i)
 			{
 				// Generate a random map
 				GameState state = generator.generate(4, 2.5);
@@ -94,6 +96,8 @@ public class TestGame
 				if (i % 10 == 0)
 					writeScores(i);
 			}
+
+			return (double) scores.get(tdPlayer) / games;
 		}
 
 		private void resetScores()
@@ -105,6 +109,9 @@ public class TestGame
 
 		private void writeHeaders()
 		{
+			if (writer == null)
+				return;
+
 			writer.write("Round");
 			writer.write(players);
 			writer.write("error");
@@ -114,6 +121,9 @@ public class TestGame
 
 		private void writeScores(int i)
 		{
+			if (writer == null)
+				return;
+
 			writer.write(i);
 			
 			for (Player player : players)
@@ -127,7 +137,7 @@ public class TestGame
 
 	static public void main(String[] args) throws Exception
 	{
-		if (args.length < 2)
+		if (args.length < 1)
 		{
 			usage();
 			return;
@@ -139,35 +149,53 @@ public class TestGame
 		defaultConfig.read(defaultConfigFile);
 
 		ExecutorService queue = Executors.newFixedThreadPool(8);
-		List<Future> results = new ArrayList<Future>();
+		HashMap<String, Vector<Future<Double>>> results = new HashMap<String, Vector<Future<Double>>>();
 
 		// For each other configuration file provided, create a few experiments
-		for (int i = 1; i < args.length; ++i)
+		if (args.length > 1)
 		{
-			File configFile = new File(args[i]);
-
-			// Skip files that do not exist
-			if (!configFile.exists())
+			for (int i = 1; i < args.length; ++i)
 			{
-				System.err.println("Error: File " + args[i] + " does not exist");
-				continue;
+				File configFile = new File(args[i]);
+
+				// Skip files that do not exist
+				if (!configFile.exists())
+				{
+					System.err.println("Error: File " + args[i] + " does not exist");
+					continue;
+				}
+
+				// Derive a configuration from the default configuration
+				Configuration config = new Configuration(defaultConfig);
+				config.read(configFile);
+
+				// Set up experiment
+				for (int run = 0; run < config.getInt("runs", 20); ++run)
+				{
+					File outputFile = new File(args[i] + "-run-" + run + ".csv");
+					CSVWriter output = new CSVWriter(new PrintStream(outputFile));
+
+					Experiment experiment = new Experiment(config, output);
+
+					// Submit experiment to the executer
+					Future<Double> task = queue.submit(experiment);
+					
+					if (!results.containsKey(configFile.getName()))
+						results.put(configFile.getName(), new Vector<Future<Double>>());
+					
+					results.get(configFile.getName()).add(task);
+				}
 			}
+		}
+		// If no additional configuration is provided, run just one experiment and print the output to stdout.
+		else
+		{
+			Experiment experiment = new Experiment(defaultConfig, null);
 
-			// Derive a configuration from the default configuration
-			Configuration config = new Configuration(defaultConfig);
-			config.read(configFile);
+			Future<Double> task = queue.submit(experiment);
 
-			// Set up experiment
-			for (int run = 0; run < config.getInt("runs", 20); ++run)
-			{
-				File outputFile = new File(args[i] + "-run-" + run + ".csv");
-				CSVWriter output = new CSVWriter(new PrintStream(outputFile));
-
-				Experiment experiment = new Experiment(config, output);
-
-				// Submit experiment to the executer
-				results.add(queue.submit(experiment));
-			}
+			results.put(defaultConfigFile.getName(), new Vector<Future<Double>>());
+			results.get(defaultConfigFile.getName()).add(task);
 		}
 
 		// No more new experiments will be added.
@@ -176,13 +204,36 @@ public class TestGame
 		// While the experiments are run, print the status of said experiments.
 		while (queue.awaitTermination(1, TimeUnit.SECONDS) == false)
 		{
+			int countedTasks = 0;
 			int finishedTasks = 0;
-			for (Future task : results)
-				if (task.isDone())
-					finishedTasks++;
+			for (String configFileName : results.keySet())
+				for (Future<Double> task : results.get(configFileName))
+				{
+					countedTasks++;
 
-			System.out.println("Finished " + finishedTasks + " of " + results.size() + " tasks");
+					if (task.isDone())
+						finishedTasks++;
+				}
+
+			System.out.println("Finished " + finishedTasks + " of " + countedTasks + " tasks");
 		}
+
+		for (String configFileName : results.keySet())
+		{
+			System.out.println("result for: " + configFileName);
+
+			double sum = 0.0;
+			for (Future<Double> score : results.get(configFileName))
+			{
+				sum += score.get();
+				System.out.print(" " + score.get());
+			}
+
+			System.out.print(" avg: " + sum / results.get(configFileName).size());
+
+			System.out.println();
+		}
+
 	}
 
 	static public void usage()
