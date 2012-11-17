@@ -3,6 +3,10 @@ import csv.CSVWriter;
 import descriptors.Dominance;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -129,26 +133,56 @@ public class TestGame
 			return;
 		}
 
+		// Read default configuration
 		File defaultConfigFile = new File(args[0]);
 		Configuration defaultConfig = new Configuration();
 		defaultConfig.read(defaultConfigFile);
 
+		ExecutorService queue = Executors.newFixedThreadPool(8);
+		List<Future> results = new ArrayList<Future>();
+
+		// For each other configuration file provided, create a few experiments
 		for (int i = 1; i < args.length; ++i)
 		{
 			File configFile = new File(args[i]);
 
+			// Skip files that do not exist
 			if (!configFile.exists())
+			{
+				System.err.println("Error: File " + args[i] + " does not exist");
 				continue;
+			}
 
+			// Derive a configuration from the default configuration
 			Configuration config = new Configuration(defaultConfig);
 			config.read(configFile);
 
-			File outputFile = new File(args[i] + ".csv");
-			CSVWriter output = new CSVWriter(new PrintStream(outputFile));
+			// Set up experiment
+			for (int run = 0; run < config.getInt("runs", 20); ++run)
+			{
+				File outputFile = new File(args[i] + "-run-" + run + ".csv");
+				CSVWriter output = new CSVWriter(new PrintStream(outputFile));
 
-			Experiment experiment = new Experiment(config, output);
-			new Thread(experiment).start();
-		}	
+				Experiment experiment = new Experiment(config, output);
+
+				// Submit experiment to the executer
+				results.add(queue.submit(experiment));
+			}
+		}
+
+		// No more new experiments will be added.
+		queue.shutdown();
+		
+		// While the experiments are run, print the status of said experiments.
+		while (queue.awaitTermination(1, TimeUnit.SECONDS) == false)
+		{
+			int finishedTasks = 0;
+			for (Future task : results)
+				if (task.isDone())
+					finishedTasks++;
+
+			System.out.println("Finished " + finishedTasks + " of " + results.size() + " tasks");
+		}
 	}
 
 	static public void usage()
