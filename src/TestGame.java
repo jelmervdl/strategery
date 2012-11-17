@@ -5,6 +5,7 @@ import descriptors.Dominance;
 import java.util.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import game.*;
 
@@ -20,87 +21,138 @@ import util.Configuration;
 
 public class TestGame 
 {
-	static public void main(String[] args) throws Exception
+	static private class Experiment extends GameEventAdapter implements Runnable
 	{
-		final Configuration config = new Configuration();
+		Configuration config;
 
-		if (args.length > 0 && new File(args[0]).exists())
-			config.read(new File(args[0]));
+		CSVWriter writer;
 
-		final TDLearning brain = new TDLearning(config.getSection("network"));
+		TDLearning brain;
 
-		final TDPlayer tdPlayer = new TDPlayer("TD", brain, config.getSection("player"));
+		TDPlayer tdPlayer;
 
-		List<Player> players = new Vector<Player>();
-		players.add(tdPlayer);
-		// players.add(new TDPlayer("TD 2", brain));
-		// players.add(new TDPlayer("TD 3", brain));
-		// players.add(new TDPlayer("TD 4", brain));
-		players.add(new RandomPlayer("Random"));
-		players.add(new SimplePlayer("Simple"));
-		// players.add(new DescriptorPlayer("Dominance", new Dominance()));
+		List<Player> players;
 
-		TerminalUI gui = new TerminalUI();
+		MapGenerator generator;
 
-		MapGenerator generator = new MapGenerator(players);
+		HashMap<Player, Integer> scores;
 
-		// Initialize scores table
-		final HashMap<Player, Integer> scores = new HashMap<Player, Integer>();
-		for (Player player : players)
-			scores.put(player, 0);
+		Game game;
 
-		CSVWriter writer = new CSVWriter(System.out);
-		writer.write("Round");
-		writer.write(players);
-		writer.write("error");
-		writer.write("variance");
-		writer.endLine();
-
-		int epochs = config.getInt("epochs", 2000);
-		for (int i = 1; i <= epochs; ++i)
+		public Experiment(Configuration config, CSVWriter writer)
 		{
-			// Generate a random map
-			GameState state = generator.generate(4, 2.5);
-			
-			final Game game = new Game(players, state);
-			game.addEventListener(new GameEventAdapter() {
-				public void onTurnEnded(GameState state)
-				{
-					if (!state.getPlayers().contains(tdPlayer))
-					{
-						System.out.println("Stopping game because TDPlayer died");
-						game.stop();
-					}
-				}
-				
-				public void onGameEnded(GameState state)
-				{
-					Player winner = state.getCountries().get(0).getPlayer();
-					scores.put(winner, scores.get(winner) + 1);
+			this.config = config;
 
-					// System.out.println("Winner: " + winner);
-				}
-			});
-			// game.addEventListener(gui);
-			game.run();
+			this.writer = writer;
 
-			if (i % 10 == 0)
+			brain = new TDLearning(config.getSection("network"));
+
+			tdPlayer = new TDPlayer("TD", brain, config.getSection("player"));
+
+			players = new Vector<Player>();
+			players.add(tdPlayer);
+			players.add(new RandomPlayer("Random"));
+			players.add(new SimplePlayer("Simple"));
+		
+			generator = new MapGenerator(players);
+		}
+
+		public void onTurnEnded(GameState state)
+		{
+			// No need to continue playing if TDPlayer is out of the game.
+			if (!state.getPlayers().contains(tdPlayer))
+				game.stop();
+		}
+		
+		public void onGameEnded(GameState state)
+		{
+			Player winner = state.getCountries().get(0).getPlayer();
+			scores.put(winner, scores.get(winner) + 1);
+		}
+
+		public void run()
+		{
+			resetScores();
+
+			writeHeaders();	
+
+			int epochs = config.getInt("epochs", 2000);
+			for (int i = 1; i <= epochs; ++i)
 			{
-				writer.write(i);
+				// Generate a random map
+				GameState state = generator.generate(4, 2.5);
 				
-				for (Player player : players)
-					writer.write(scores.get(player));
+				game = new Game(players, state);
+				game.addEventListener(this);
 
-				writer.write(brain.getError().mean());
-				writer.write(brain.getError().variance());
-				writer.endLine();
+				game.run();
+
+				if (i % 10 == 0)
+					writeScores(i);
 			}
 		}
 
-		// Print total scores table
-		System.out.println();
-		System.out.println("# Total scores:");
-		for (Player player : players)
-			System.out.println("# Player " + player + ": \t" + scores.get(player));
+		private void resetScores()
+		{
+			scores = new HashMap<Player, Integer>();
+			for (Player player : players)
+				scores.put(player, 0);
+		}
+
+		private void writeHeaders()
+		{
+			writer.write("Round");
+			writer.write(players);
+			writer.write("error");
+			writer.write("variance");
+			writer.endLine();
+		}
+
+		private void writeScores(int i)
+		{
+			writer.write(i);
+			
+			for (Player player : players)
+				writer.write(scores.get(player));
+
+			writer.write(brain.getError().mean());
+			writer.write(brain.getError().variance());
+			writer.endLine();
+		}
 	}
+
+	static public void main(String[] args) throws Exception
+	{
+		if (args.length < 2)
+		{
+			usage();
+			return;
+		}
+
+		File defaultConfigFile = new File(args[0]);
+		Configuration defaultConfig = new Configuration();
+		defaultConfig.read(defaultConfigFile);
+
+		for (int i = 1; i < args.length; ++i)
+		{
+			File configFile = new File(args[i]);
+
+			if (!configFile.exists())
+				continue;
+
+			Configuration config = new Configuration(defaultConfig);
+			config.read(configFile);
+
+			File outputFile = new File(args[i] + ".csv");
+			CSVWriter output = new CSVWriter(new PrintStream(outputFile));
+
+			Experiment experiment = new Experiment(config, output);
+			new Thread(experiment).start();
+		}	
+	}
+
+	static public void usage()
+	{
+		System.out.println("Usage: TestGame default.conf test1.conf test2.conf ...");
+	} 
 }

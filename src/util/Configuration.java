@@ -23,6 +23,12 @@ public class Configuration
 		prefix = "";
 	}
 
+	public Configuration(Configuration other)
+	{
+		data = new HashMap<String,Object>(other.data);
+		prefix = other.prefix;
+	}
+
 	public Configuration getSection(String name)
 	{
 		Configuration section = new Configuration();
