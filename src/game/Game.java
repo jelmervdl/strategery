@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Game implements Runnable
 {
+	final static public int MAX_NUMBER_OF_TURNS = 1000;
+
 	GameState state;
 
 	List<Player> players;
@@ -50,8 +52,12 @@ public class Game implements Runnable
 	
 		publishStartOfGame(state);
 
+		// Keep track of the number of turns played (to kill the game if we 
+		// end up in a loop)
+		int turn = 0;
+
 		// While there is no winner (and the thread hasn't been killed): play!
-		while (alive && !state.isFinished())
+		while (alive && !state.isFinished() && ++turn < MAX_NUMBER_OF_TURNS)
 			step();
 
 		publishEndOfGame(state);
