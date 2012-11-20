@@ -23,6 +23,7 @@ import ui.terminal.TerminalUI;
 import ui.terminal.TerminalPlayer;
 
 import util.Configuration;
+import util.Instrument;
 
 public class TestGame 
 {
@@ -203,37 +204,42 @@ public class TestGame
 		
 		// While the experiments are run, print the status of said experiments.
 		while (queue.awaitTermination(1, TimeUnit.SECONDS) == false)
-		{
-			int countedTasks = 0;
-			int finishedTasks = 0;
-			for (String configFileName : results.keySet())
-				for (Future<Double> task : results.get(configFileName))
-				{
-					countedTasks++;
+			printStatus(results);
 
-					if (task.isDone())
-						finishedTasks++;
-				}
+		// Done? Print summary of the results!
+		printResults(results);
+	}
 
-			System.out.println("Finished " + finishedTasks + " of " + countedTasks + " tasks");
-		}
-
+	static private void printStatus(HashMap<String, Vector<Future<Double>>> results)
+	{
+		int countedTasks = 0;
+		int finishedTasks = 0;
 		for (String configFileName : results.keySet())
-		{
-			System.out.println("result for: " + configFileName);
-
-			double sum = 0.0;
-			for (Future<Double> score : results.get(configFileName))
+			for (Future<Double> task : results.get(configFileName))
 			{
-				sum += score.get();
-				System.out.print(" " + score.get());
+				countedTasks++;
+
+				if (task.isDone())
+					finishedTasks++;
 			}
 
-			System.out.print(" avg: " + sum / results.get(configFileName).size());
+		System.out.println("Finished " + finishedTasks + " of " + countedTasks + " tasks");
+	}
 
-			System.out.println();
+	static private void printResults(HashMap<String, Vector<Future<Double>>> results) throws Exception
+	{
+		for (String configFileName : results.keySet())
+		{
+			Vector<Future<Double>> scores = results.get(configFileName);
+
+			Instrument m = new Instrument(scores.size());
+			for (Future<Double> score : scores)
+				m.add(score.get());
+
+			System.out.println(configFileName + ":"
+				+ "\tavg:" + m.mean()
+				+ "\tvar:" + m.variance());
 		}
-
 	}
 
 	static public void usage()
