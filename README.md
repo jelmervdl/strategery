@@ -4,7 +4,28 @@ A simple game which looks a bit like a simplified version of Risk. It was implem
 # Compiling
 Run `ant compile` in the root directory. This should build your classes in build/classes.
 
-# Usage
-The first argument is the default configuration. All the following argumens are deviations of this default configuration which will be executed as experiments. Call `java -cp build/classes TestGame default.conf ./experiments/my-experiment/*.conf` from the root directory. The results of the experiments will have the same names as their configuration files but with `.csv` appended.
+If things behave weird, or methods cannot be found, try recompiling by first running `ant clean` and then again `ant compile`.
 
-All experiments are run concurrently in their own thread. There is currently no feedback on their status or progress.
+# Running Experiments
+Create a configuration file for each configuration you want to test. For example, if I want to test a different number of hidden units, create two files:
+
+nn-1.conf:
+```
+[network]
+hidden_units  i 	1
+```
+
+nn-10.conf:
+```
+[network]
+hidden_units  i   10
+```
+
+Now I can run these two experiments by calling:
+```
+java -cp build/classes TestGame ./default.conf ./nn-*.conf
+```
+
+Note that I first pass default.conf as this contains all the other configuration options. Only the parameters named in the individual experiment configurations will be altered for that particular experiment.
+
+After all the experiments have finished, a summary will be printed. Also, for each run of each experiment a file named `config.conf-run-#.csv` will be created, in which config.conf is replaced with the path of the configuration file for that experiment, and # is the number of the run.
