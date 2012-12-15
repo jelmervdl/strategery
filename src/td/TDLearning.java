@@ -141,6 +141,9 @@ public class TDLearning
 
         network.backPropagate(targetValue, config.getDouble("learning_rate", 0.001));
 
+        // Keep count of the number of updates (to decrease other things, like exploration rate)
+        updates += 1;
+
         error.add(currentExpectedValue - actualValue);
     }
 
