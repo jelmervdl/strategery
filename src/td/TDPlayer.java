@@ -22,11 +22,23 @@ public class TDPlayer extends PlayerAdapter
 
     private Configuration config;
 
+    private Descriptor rewardFunction;
+
     public TDPlayer(String name, TDLearning brain, Configuration configuration)
     {
 		super(name);
         td = brain;
         config = configuration;
+
+        // Missuse the Dominance descriptor as default reward function.
+        String descriptorName = "descriptors." + configuration.getString("reward_function", "Dominance");
+        try {
+            Class<? extends Descriptor> descriptor = Class.forName(descriptorName).asSubclass(Descriptor.class);
+            rewardFunction = (Descriptor) descriptor.newInstance();
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Could not instantiate reward_function " + descriptorName, e);
+        }
 	}
 
     public void setConfiguration(Configuration config)
@@ -99,8 +111,7 @@ public class TDPlayer extends PlayerAdapter
      */
     private double getValue(GameState state)
     {
-        // Missuse the Dominance descriptor as reward function.
-        return new Dominance().describe(state, this);
+        return rewardFunction.describe(state, this);
     }
 
     /**

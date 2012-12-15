@@ -53,6 +53,11 @@ public class Configuration
 		return (Double) data.get(prefix + key);
 	}
 
+	public String getString(String key)
+	{
+		return (String) data.get(prefix + key);
+	}
+
 	public int getInt(String key, int fallback)
 	{
 		return data.containsKey(prefix + key) ? getInt(key) : fallback; 
@@ -66,6 +71,11 @@ public class Configuration
 	public double getDouble(String key, double fallback)
 	{
 		return data.containsKey(prefix + key) ? getDouble(key) : fallback;
+	}
+
+	public String getString(String key, String fallback)
+	{
+		return data.containsKey(prefix + key) ? getString(key) : fallback;
 	}
 	
 	public void read(File file) throws IOException
@@ -130,6 +140,13 @@ public class Configuration
 						throw new NoSuchElementException("value double");
 
 					data.put(name, new Double(scanner.nextDouble()));
+				}
+				else if (type.equals("s"))
+				{
+					if (!scanner.hasNext())
+						throw new NoSuchElementException("value string");
+
+					data.put(name, scanner.next());
 				}
 				else
 				{
