@@ -32,6 +32,11 @@ public class Instrument
 			size++;
 	}
 
+	public int count()
+	{
+		return size;
+	}
+
 	public double sum()
 	{
 		double sum = 0;
