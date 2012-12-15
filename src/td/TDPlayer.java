@@ -63,7 +63,11 @@ public class TDPlayer extends PlayerAdapter
 
     private boolean shoudWeExplore()
     {
-        return new Random().nextDouble() < config.getDouble("exploration_rate", 0.005);
+        double explorationRate = config.getDouble("exploration_rate", 0.005);
+        double decrease = config.getDouble("exploration_rate_decrease", 0.0);
+        double chance = explorationRate - decrease * td.getUpdates();
+
+        return new Random().nextDouble() < chance;
     }
 
     private Move exploreMove(GameState state, List<Move> moves)

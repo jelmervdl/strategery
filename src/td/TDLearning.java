@@ -25,6 +25,8 @@ public class TDLearning
 
     private Configuration config;
 
+    private int updates;
+
     public TDLearning(Configuration configuration)
     {
         // The encoder turns a GameState instance into a set of doubles.
@@ -43,6 +45,8 @@ public class TDLearning
         network.seed(config.getDouble("seed", 0.05));
 
         error = new Instrument(500);
+
+        updates = 0;
     }
 
     public NeuralNetwork getNeuralNetwork()
@@ -53,6 +57,11 @@ public class TDLearning
     public Instrument getError()
     {
         return error;
+    }
+
+    public int getUpdates()
+    {
+        return updates;
     }
 
     /**
