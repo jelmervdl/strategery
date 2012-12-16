@@ -1,55 +1,99 @@
+import csv.CSVWriter;
+
+import descriptors.Descriptor;
+
 import java.util.*;
 import java.io.File;
-import java.io.IOException;
-import descriptors.Descriptor;
+
 import game.*;
-import map.MapReader;
 
-public class TestDescriptors
+import map.MapGenerator;
+
+import td.GameStateEncoder;
+import td.TDLearning;
+import td.TDPlayer;
+
+import util.Configuration;
+
+public class TestDescriptors 
 {
-	static public void main(String[] args)
+	static private class Experiment extends GameEventAdapter
 	{
-		List<Player> players = new Vector<Player>();
-		players.add(new RandomPlayer("a"));
-		players.add(new RandomPlayer("b"));
-		players.add(new RandomPlayer("c"));
-		players.add(new RandomPlayer("d"));
+		Configuration config;
 
-		List<Descriptor> descriptors = new Vector<Descriptor>();
-		descriptors.add(new descriptors.Dominance());
-		descriptors.add(new descriptors.StrengthOnBorders());
-		descriptors.add(new descriptors.Connectedness());
-		descriptors.add(new descriptors.ConnectedBalance());
-		descriptors.add(new descriptors.CountryBalance());
-		descriptors.add(new descriptors.EnemyCountryBalance());
-		descriptors.add(new descriptors.EnemyDiceBalance());
-		descriptors.add(new descriptors.RemainingPlayers());
-		descriptors.add(new descriptors.ConnectednessAverage());
-		descriptors.add(new descriptors.DiceDominance());
+		CSVWriter writer;
 
-		MapReader reader = new MapReader(players);
+		TDLearning brain;
 
-		String path = args.length > 0
-			? args[0]
-			: "../maps/1.txt";
+		TDPlayer tdPlayer;
 
-		try {
-			List<Country> countries = reader.read(new File(path));
+		List<Player> players;
+
+		MapGenerator generator;
+
+		GameStateEncoder encoder;
+
+		int n;
+
+		public Experiment(Configuration config, CSVWriter writer)
+		{
+			this.config = config;
+
+			this.writer = writer;
+
+			brain = new TDLearning(config.getSection("network"));
+
+			tdPlayer = new TDPlayer("TD", brain, config.getSection("player"));
+
+			players = new Vector<Player>();
+			players.add(tdPlayer);
+			players.add(new RandomPlayer("Random"));
+			players.add(new SimplePlayer("Simple"));
 		
-			GameState state = new GameState(countries);
+			generator = new MapGenerator(players);
 
-			for (Player player : players)
-			{
-				System.out.println(player);
-				for (Descriptor descriptor : descriptors)
-					System.out.println(descriptor + "\t" + descriptor.describe(state, player));
+			encoder = GameStateEncoder.buildDefaultEncoder();
+		}
 
-				System.out.println("");
-			}
+		public void onStateChange(GameState state)
+		{
+			writer.write(n++);
+
+			for (double value : encoder.encode(state, tdPlayer))
+				writer.write(value);
+
+			writer.endLine();
 		}
-		catch (IOException e) {
-			System.out.println("Could not read map: " + e.getMessage());
-			return;
+
+		public void call()
+		{
+			n = 0;
+
+			writer.write("step");
+
+			// Print descriptor names
+			for (Descriptor descriptor : encoder.getDescriptors())
+				writer.write(descriptor.getClass().getSimpleName());
+
+			writer.endLine();
+
+			GameState state = generator.generate(4, 2.5);
+				
+			Game game = new Game(players, state);
+			game.addEventListener(this);
+
+			game.run();
 		}
+	}
+
+	static public void main(String[] args) throws Exception
+	{
+		Configuration config = new Configuration();
+		
+		CSVWriter output = new CSVWriter(System.out);
+
+		Experiment experiment = new Experiment(config, output);
+
+		experiment.call();
 	}
 }
