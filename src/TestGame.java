@@ -73,7 +73,12 @@ public class TestGame
 		
 		public void onGameEnded(GameState state)
 		{
-			Player winner = state.getCountries().get(0).getPlayer();
+			Set<Player> surviving = state.getPlayers();
+
+			if (surviving.size() != 1)
+				return;
+
+			Player winner = surviving.iterator().next();
 			scores.put(winner, scores.get(winner) + 1);
 		}
 
@@ -237,6 +242,7 @@ public class TestGame
 				m.add(score.get());
 
 			System.out.println(configFileName + ":"
+				+ "\tn:" + m.count()
 				+ "\tavg:" + m.mean()
 				+ "\tvar:" + m.variance());
 		}
