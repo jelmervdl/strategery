@@ -56,13 +56,14 @@ public class ConnectednessAverage extends Descriptor
 		sum -= largestClusterSize.get(player);
 		if (sum == 0)
 			return 1;
-		double mean = (double)sum / (largestClusterSize.size() - 1);
+		//double mean = (double)sum / (largestClusterSize.size() - 1);
 		
-		double ratio = (double)(largestClusterSize.get(player)) / (double)mean;
+		double ratio = (double)(largestClusterSize.get(player)) / (double)sum;
 
-		if(ratio > state.getNumberOfPlayers()-1)
-			ratio = state.getNumberOfPlayers()-1;
-
-		return normalize(ratio, 0, state.getNumberOfPlayers()-1);
+		// ratio capped at 2. If you have more than twice as large a cluster as all other players combined, you reach max value
+		if(ratio > 2)
+			ratio = 2;
+		
+		return normalize(ratio, 0, 2);
 	}
 }
