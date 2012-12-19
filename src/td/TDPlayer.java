@@ -79,7 +79,7 @@ public class TDPlayer extends PlayerAdapter
         double decrease = config.getDouble("exploration_rate_decrease", 0.0);
         double chance = explorationRate - decrease * td.getUpdates();
 
-        return new Random().nextDouble() < chance;
+        return new Random().nextDouble() <= chance;
     }
 
     private Move exploreMove(GameState state, List<Move> moves)
