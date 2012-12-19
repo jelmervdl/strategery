@@ -18,7 +18,6 @@ public class EnemyCountryBalance extends Descriptor
 	{
 		// Count the number of countries for each player.
 		Map<Player, Integer> numberOfCountries = new HashMap<Player, Integer>();
-		int numCountries = 0;
 
 		for (Country country : state.getCountries())
 			if(!country.getPlayer().equals(player))
@@ -27,10 +26,9 @@ public class EnemyCountryBalance extends Descriptor
 						numberOfCountries.containsKey(country.getPlayer())
 						? numberOfCountries.get(country.getPlayer()) + 1
 								: 1);
-				numCountries++;
 			}
 		
-		int playerCount = 0;
+		int playerCount = 1;
 		while ( numberOfCountries.size() < state.getNumberOfPlayers())
 			numberOfCountries.put(new RandomPlayer("empty"+playerCount++), 0);
 

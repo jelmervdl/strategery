@@ -27,7 +27,7 @@ public class EnemyDiceBalance extends Descriptor
 								: country.getDice());
 			}
 		
-		int playerCount = 0;
+		int playerCount = 1;
 		while (numberOfDice.size() < state.getNumberOfPlayers())
 			numberOfDice.put(new RandomPlayer("empty"+playerCount++), 0);
 

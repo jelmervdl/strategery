@@ -16,6 +16,9 @@ public class RemainingPlayers extends Descriptor
 	 */
 	public double describe(GameState state, Player player)
 	{
-		return normalize((double)(state.getPlayers().size()) / (double)(state.getNumberOfPlayers()), 0, 1);
+		if (state.getPlayers().size() == 1)
+			return -1;
+		else
+			return normalize((double)(state.getPlayers().size() - 1) / (double)(state.getNumberOfPlayers() - 1), 0, 1);
 	}
 }
