@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.NoSuchElementException;
 
@@ -106,6 +107,7 @@ public class Configuration
 
 			try {
 				Scanner scanner = new Scanner(line);
+                scanner.useLocale(Locale.US);
 
 				if (!scanner.hasNext())
 					throw new NoSuchElementException("key string");
