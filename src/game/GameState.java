@@ -116,7 +116,7 @@ public class GameState
 			state.getCountry(move.attackingCountry).setDice(1);
 
 			// Assign remaining dice to country
-			state.getCountry(move.defendingCountry).setDice(remainingDice(Chance.diceRemainingAttacker(attackingEyes, defendingEyes)));
+			state.getCountry(move.defendingCountry).setDice(Chance.diceRemainingAttacker(attackingEyes, defendingEyes));
         }
         
         // It's a draw
@@ -132,7 +132,7 @@ public class GameState
 		{
 			state.getCountry(move.attackingCountry).setDice(1);
 
-			state.getCountry(move.defendingCountry).setDice(remainingDice(Chance.diceRemainingDefender(attackingEyes, defendingEyes)));
+			state.getCountry(move.defendingCountry).setDice(Chance.diceRemainingDefender(attackingEyes, defendingEyes));
 		}   
       
         return state;
