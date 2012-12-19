@@ -126,9 +126,7 @@ public class TDLearning
         network.forwardPropagate();
 
         // Return the output of the network
-        double output = network.getOutput().getValue(0);
-
-        return output;
+        return network.getOutput().getValue(0);
     }
 
     public void adjustNetwork(Player player, GameState state, double actualValue)
