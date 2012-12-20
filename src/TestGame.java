@@ -139,8 +139,19 @@ public class TestGame
 			testPlayers.add(tdPlayer);
 			
 			String testOpponentClassName = config.getString("opponent_class", "RandomPlayer");
-			Class<? extends Player> testOpponentClass = Class.forName("game." + testOpponentClassName).asSubclass(Player.class);
-			testPlayers.add(testOpponentClass.getConstructor(String.class).newInstance(testOpponentClassName));
+
+			if (testOpponentClassName.equals("TDPlayer"))
+			{
+				testPlayers.add(new TDPlayer("Dumb TDPlayer",
+					new TDLearning(config.getSection("network")),
+					config.getSection("player")));
+			}
+			else
+			{
+				Class<? extends Player> testOpponentClass = Class.forName("game." + testOpponentClassName).asSubclass(Player.class);
+				testPlayers.add(testOpponentClass.getConstructor(String.class).newInstance(testOpponentClassName));
+			}
+
 
 			int games = config.getInt("games", 2000);
 			
