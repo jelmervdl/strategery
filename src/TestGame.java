@@ -37,10 +37,6 @@ public class TestGame
 
 		TDPlayer tdPlayer;
 
-		List<Player> players;
-
-		MapGenerator generator;
-
 		HashMap<Player, Integer> scores;
 
 		Game game;
@@ -54,13 +50,6 @@ public class TestGame
 			brain = new TDLearning(config.getSection("network"));
 
 			tdPlayer = new TDPlayer("TD", brain, config.getSection("player"));
-
-			players = new Vector<Player>();
-			players.add(tdPlayer);
-			players.add(new RandomPlayer("Random"));
-			players.add(new SimplePlayer("Simple"));
-		
-			generator = new MapGenerator(players);
 		}
 
 		public void onTurnEnded(GameState state)
@@ -73,6 +62,9 @@ public class TestGame
 		
 		public void onGameEnded(GameState state)
 		{
+			if (scores == null)
+				return;
+			
 			Set<Player> surviving = state.getPlayers();
 
 			if (surviving.size() != 1)
@@ -82,13 +74,26 @@ public class TestGame
 			scores.put(winner, scores.get(winner) + 1);
 		}
 
-		public Double call()
+		private void train(List<Player> players, int games)
 		{
-			resetScores();
+			MapGenerator generator = new MapGenerator(players);
 
-			writeHeaders();	
+			for (int i = 1; i <= games; ++i)
+			{
+				// Generate a random map
+				GameState state = generator.generate(4, 2.5);
+				
+				game = new Game(players, state);
+				game.addEventListener(this);
 
-			int games = config.getInt("games", 2000);
+				game.run();
+			}
+		}
+
+		private void test(List<Player> players, int games)
+		{
+			MapGenerator generator = new MapGenerator(players);
+
 			for (int i = 1; i <= games; ++i)
 			{
 				// Generate a random map
@@ -100,20 +105,42 @@ public class TestGame
 				game.run();
 
 				if (i % 10 == 0)
-					writeScores(i);
+					writeScores(players, i);
 			}
+		}
+
+		public Double call()
+		{
+			List<Player> trainPlayers = new Vector<Player>();
+			trainPlayers.add(tdPlayer);
+			trainPlayers.add(new TDPlayer("TD2", brain, config.getSection("player")));
+			
+			List<Player> testPlayers = new Vector<Player>();
+			testPlayers.add(tdPlayer);
+			// testPlayers.add(new RandomPlayer("Random"));
+			testPlayers.add(new SimplePlayer("Random"));
+
+			int games = config.getInt("games", 2000);
+			
+			train(trainPlayers, games);
+
+			resetScores(testPlayers);
+
+			writeHeaders(testPlayers);
+			
+			test(testPlayers, games);
 
 			return (double) scores.get(tdPlayer) / games;
 		}
 
-		private void resetScores()
+		private void resetScores(List<Player> players)
 		{
 			scores = new HashMap<Player, Integer>();
 			for (Player player : players)
 				scores.put(player, 0);
 		}
 
-		private void writeHeaders()
+		private void writeHeaders(List<Player> players)
 		{
 			if (writer == null)
 				return;
@@ -125,7 +152,7 @@ public class TestGame
 			writer.endLine();
 		}
 
-		private void writeScores(int i)
+		private void writeScores(List<Player> players, int i)
 		{
 			if (writer == null)
 				return;

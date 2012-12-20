@@ -24,8 +24,6 @@ public class TestLearning
 
 		TDLearning brain;
 
-		TDPlayer tdPlayer;
-
 		List<Player> players;
 
 		MapGenerator generator;
@@ -39,12 +37,9 @@ public class TestLearning
 			brain = new TDLearning(config.getSection("network"));
 			brain.getError().reset(samples + 1000);
 
-			tdPlayer = new TDPlayer("TD", brain, config.getSection("player"));
-
 			players = new Vector<Player>();
-			players.add(tdPlayer);
-			players.add(new RandomPlayer("Random"));
-			players.add(new SimplePlayer("Simple"));
+			players.add(new TDPlayer("TD", brain, config.getSection("player")));
+			players.add(new TDPlayer("TD 2", brain, config.getSection("player")));
 		
 			generator = new MapGenerator(players);
 		}
@@ -81,16 +76,18 @@ public class TestLearning
 
 		double[] error = experiment.call();
 
-		output.write("avg");
+		output.write("mean");
 		output.write("min");
 		output.write("max");
+		output.write("var");
 		output.endLine();
 
 		for (Sample sample : resample(error, 50))
 		{
-			output.write(sample.avg());
+			output.write(sample.mean());
 			output.write(sample.min());
 			output.write(sample.max());
+			output.write(sample.variance());
 			output.endLine();
 		}
 	}
@@ -127,7 +124,7 @@ public class TestLearning
 			return max;
 		}
 
-		public double avg()
+		public double mean()
 		{
 			if (count() == 0)
 				return 0;
@@ -148,6 +145,17 @@ public class TestLearning
 		public int count()
 		{
 			return data.size();
+		}
+
+		public double variance()
+		{
+			double diff = 0;
+			double mean = mean();
+
+			for (double value : data)
+				diff += (value - mean) * (value - mean);
+
+			return Math.sqrt(diff / count());
 		}
 
 		public Sample()
