@@ -120,7 +120,7 @@ public class TestGame
 		{
 			MapGenerator generator = new MapGenerator(trainPlayers);
 
-			for (int i = 0; i < trainGames; ++i)
+			for (int i = 0; i <= trainGames; ++i)
 			{
 				if (i % 10 == 0)
 					test(testPlayers, testGames);
@@ -129,7 +129,7 @@ public class TestGame
 			}
 		}
 
-		public Double call()
+		public Double call() throws Exception
 		{
 			List<Player> trainPlayers = new Vector<Player>();
 			trainPlayers.add(tdPlayer);
@@ -137,8 +137,10 @@ public class TestGame
 			
 			List<Player> testPlayers = new Vector<Player>();
 			testPlayers.add(tdPlayer);
-			// testPlayers.add(new RandomPlayer("Random"));
-			testPlayers.add(new SimplePlayer("Random"));
+			
+			String testOpponentClassName = config.getString("opponent_class", "RandomPlayer");
+			Class<? extends Player> testOpponentClass = Class.forName("game." + testOpponentClassName).asSubclass(Player.class);
+			testPlayers.add(testOpponentClass.getConstructor(String.class).newInstance(testOpponentClassName));
 
 			int games = config.getInt("games", 2000);
 			
@@ -277,7 +279,7 @@ public class TestGame
 					finishedTasks++;
 			}
 
-		System.out.println("Finished " + finishedTasks + " of " + countedTasks + " tasks");
+		System.err.println("Finished " + finishedTasks + " of " + countedTasks + " tasks");
 	}
 
 	static private void printResults(HashMap<String, Vector<Future<Double>>> results) throws Exception
@@ -290,7 +292,7 @@ public class TestGame
 			for (Future<Double> score : scores)
 				m.add(score.get());
 
-			System.out.println(configFileName + ":"
+			System.err.println(configFileName + ":"
 				+ "\tn:" + m.count()
 				+ "\tavg:" + m.mean()
 				+ "\tvar:" + m.variance());
