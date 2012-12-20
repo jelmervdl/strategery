@@ -41,6 +41,8 @@ public class TestGame
 
 		Game game;
 
+		boolean testing;
+
 		public Experiment(Configuration config, CSVWriter writer)
 		{
 			this.config = config;
@@ -50,6 +52,8 @@ public class TestGame
 			brain = new TDLearning(config.getSection("network"));
 
 			tdPlayer = new TDPlayer("TD", brain, config.getSection("player"));
+
+			testing = false;
 		}
 
 		public void onTurnEnded(GameState state)
@@ -62,9 +66,9 @@ public class TestGame
 		
 		public void onGameEnded(GameState state)
 		{
-			if (scores == null)
+			if (!testing)
 				return;
-			
+
 			Set<Player> surviving = state.getPlayers();
 
 			if (surviving.size() != 1)
@@ -92,6 +96,8 @@ public class TestGame
 
 		private void test(List<Player> players, int games)
 		{
+			testing = true;
+
 			MapGenerator generator = new MapGenerator(players);
 
 			for (int i = 1; i <= games; ++i)
@@ -104,8 +110,22 @@ public class TestGame
 
 				game.run();
 
+				writeScores(players, i);
+			}
+
+			testing = false;
+		}
+
+		private void trainAndTest(List<Player> trainPlayers, List<Player> testPlayers, int trainGames, int testGames)
+		{
+			MapGenerator generator = new MapGenerator(trainPlayers);
+
+			for (int i = 0; i < trainGames; ++i)
+			{
 				if (i % 10 == 0)
-					writeScores(players, i);
+					test(testPlayers, testGames);
+				else
+					train(trainPlayers, 1);
 			}
 		}
 
@@ -122,13 +142,15 @@ public class TestGame
 
 			int games = config.getInt("games", 2000);
 			
-			train(trainPlayers, games);
+			// train(trainPlayers, games);
 
 			resetScores(testPlayers);
 
 			writeHeaders(testPlayers);
 			
-			test(testPlayers, games);
+			// test(testPlayers, games);
+
+			trainAndTest(trainPlayers, testPlayers, games, 10);
 
 			return (double) scores.get(tdPlayer) / games;
 		}
