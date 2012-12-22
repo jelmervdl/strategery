@@ -46,9 +46,9 @@ public class Game implements Runnable
 		// alive can be set to false to end this Java thread.
 		alive = true;
 
-		// Give each player 10 dice to start with
+		// Give each player twice as many dice as countries it has to start with
 		for (Player player : players)
-			distributeNewDice(player, 10);
+			distributeNewDice(player, 2 * state.getCountries(player).size());
 	
 		publishStartOfGame(state);
 

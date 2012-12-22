@@ -159,7 +159,7 @@ public class MainWindow extends JFrame implements GameEventListener
 
 	public void onGameEnded(GameState state)
 	{
-
+		System.out.println("The Game has Ended");
 	}
 
 	public Player getPlayer()

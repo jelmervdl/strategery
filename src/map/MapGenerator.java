@@ -51,7 +51,7 @@ public class MapGenerator
 			
 			if(grid[x][y].country == null)
 			{
-				Country country = new Country(3, countryCount++);
+				Country country = new Country(1, countryCount++);
 				grid[x][y].country = country;
 				country.hexagons.add(grid[x][y]);
 				countries.add(country);
