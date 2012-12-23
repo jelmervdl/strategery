@@ -11,25 +11,27 @@ class CountrySelector implements MapPanel.ActionListener
 
 	Country selection;
 
-	public CountrySelector(Set<Country> options)
-	{
-		if (options.size() == 0)
-			throw new RuntimeException("Options set is empty");
+	MapPanel panel;
 
-		this.options = options;
+	boolean isCancelled;
+
+	public CountrySelector(MapPanel panel)
+	{
+		this.panel = panel;
 	}
 
 	public void actionPerformed(MapPanel.ActionEvent event)
 	{
 		if (event.getCountry() != null && options.contains(event.getCountry()))
-		{
 			setSelection(event.getCountry());
+	}
 
-			// Highlight selection
-			Set<Country> highlights = new HashSet<Country>();
-			highlights.add(event.getCountry());
-			event.getSource().setHighlights(highlights);
-		}
+	public void setOptions(Set<Country> options)
+	{
+		if (options.size() == 0)
+			throw new RuntimeException("Options set is empty");
+
+		this.options = options;
 	}
 
 	public boolean hasSelection()
@@ -50,23 +52,32 @@ class CountrySelector implements MapPanel.ActionListener
 		selection = country;
 	}
 
-	static public Country run(Thread gameThread, MapPanel panel, Set<Country> countries)
+	public void run(Thread gameThread)
 	{
-		CountrySelector selector = new CountrySelector(countries);
-		panel.addActionListener(selector);
-		panel.setHighlights(countries);
+		selection = null;
+		isCancelled = false;
+
+		panel.addActionListener(this);
+		panel.setHighlights(options);
 
 		try {
-			while (!selector.hasSelection())
-				gameThread.sleep(100);
+			while (!hasSelection() && !isCancelled)
+				gameThread.sleep(50);
 		} catch (InterruptedException e) {
-			return null;
+			//
 		}
 
-		Country selection = selector.getSelection();
-		panel.removeActionListener(selector);
 		panel.setHighlights(new HashSet<Country>());
+		panel.removeActionListener(this);
+	}
 
-		return selection;
+	public void cancel()
+	{
+		isCancelled = true;
+	}
+
+	public boolean isCancelled()
+	{
+		return isCancelled;
 	}
 }

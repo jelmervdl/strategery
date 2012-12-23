@@ -1,8 +1,11 @@
 package ui.graphical;
 
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -35,6 +38,8 @@ public class MainWindow extends JFrame implements GameEventListener
 
 	private JFrame descriptorWindow;
 
+	private Button endTurnButton;
+
 	private Player player;
 
 	public MainWindow()
@@ -58,6 +63,12 @@ public class MainWindow extends JFrame implements GameEventListener
 		descriptorWindow = new JFrame();
 		descriptorWindow.getContentPane().add(descriptorPanel);
 		descriptorWindow.setVisible(true);
+
+		endTurnButton = new Button("End turn");
+		getContentPane().add(endTurnButton, BorderLayout.SOUTH);
+		endTurnButton.setVisible(false);
+
+		getContentPane().validate();
 	}
 
 	public void setGame(Game game)
@@ -107,6 +118,7 @@ public class MainWindow extends JFrame implements GameEventListener
 
 	public void onChooseMove(List<Move> moves)
 	{
+		/*
 		HashSet<Country> highlights = new HashSet<Country>();
 		
 		for (Move move : moves)
@@ -120,6 +132,7 @@ public class MainWindow extends JFrame implements GameEventListener
 
 		mapPanel.setHighlights(highlights);
 		pauseGame(200);
+		*/
 	}
 
 	public void onMove(Move move)
@@ -175,8 +188,35 @@ public class MainWindow extends JFrame implements GameEventListener
 
 				public Move decide(List<Move> possibleMoves, GameState state)
 				{
+					// If the only move is end-of-turn, return that one automatically
 					if (possibleMoves.size() == 1)
 						return possibleMoves.get(0);
+
+					// Set up the country selectors here so we know of them (and can cancel them)
+					final CountrySelector countrySelector = new CountrySelector(mapPanel);
+					
+					// Find end-of-turn move in case we need to return it.
+					Move endOfTurn = null;
+					for (Move move : possibleMoves)
+					{
+						if (move.isEndOfTurn())
+						{
+							endOfTurn = move;
+							break;
+						}
+					}
+
+					// Show the end-of-turn button. It only cancels the selector. If a selector
+					// returns while it has no selection, this probably happened.
+					endTurnButton.setVisible(true);
+					endTurnButton.addActionListener(new ActionListener()
+					{
+						public void actionPerformed(ActionEvent e)
+						{
+							countrySelector.cancel();
+						}
+					});
+					getContentPane().validate();
 
 					// Get attacking country
 					HashSet<Country> attackingCountries = new HashSet<Country>();
@@ -184,17 +224,40 @@ public class MainWindow extends JFrame implements GameEventListener
 						if (!move.isEndOfTurn())
 							attackingCountries.add(move.getAttackingCountry());
 
-					Country attackingCountry = CountrySelector.run(gameThread, mapPanel, attackingCountries);
+					countrySelector.setOptions(attackingCountries);
+					countrySelector.run(gameThread);
 
-					// Get defending country (or attacked country)
+					if (countrySelector.isCancelled())
+					{
+						endTurnButton.setVisible(false);
+						getContentPane().validate();
+						return endOfTurn;
+					}
+
+					Country attackingCountry = countrySelector.getSelection();
+
 					HashSet<Country> defendingCountries = new HashSet<Country>();
 					for (Move move : possibleMoves)
 						if (!move.isEndOfTurn() && move.getAttackingCountry().equals(attackingCountry))
 							defendingCountries.add(move.getDefendingCountry());
 
-					Country defendingCountry = CountrySelector.run(gameThread, mapPanel, defendingCountries);
+					countrySelector.setOptions(defendingCountries);
+					countrySelector.run(gameThread);
+
+					// Apparently the country selector was cancelled, which can only be for once reason
+					if (countrySelector.isCancelled())
+					{
+						endTurnButton.setVisible(false);
+						getContentPane().validate();
+						return endOfTurn;
+					}
 					
-					// Return that move.
+					Country defendingCountry = countrySelector.getSelection();
+
+					endTurnButton.setVisible(false);
+					getContentPane().validate();
+
+					// Return the move.
 					for (Move move : possibleMoves)
 						if (!move.isEndOfTurn()
 							&& move.getAttackingCountry().equals(attackingCountry)
