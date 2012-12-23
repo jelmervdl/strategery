@@ -1,3 +1,5 @@
+import java.awt.Color;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -62,10 +64,16 @@ public class TestGUI
 		public void reset()
 		{
 			// Line up some players
+			TDPlayer enemy1 = new TDPlayer("Enemy 1", brain, config.getSection("player"));
+			enemy1.setColor(Color.BLUE);
+
+			TDPlayer enemy2 = new TDPlayer("Enemy 2", brain, config.getSection("player"));
+			enemy2.setColor(Color.GREEN);
+
 			List<Player> players = new Vector<Player>();
 			players.add(mainWindow.getPlayer());
-			players.add(new TDPlayer("Enemy 1", brain, config.getSection("player")));
-			players.add(new TDPlayer("Enemy 2", brain, config.getSection("player")));
+			players.add(enemy1);
+			players.add(enemy2);
 
 			// Generate a map
 			MapGenerator generator = new MapGenerator(players);

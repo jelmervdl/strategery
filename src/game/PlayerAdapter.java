@@ -14,12 +14,17 @@ public abstract class PlayerAdapter implements Player
 	{
 		this.name = name;
 
-		this.color = randomColor();
+		setColor(randomColor());
 	}
 
 	public Color getColor()
 	{
 		return color;
+	}
+
+	public void setColor(Color color)
+	{
+		this.color = color;
 	}
 	
 	public String toString()
